@@ -5,6 +5,9 @@
 			<column name="id" type="integer" jt="4" mandatory="y" />
 			<column name="student_id" type="integer" jt="4" mandatory="y" />
 			<column name="proposal_id" type="serial" jt="4" mandatory="y" />
+			<column name="status" type="boolean" jt="16" >
+				<comment><![CDATA[Status of the application, NULL means that it hasn't been rejected or approved yet. FALSE means rejected and TRUE means approved]]></comment>
+			</column>
 			<index name="pk_application" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -71,6 +74,7 @@
 			<column name="title" type="text" jt="12" mandatory="y" >
 				<comment><![CDATA[Title of the thesis]]></comment>
 			</column>
+			<column name="teacher_id" type="integer" jt="4" mandatory="y" />
 			<column name="supervisor" type="text" jt="12" mandatory="y" >
 				<comment><![CDATA[The email of the supervisor (since supervisors can be external and those aren't in the system, I can't use the internal teacher ID)]]></comment>
 			</column>
@@ -81,7 +85,7 @@
 			<column name="type" type="text" jt="12" />
 			<column name="groups" type="text[]" jt="2003" />
 			<column name="description" type="text" jt="12" mandatory="y" />
-			<column name="required_knowledge" prior="required-knowledge" type="text" jt="12" />
+			<column name="required_knowledge" prior="required-knowledge" type="text[]" jt="2003" />
 			<column name="notes" type="text" jt="12" />
 			<column name="expiration" type="date" jt="91" mandatory="y" />
 			<column name="level" type="integer" jt="4" mandatory="y" />
@@ -89,6 +93,9 @@
 			<index name="pk_thesis_proposal" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
+			<fk name="fk_thesis_proposal_teacher" to_schema="thesismanagement" to_table="teacher" >
+				<fk_column name="teacher_id" pk="id" />
+			</fk>
 		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout-2039" show_relation="columns" >
@@ -96,7 +103,7 @@
 		<entity schema="thesismanagement" name="career" color="C1D8EE" x="192" y="352" />
 		<entity schema="thesismanagement" name="degree" color="C1D8EE" x="240" y="224" />
 		<entity schema="thesismanagement" name="student" color="C1D8EE" x="480" y="240" />
-		<entity schema="thesismanagement" name="teacher" color="C1D8EE" x="240" y="48" />
+		<entity schema="thesismanagement" name="teacher" color="C1D8EE" x="384" y="48" />
 		<entity schema="thesismanagement" name="thesis_proposal" color="C1D8EE" x="48" y="48" />
 		<script name="thesis_proposal" id="Editor-8ec" language="SQL" >
 			<string><![CDATA[SELECT

@@ -8,6 +8,7 @@
 			<column name="status" type="boolean" jt="16" >
 				<comment><![CDATA[Status of the application, NULL means that it hasn't been rejected or approved yet. FALSE means rejected and TRUE means approved]]></comment>
 			</column>
+			<column name="apply_date" type="date" jt="91" mandatory="y" />
 			<index name="pk_application" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>

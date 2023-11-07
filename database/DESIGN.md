@@ -14,7 +14,7 @@
 | TYPE               | TEXT    | NO          |          | Type of thesis (with company, out of country, etc)                                                                                  |
 | GROUPS             | TEXT[]  | YES         |          | Groups that handle this thesis                                                                                                      |
 | DESCRIPTION        | TEXT    | NO          |          | Description of the thesis                                                                                                           |
-| REQUIRED_KNOWLEDGE | TEXT[]   | NO          |          | Required course/general concepts to know for this thesis                                                                            |
+| REQUIRED_KNOWLEDGE | TEXT[]  | NO          |          | Required course/general concepts to know for this thesis                                                                            |
 | NOTES              | TEXT    | YES         |          | Extra notes on this thesis                                                                                                          |
 | EXPIRATION         | DATE    | NO          |          | Date of expiration of this thesis proposal                                                                                          |
 | LEVEL              | INTEGER | NO          |          | Level of this thesis, e.g. 1 for bachelor, 2 for masters and 3 for doctorate                                                                                                                |
@@ -27,8 +27,8 @@
 | SURNAME        | TEXT    | NO          |          | Surname of the teacher                             |
 | NAME           | TEXT    | NO          |          | Name of the teacher                                |
 | EMAIL          | TEXT    | NO          |          | Email of the teacher                               |
-| COD_GROUP      | INTEGER | NO          |          | Code of the group that the teacher belongs to      |
-| COD_DEPARTMENT | INTEGER | NO          |          | Code of the department that the teacher belongs to |
+| COD_GROUP      | INTEGER | NO          | FOREIGN  | Code of the group that the teacher belongs to      |
+| COD_DEPARTMENT | INTEGER | NO          | FOREIGN  | Code of the department that the teacher belongs to |
 
 ### DEGREE table
 | FIELD_NAME   | TYPE | CAN BE NULL | KEY TYPE | DESCRIPTION         |
@@ -66,3 +66,16 @@
 | PROPOSAL_ID | INTEGER | NO          | FOREIGN  | Id of the thesis proposal that the student applied to |
 | APPLY_DATE  | DATE    | NO          |          | Date of a new application                             |
 | STATUS      | BOOL    | YES         |          | Status of the application, NULL means not evaluated, TRUE means accepted, FALSE means rejected |
+
+### DEPARTMENT table
+| FIELD_NAME     |  TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | -------  | ----------- | -------- | ----------------------------------------------------- |
+| COD_DEPARTMENT | INTEGER  | NO          | PRIMARY  | Code of the department                                |
+| NAME           | TEXT     | NO          |          | Name of the department                                |
+
+### GROUP table
+| FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
+| COD_GROUP      | INTEGER | NO          | PRIMARY  | Code of the group                                     |
+| COD_DEPARTMENT | INTEGER | NO          | FOREIGN  | Code of the department that the group belongs to      |
+| NAME           | TEXT    | NO          |          | Name of the group                                     |

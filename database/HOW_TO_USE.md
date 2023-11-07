@@ -30,7 +30,7 @@ To remove the data from the database you can run:
 \i clear_data.sql
 ```
 
-To remove the database:
+To remove the database (to run this command you need to be in the PostgreSQL shell with this command `psql -U postgres` so it doesn't connect to the database and thus it can be dropped):
 
 ```postgresql
 \i restore_clean.sql

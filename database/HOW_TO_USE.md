@@ -8,3 +8,22 @@
 Alternatively you can try using PGAdmin (the GUI for PostgreSQL) to run the sql scripts but I find it easier to use the shell.
 
 
+## Populate the database
+
+In order to add the data to the database you can run:
+
+```postgresql
+\i init_data.sql
+```
+
+To remove the data from the database you can run:
+
+```postgresql
+\i clear_data.sql
+```
+
+To remove the database:
+
+```postgres
+\i restore_clean;
+```

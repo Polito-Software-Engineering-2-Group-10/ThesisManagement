@@ -107,7 +107,15 @@ CREATE TABLE IF NOT EXISTS public.career
     CFU integer NOT NULL,
     grade float,
     exam_date date NOT NULL,
-    CONSTRAINT career_pk PRIMARY KEY (id, cod_course)
+    CONSTRAINT career_pk PRIMARY KEY (id, cod_course),
+    CONSTRAINT career_id_fkey FOREIGN KEY (id)
+        REFERENCES public.student (id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT career_cod_course_fkey FOREIGN KEY (cod_course)
+        REFERENCES public.degree (cod_degree)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 );
 ALTER TABLE IF EXISTS public.career OWNER TO thesismanager;
 

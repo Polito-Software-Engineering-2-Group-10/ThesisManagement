@@ -1,117 +1,143 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="ThesisManagement" id="Project-201b" database="PostgreSQL" >
-	<schema name="thesismanagement" >
-		<table name="application" prior="tbl" >
-			<column name="id" type="integer" jt="4" mandatory="y" />
-			<column name="student_id" type="integer" jt="4" mandatory="y" />
-			<column name="proposal_id" type="serial" jt="4" mandatory="y" />
-			<column name="status" type="boolean" jt="16" >
-				<comment><![CDATA[Status of the application, NULL means that it hasn't been rejected or approved yet. FALSE means rejected and TRUE means approved]]></comment>
-			</column>
-			<column name="apply_date" type="date" jt="91" mandatory="y" />
-			<index name="pk_application" unique="PRIMARY_KEY" >
+<project name="PostgreSQL" id="Project-287" database="PostgreSQL" >
+	<schema name="public" >
+		<comment><![CDATA[standard public schema]]></comment>
+		<table name="application" row_count="0" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="student_id" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="proposal_id" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="apply_date" type="date" length="0" jt="91" mandatory="y" />
+			<column name="status" type="boolean" jt="16" />
+			<index name="application_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<fk name="fk_application_student_id" to_schema="thesismanagement" to_table="student" >
+			<fk name="application_student_id_fkey" to_schema="public" to_table="student" options="" >
 				<fk_column name="student_id" pk="id" />
 			</fk>
-			<fk name="fk_application_proposal_id" to_schema="thesismanagement" to_table="thesis_proposal" >
+			<fk name="application_proposal_id_fkey" to_schema="public" to_table="thesis_proposal" options="" >
 				<fk_column name="proposal_id" pk="id" />
 			</fk>
 		</table>
-		<table name="career" prior="tbl" >
-			<column name="id" type="integer" jt="4" mandatory="y" />
+		<table name="career" row_count="0" spec="" >
+			<column name="id" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="cod_course" type="text" jt="12" mandatory="y" />
 			<column name="title_course" type="text" jt="12" mandatory="y" />
-			<column name="cfu" type="integer" jt="4" mandatory="y" />
-			<column name="grade" type="real" jt="7" />
-			<column name="exam_date" type="date" jt="91" mandatory="y" />
-			<index name="pk_career" unique="PRIMARY_KEY" >
+			<column name="cfu" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="grade" type="double precision" jt="3" />
+			<column name="exam_date" type="date" length="0" jt="91" mandatory="y" />
+			<index name="career_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 				<column name="cod_course" />
 			</index>
-			<fk name="fk_career_student_id" to_schema="thesismanagement" to_table="student" >
+			<fk name="career_id_fkey" to_schema="public" to_table="student" options="" >
 				<fk_column name="id" pk="id" />
 			</fk>
+			<fk name="career_cod_course_fkey" to_schema="public" to_table="degree" options="" >
+				<fk_column name="cod_course" pk="cod_degree" />
+			</fk>
 		</table>
-		<table name="degree" prior="tbl" >
+		<table name="degree" row_count="0" spec="" >
 			<column name="cod_degree" type="text" jt="12" mandatory="y" />
 			<column name="title_degree" type="text" jt="12" mandatory="y" />
-			<index name="unq_degree_cod_degree" unique="UNIQUE_KEY" >
+			<index name="degree_pk" unique="PRIMARY_KEY" >
 				<column name="cod_degree" />
 			</index>
 		</table>
-		<table name="student" prior="tbl" >
-			<column name="id" type="integer" jt="4" mandatory="y" />
+		<table name="department" row_count="0" spec="" >
+			<column name="cod_department" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="nick_name" type="text" jt="12" />
+			<column name="full_name" type="text" jt="12" mandatory="y" />
+			<index name="department_pk" unique="PRIMARY_KEY" >
+				<column name="cod_department" />
+			</index>
+		</table>
+		<table name="group" row_count="0" spec="" >
+			<column name="cod_group" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="cod_department" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="name" type="text" jt="12" mandatory="y" />
+			<index name="group_pk" unique="PRIMARY_KEY" >
+				<column name="cod_group" />
+			</index>
+			<fk name="group_cod_department_fkey" to_schema="public" to_table="department" options="" >
+				<fk_column name="cod_department" pk="cod_department" />
+			</fk>
+		</table>
+		<table name="student" row_count="0" spec="" >
+			<column name="id" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="surname" type="text" jt="12" mandatory="y" />
 			<column name="name" type="text" jt="12" mandatory="y" />
 			<column name="gender" type="text" jt="12" mandatory="y" />
 			<column name="nationality" type="text" jt="12" mandatory="y" />
 			<column name="email" type="text" jt="12" mandatory="y" />
 			<column name="cod_degree" type="text" jt="12" mandatory="y" />
-			<column name="enrollment_year" type="date" jt="91" mandatory="y" />
-			<index name="pk_student" unique="PRIMARY_KEY" >
+			<column name="enrollment_year" type="date" length="0" jt="91" mandatory="y" />
+			<index name="student_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<fk name="fk_student_degree" to_schema="thesismanagement" to_table="degree" >
+			<fk name="student_cod_degree_fkey" to_schema="public" to_table="degree" options="" >
 				<fk_column name="cod_degree" pk="cod_degree" />
 			</fk>
 		</table>
-		<table name="teacher" prior="tbl" >
-			<column name="id" type="integer" jt="4" mandatory="y" />
+		<table name="teacher" row_count="0" spec="" >
+			<column name="id" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="surname" type="text" jt="12" mandatory="y" />
 			<column name="name" type="text" jt="12" mandatory="y" />
 			<column name="email" type="text" jt="12" mandatory="y" />
-			<column name="cod_group" type="integer" jt="4" mandatory="y" />
-			<column name="cod_department" type="integer" jt="4" mandatory="y" />
-			<index name="pk_teacher" unique="PRIMARY_KEY" >
+			<column name="cod_group" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="cod_department" type="integer" length="32" jt="4" mandatory="y" />
+			<index name="teacher_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
+			<fk name="teacher_cod_group_fkey" to_schema="public" to_table="group" options="" >
+				<fk_column name="cod_group" pk="cod_group" />
+			</fk>
+			<fk name="teacher_cod_department_fkey" to_schema="public" to_table="department" options="" >
+				<fk_column name="cod_department" pk="cod_department" />
+			</fk>
 		</table>
-		<table name="thesis_proposal" prior="proposal" >
-			<column name="id" type="serial" jt="4" mandatory="y" >
-				<comment><![CDATA[Autogenerated thesis ID]]></comment>
-			</column>
-			<column name="title" type="text" jt="12" mandatory="y" >
-				<comment><![CDATA[Title of the thesis]]></comment>
-			</column>
-			<column name="teacher_id" type="integer" jt="4" mandatory="y" />
-			<column name="supervisor" type="text" jt="12" mandatory="y" >
-				<comment><![CDATA[The email of the supervisor (since supervisors can be external and those aren't in the system, I can't use the internal teacher ID)]]></comment>
-			</column>
-			<column name="co_supervisors" prior="co-supervisors" type="text[]" jt="2003" >
-				<comment><![CDATA[The emails of the co-supervisors]]></comment>
-			</column>
-			<column name="keywords" type="text[]" jt="2003" />
-			<column name="type" type="text" jt="12" />
+		<table name="thesis_proposal" row_count="0" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="title" type="text" jt="12" mandatory="y" />
+			<column name="teacher_id" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="supervisor" type="text" jt="12" mandatory="y" />
+			<column name="co_supervisor" type="text[]" jt="2003" />
+			<column name="keywords" type="text[]" jt="2003" mandatory="y" />
+			<column name="type" type="text" jt="12" mandatory="y" />
 			<column name="groups" type="text[]" jt="2003" />
 			<column name="description" type="text" jt="12" mandatory="y" />
-			<column name="required_knowledge" prior="required-knowledge" type="text[]" jt="2003" />
+			<column name="required_knowledge" type="text[]" jt="2003" mandatory="y" />
 			<column name="notes" type="text" jt="12" />
-			<column name="expiration" type="date" jt="91" mandatory="y" />
-			<column name="level" type="integer" jt="4" mandatory="y" />
+			<column name="expiration" type="date" length="0" jt="91" mandatory="y" />
+			<column name="level" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="programmes" type="text[]" jt="2003" />
-			<index name="pk_thesis_proposal" unique="PRIMARY_KEY" >
+			<index name="thesis_proposal_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<fk name="fk_thesis_proposal_teacher" to_schema="thesismanagement" to_table="teacher" >
+			<fk name="thesis_proposal_teacher_id_fkey" to_schema="public" to_table="teacher" options="" >
 				<fk_column name="teacher_id" pk="id" />
 			</fk>
 		</table>
+		<sequence name="application_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="thesis_proposal_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 	</schema>
-	<layout name="Default Layout" id="Layout-2039" show_relation="columns" >
-		<entity schema="thesismanagement" name="application" color="C1D8EE" x="464" y="464" />
-		<entity schema="thesismanagement" name="career" color="C1D8EE" x="192" y="352" />
-		<entity schema="thesismanagement" name="degree" color="C1D8EE" x="240" y="224" />
-		<entity schema="thesismanagement" name="student" color="C1D8EE" x="480" y="240" />
-		<entity schema="thesismanagement" name="teacher" color="C1D8EE" x="384" y="48" />
-		<entity schema="thesismanagement" name="thesis_proposal" color="C1D8EE" x="48" y="48" />
-		<script name="thesis_proposal" id="Editor-8ec" language="SQL" >
-			<string><![CDATA[SELECT
-	id, title, supervisor, "co-supervisors", keywords, "type", groups, description, "required-knowledge", notes, expiration, 
-	"level", programmes
-FROM
-	thesismanagement.thesis_proposal l;]]></string>
-		</script>
+	<layout name="Main Layout" id="Layout-1014" show_relation="columns" >
+		<entity schema="public" name="application" color="BED3F4" x="480" y="544" />
+		<entity schema="public" name="career" color="BED3F4" x="256" y="544" />
+		<entity schema="public" name="degree" color="BED3F4" x="48" y="544" />
+		<entity schema="public" name="department" color="BED3F4" x="240" y="80" />
+		<entity schema="public" name="group" color="BED3F4" x="480" y="80" />
+		<entity schema="public" name="student" color="BED3F4" x="256" y="272" />
+		<entity schema="public" name="teacher" color="BED3F4" x="480" y="272" />
+		<entity schema="public" name="thesis_proposal" color="BED3F4" x="720" y="272" />
+		<group name="student" color="ECF0F7" >
+			<entity schema="public" name="student" />
+			<entity schema="public" name="teacher" />
+			<entity schema="public" name="application" />
+			<entity schema="public" name="thesis_proposal" />
+			<entity schema="public" name="career" />
+			<entity schema="public" name="degree" />
+			<entity schema="public" name="department" />
+			<entity schema="public" name="group" />
+		</group>
 	</layout>
 </project>

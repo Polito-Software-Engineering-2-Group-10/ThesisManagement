@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS public.application
     id serial NOT NULL,
     student_id integer NOT NULL,
     proposal_id integer NOT NULL,
+    apply_date date NOT NULL,
     status boolean,
     CONSTRAINT application_pk PRIMARY KEY (id),
     CONSTRAINT application_student_id_fkey FOREIGN KEY (student_id)
@@ -97,4 +98,3 @@ CREATE TABLE IF NOT EXISTS public.application
         ON DELETE NO ACTION
 );
 ALTER TABLE IF EXISTS public.application OWNER TO thesismanager;
-

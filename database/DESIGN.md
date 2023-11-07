@@ -64,4 +64,5 @@
 | ID          | SERIAL  | NO          | PRIMARY  | Id of the application                                 |
 | STUDENT_ID  | INTEGER | NO          | FOREIGN  | Id of the student that applied                        |
 | PROPOSAL_ID | INTEGER | NO          | FOREIGN  | Id of the thesis proposal that the student applied to |
+| APPLY_DATE  | DATE    | NO          |          | Date of a new application                             |
 | STATUS      | BOOL    | YES         |          | Status of the application, NULL means not evaluated, TRUE means accepted, FALSE means rejected |

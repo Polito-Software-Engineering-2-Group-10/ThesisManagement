@@ -9,6 +9,29 @@ CREATE TABLE IF NOT EXISTS public.degree
 );
 ALTER TABLE IF EXISTS public.degree OWNER TO thesismanager;
 
+-- department
+CREATE TABLE IF NOT EXISTS public.department
+(
+    cod_department integer NOT NULL,
+    name text NOT NULL,
+    CONSTRAINT department_pk PRIMARY KEY (cod_department)
+);
+ALTER TABLE IF EXISTS public.department OWNER TO thesismanager;
+
+-- group
+CREATE TABLE IF NOT EXISTS public.group
+(
+    cod_group integer NOT NULL,
+    cod_department integer NOT NULL,
+    name text NOT NULL,
+    CONSTRAINT group_pk PRIMARY KEY (cod_group),
+    CONSTRAINT group_cod_department_fkey FOREIGN KEY (cod_department)
+        REFERENCES public.department (cod_department)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+ALTER TABLE IF EXISTS public.group OWNER TO thesismanager;
+
 -- teacher
 CREATE TABLE IF NOT EXISTS public.teacher
 (
@@ -18,7 +41,15 @@ CREATE TABLE IF NOT EXISTS public.teacher
     email text NOT NULL,
     cod_group integer NOT NULL,
     cod_department integer NOT NULL,
-    CONSTRAINT teacher_pk PRIMARY KEY (id)
+    CONSTRAINT teacher_pk PRIMARY KEY (id),
+    CONSTRAINT teacher_cod_group_fkey FOREIGN KEY (cod_group)
+        REFERENCES public.group(cod_group)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT teacher_cod_department_fkey FOREIGN KEY (cod_department)
+        REFERENCES public.department(cod_department)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 );
 ALTER TABLE IF EXISTS public.teacher OWNER TO thesismanager;
 

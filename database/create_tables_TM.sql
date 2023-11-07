@@ -13,7 +13,8 @@ ALTER TABLE IF EXISTS public.degree OWNER TO thesismanager;
 CREATE TABLE IF NOT EXISTS public.department
 (
     cod_department integer NOT NULL,
-    name text NOT NULL,
+    nick_name text NOT NULL,
+    full_name text NOT NULL,
     CONSTRAINT department_pk PRIMARY KEY (cod_department)
 );
 ALTER TABLE IF EXISTS public.department OWNER TO thesismanager;

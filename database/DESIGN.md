@@ -71,7 +71,8 @@
 | FIELD_NAME     |  TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
 | -----------    | -------  | ----------- | -------- | ----------------------------------------------------- |
 | COD_DEPARTMENT | INTEGER  | NO          | PRIMARY  | Code of the department                                |
-| NAME           | TEXT     | NO          |          | Name of the department                                |
+| NICK_NAME      | TEXT     | NO          |          | Abbrevation name of the department                    |
+| FULL_NAME      | TEXT     | NO          |          | Full Name of the department                           |
 
 ### GROUP table
 | FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |

@@ -107,6 +107,9 @@
 			<column name="expiration" type="date" length="0" jt="91" mandatory="y" />
 			<column name="level" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="programmes" type="text[]" jt="2003" />
+			<column name="archived" type="boolean" jt="16" mandatory="y" >
+				<defo><![CDATA[false]]></defo>
+			</column>
 			<index name="thesis_proposal_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>

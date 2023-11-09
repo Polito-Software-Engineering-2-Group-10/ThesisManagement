@@ -1,3 +1,10 @@
+import dotenv from 'dotenv';
+if (process.env.DOCKER_SETUP === 'true') {
+    dotenv.config({path: '/usr/src/app/.dockerenv'});
+} else {
+    dotenv.config();
+}
+
 export default {
     development: {
         saml: {

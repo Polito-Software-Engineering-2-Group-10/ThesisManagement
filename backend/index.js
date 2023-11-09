@@ -5,11 +5,10 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import 'dotenv/config'
-import passportconfig from './config/passport-config.js';
-import baseconfig from './config/config.js';
-import authrouteconfig from './auth-routes.js';
 import cors from 'cors';
+import baseconfig from './config/config.js';
+import passportconfig from './config/passport-config.js';
+import authrouteconfig from './auth-routes.js';
 import { 
     studentTable,
     teacherTable,

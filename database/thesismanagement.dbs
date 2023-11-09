@@ -24,16 +24,13 @@
 			<column name="title_course" type="text" jt="12" mandatory="y" />
 			<column name="cfu" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="grade" type="double precision" jt="3" />
-			<column name="exam_date" type="date" length="0" jt="91" mandatory="y" />
+			<column name="date" type="date" length="0" jt="91" mandatory="y" />
 			<index name="career_pk" unique="PRIMARY_KEY" >
 				<column name="id" />
 				<column name="cod_course" />
 			</index>
 			<fk name="career_id_fkey" to_schema="public" to_table="student" options="" >
 				<fk_column name="id" pk="id" />
-			</fk>
-			<fk name="career_cod_course_fkey" to_schema="public" to_table="degree" options="" >
-				<fk_column name="cod_course" pk="cod_degree" />
 			</fk>
 		</table>
 		<table name="degree" row_count="0" spec="" >

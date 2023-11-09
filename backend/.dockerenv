@@ -1,12 +1,12 @@
 PASSPORT_STRATEGY=local
 PORT=3001
-FRONTEND_HOST=localhost
+FRONTEND_HOST=frontend
 FRONTEND_PORT=5173
-DATABASE_HOST=localhost
+DATABASE_HOST=db
 DATABASE_PORT=5432
 SAML_PATH=/login/callback
-SAML_ENTRY_POINT=http://localhost:8080/simplesaml/saml2/idp/SSOService.php
-SAML_LOGOUT_URL=http://localhost:8080/simplesaml/saml2/idp/SingleLogoutService.php
+SAML_ENTRY_POINT=http://saml:8080/simplesaml/saml2/idp/SSOService.php
+SAML_LOGOUT_URL=http://saml:8080/simplesaml/saml2/idp/SingleLogoutService.php
 SAML_ISSUER=passport-saml
 # We don't care about this certificate being public, it's only used for testing
 SAML_CERT="-----BEGIN CERTIFICATE-----

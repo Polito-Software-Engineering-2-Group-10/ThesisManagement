@@ -50,6 +50,39 @@ app.use(passport.session());
 
 authrouteconfig(app, config, passport, currentStrategy);
 
+
+/*API*/
+
+
+/*Browse Applications */
+
+//Applications List
+//GET /api/ApplicationsList
+app.get('/api/ApplicationsList',
+  async (req,res)=>{
+    try{
+      const applicationList= await applicationTable.getByTeacherId(1); //to do: modify the current manual id with user.id logged in at the moment
+      res.json(applicationList);
+  }
+  catch(err){
+    res.status(503).json({ error: `Database error during retrieving application List` });
+
+    }
+
+  }
+);
+//Application Details
+//GET /api/application/:id
+
+/*END Browse Application*/ 
+
+
+
+
+
+/*END API*/ 
+
+
 const server = app.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
 });

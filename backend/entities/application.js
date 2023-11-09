@@ -46,12 +46,12 @@ class ApplicationTable {
         return result.map(Application.fromRow);
     }
     async getByTeacherId(teacher_id) {
-        const query = `SELECT application.*, thesis_proposal.id AS proposal_id FROM application, thesis_proposal WHERE 
+        const query = `SELECT application.*, thesis_proposal.id AS proposal_id, thesis_proposal.title AS thesis_title FROM application, thesis_proposal WHERE 
 	                    proposal_id IN (select id FROM thesis_proposal WHERE teacher_id = $1)
 	                    AND thesis_proposal.id = application.proposal_id;`;
         const id = getNum(teacher_id);
         const result = await this.db.executeQueryExpectAny(query, id);
-        return result.map((r) => { return { ...Application.fromRow(r), proposal_id: r.proposal_id } });
+        return result.map((r) => { return { ...Application.fromRow(r), proposal_id: r.proposal_id, thesis_title: r.thesis_title } });
     }
     async addApplication(student_id, proposal_id) {
         const query = `INSERT INTO application (student_id, proposal_id, apply_date) VALUES ($1, $2, NOW()) RETURNING *`;

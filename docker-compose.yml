@@ -39,6 +39,8 @@ services:
       - saml_config:/var/www/simplesamlphp/config:ro
   server:
     image: node:21.1
+    environment:
+      - DOCKER_SETUP=true
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
@@ -46,7 +48,7 @@ services:
       db:
         condition: service_healthy
     command: >
-      sh -c "npm install && npm run dev"
+      sh -c "npm install && node index.js"
     expose:
       - 3001
     ports:

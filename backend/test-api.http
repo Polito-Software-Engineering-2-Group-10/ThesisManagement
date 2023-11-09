@@ -1,3 +1,6 @@
 ## Retrieving ApplicationList by teacher id.
 GET http://localhost:3001/api/ApplicationsList HTTP/1.1
 ###
+## Retrieving Application Detail by application id.
+GET http://localhost:3001/api/applicationDetail/1 HTTP/1.1
+###

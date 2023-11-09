@@ -58,6 +58,7 @@ authrouteconfig(app, config, passport, currentStrategy);
 
 //Applications List
 //GET /api/ApplicationsList
+//get the list of applications by teacher id
 app.get('/api/ApplicationsList',
   async (req,res)=>{
     try{
@@ -72,8 +73,37 @@ app.get('/api/ApplicationsList',
   }
 );
 //Application Details
-//GET /api/application/:id
+//GET /api/applicationDetail/<applicationid>
+//get the application details by application id
+//should be used when the teacher click on the application from the list to see the details
+app.get('/api/applicationDetail/:applicationid',
+  async(req,res)=>{
+    try{
+      const applicationDetail= await applicationTable.getDetailById(req.params.applicationid); //to do: modify the current manual id with user.id logged in at the moment
+      const cleanApplicationList= applicationDetail.map(item=>{
+        return{
+          thesis_title:item.title,
+          student_id:item.id,
+          student_name:item.name,
+          student_surname:item.surname,
+          application_date:item.apply_date,
+          student_gender:item.gender,
+          student_nationality:item.nationality,
+          student_email:item.email,
+          student_carrer:item.title_degree,
+          student_ey:item.enrollment_year
+        };
+      });
+      
+      res.json(cleanApplicationList);
 
+    }catch(err){
+      res.status(503).json({ error: `Database error during retrieving application List` });
+    }
+  }
+
+
+);
 /*END Browse Application*/ 
 
 

@@ -33,6 +33,19 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, aid, `Application with id ${id} not found`);
         return Application.fromRow(result);
     }
+
+    async getDetailById(id) {
+        const query= `SELECT student.*, degree.title_degree,thesis_proposal.title,application.apply_date from student, degree, application,thesis_proposal 
+        where student.cod_degree=degree.cod_degree 
+        and student.id=application.student_id 
+        and application.id=$1
+        and application.proposal_id=thesis_proposal.id`;
+        //const aid = getNum(id);
+        //const result = await this.db.executeQueryExpectOne(query,id, `Application with id ${id} not found`);
+        const result = await this.db.executeQueryExpectAny(query, id);
+        return result;
+
+    }
     async getByStudentId(student_id) {
         const query = `SELECT * FROM application WHERE student_id = $1`;
         const id = getNum(student_id);

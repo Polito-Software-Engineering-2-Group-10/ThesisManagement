@@ -29,6 +29,21 @@ class DepartmentTable {
         const rows = await this.db.executeQueryExpectAny(query);
         return rows.map(Department.fromRow);
     }
+    async getDepartmentByCode(cod_department) {
+        const query = `SELECT * FROM department WHERE cod_department = $1`;
+        const row = await this.db.executeQueryExpectOne(query, cod_department, `Department with cod_department ${cod_department} not found`);
+        return Department.fromRow(row);
+    }
+    async getDepartmentByNickname(nick_name) {
+        const query = `SELECT * FROM department WHERE nick_name = $1`;
+        const rows = await this.db.executeQueryExpectAny(query, nick_name);
+        return rows.map(Department.fromRow);
+    }
+    async getDepartmentByFullName(full_name) {
+        const query = `SELECT * FROM department WHERE full_name = $1`;
+        const rows = await this.db.executeQueryExpectAny(query, full_name);
+        return rows.map(Department.fromRow);
+    }
 }
 
 export { Department, DepartmentTable };

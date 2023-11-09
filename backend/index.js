@@ -43,7 +43,7 @@ app.use(session(
   {
     resave: currentStrategy === 'local' ? false : true,
     saveUninitialized: currentStrategy === 'local' ? false : true,
-    secret: 'this is a secret'
+    secret: 'TcEn#GiCD@Y$Etj7N933YHGK9h'
   }));
 app.use(passport.initialize());
 app.use(passport.session());

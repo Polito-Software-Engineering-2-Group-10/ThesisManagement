@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS public.career
     title_course text NOT NULL,
     CFU integer NOT NULL,
     grade float,
-    exam_date date NOT NULL,
+    date date NOT NULL,
     CONSTRAINT career_pk PRIMARY KEY (id, cod_course),
     CONSTRAINT career_id_fkey FOREIGN KEY (id)
         REFERENCES public.student (id)

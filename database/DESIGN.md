@@ -56,7 +56,7 @@
 | TITLE_COURSE | TEXT    | NO          |          | Title of the course                              |
 | CFU          | INTEGER | NO          |          | Credits of the course                            |
 | GRADE        | FLOAT   | YES         |          | Grade taken in the exam, null if exam not passed |
-| EXAM_DATE    | DATE    | NO          |          | Date of the exam                                 |
+| DATE         | DATE    | NO          |          | Date of the exam                                 |
 
 ### APPLICATION table
 | FIELD_NAME  | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |

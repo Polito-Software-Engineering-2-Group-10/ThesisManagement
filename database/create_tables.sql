@@ -111,10 +111,6 @@ CREATE TABLE IF NOT EXISTS public.career
     CONSTRAINT career_id_fkey FOREIGN KEY (id)
         REFERENCES public.student (id)
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT career_cod_course_fkey FOREIGN KEY (cod_course)
-        REFERENCES public.degree (cod_degree)
-        ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 ALTER TABLE IF EXISTS public.career OWNER TO thesismanager;

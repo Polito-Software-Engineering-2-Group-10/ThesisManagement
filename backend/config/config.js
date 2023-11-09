@@ -3,7 +3,11 @@ export default {
         saml: {
             app: {
                 name: 'Passport SAML',
-                port: process.env.PORT || 3000
+                port: process.env.PORT || 3000,
+                frontend_host: process.env.FRONTEND_HOST || 'localhost',
+                frontend_port: process.env.FRONTEND_PORT || 5173,
+                database_host: process.env.DATABASE_HOST || 'localhost',
+                database_port: process.env.DATABASE_PORT || 5432,
             },
             passport: {
                 strategy: 'saml',
@@ -19,7 +23,11 @@ export default {
         local: {
             app: {
                 name: 'Passport LOCAL',
-                port: process.env.PORT || 3000
+                port: process.env.PORT || 3000,
+                frontend_host: process.env.FRONTEND_HOST || 'localhost',
+                frontend_port: process.env.FRONTEND_PORT || 5173,
+                database_host: process.env.DATABASE_HOST || 'localhost',
+                database_port: process.env.DATABASE_PORT || 5432,
             },
             passport: {
                 strategy: 'local'

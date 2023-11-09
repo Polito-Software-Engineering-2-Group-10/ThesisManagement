@@ -7,21 +7,23 @@ import { Teacher, TeacherTable } from "./entities/teacher.js";
 import { Career, CareerTable } from "./entities/career.js";
 import { Department, DepartmentTable } from "./entities/department.js";
 
+
+const studentTable = await StudentTable.initialize();
+const groupTable = await GroupTable.initialize();
+const degreeTable = await DegreeTable.initialize();
+const teacherTable = await TeacherTable.initialize();
+const departmentTable = await DepartmentTable.initialize();
+const careerTable = await CareerTable.initialize();
+const thesisProposalTable = await ThesisProposalTable.initialize();
+const applicationTable = await ApplicationTable.initialize();
+
 export {
-    Application,
-    ApplicationTable,
-    Degree,
-    DegreeTable,
-    Group,
-    GroupTable,
-    ThesisProposal,
-    ThesisProposalTable,
-    Student,
-    StudentTable,
-    Teacher,
-    TeacherTable,
-    Career,
-    CareerTable,
-    Department,
-    DepartmentTable
+    applicationTable,
+    degreeTable,
+    groupTable,
+    thesisProposalTable,
+    studentTable,
+    teacherTable,
+    careerTable,
+    departmentTable
 };

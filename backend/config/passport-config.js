@@ -1,6 +1,6 @@
 import { Strategy as SamlStrategy } from 'passport-saml';
 import { Strategy as LocalStrategy } from 'passport-local'
-import { studentTable, teacherTable } from '../index.js';
+import { studentTable, teacherTable } from '../dbentities.js'
 
 function samlstrategy(passport, config) {
 

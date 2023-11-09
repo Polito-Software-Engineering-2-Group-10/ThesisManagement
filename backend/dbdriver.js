@@ -2,11 +2,15 @@
 import pkg from 'pg';
 const { Client } = pkg;
 
+import config from './config/config.js'
+const env = process.env.NODE_ENV || 'development';
+const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
+
 const basePgConfig = {
     user: 'thesismanager',
     password: 'thesismanager',
-    host: 'db',
-    port: 5432,
+    host: config[env][currentStrategy].app.database_host,
+    port: config[env][currentStrategy].app.database_port,
 }
 
 class PsqlDb {

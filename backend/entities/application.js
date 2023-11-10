@@ -34,21 +34,22 @@ class ApplicationTable {
         return Application.fromRow(result);
     }
 
-    async getDetailById(id) {
+    async getTeacherAppDetailById(id) {
         const query= `SELECT student.*, degree.title_degree,thesis_proposal.title,application.apply_date from student, degree, application,thesis_proposal 
         where student.cod_degree=degree.cod_degree 
         and student.id=application.student_id 
         and application.id=$1
         and application.proposal_id=thesis_proposal.id`;
-        const result = await this.db.executeQueryExpectAny(query, id);
+        /// I use executeQueryExpectOne because I expect only one row to be returned if we get an application by id (the id is the primary key)
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Application with id ${id} not found`);
         return result;
-
     }
     async getByStudentId(student_id) {
-        const query = `SELECT * FROM application WHERE student_id = $1`;
+        const query = `SELECT application.*, tp.title as thesis_title, teacher.name as teacher_name, teacher.surname as teacher_surname, teacher.email as teacher_email FROM application, thesis_proposal as tp, teacher 
+            WHERE student_id = $1 AND application.proposal_id = tp.id AND tp.teacher_id = teacher.id ORDER BY apply_date DESC`;
         const id = getNum(student_id);
         const result = await this.db.executeQueryExpectAny(query, id);
-        return result.map(Application.fromRow);
+        return result;
     }
     async getByProposalId(proposal_id) {
         const query = `SELECT * FROM application WHERE proposal_id = $1`;

@@ -73,9 +73,9 @@ const isLoggedInAsStudent = (req, res, next) => {
 /*Browse Applications */
 
 //Applications List
-//GET /api/ApplicationsList
+//GET /api/teacher/ApplicationsList
 //get the list of applications by teacher id
-app.get('/api/ApplicationsList',
+app.get('/api/teacher/ApplicationsList',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
@@ -90,31 +90,27 @@ app.get('/api/ApplicationsList',
     }
 );
 //Application Details
-//GET /api/applicationDetail/<applicationid>
+//GET /api/teacher/applicationDetail/<applicationid>
 //get the application details by application id
 //should be used when the teacher click on the application from the list to see the details
-app.get('/api/applicationDetail/:applicationid',
+app.get('/api/teacher/applicationDetail/:applicationid',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            const applicationDetail = await applicationTable.getDetailById(req.params.applicationid); //to do: modify the current manual id with user.id logged in at the moment
-            const cleanApplicationList = applicationDetail.map(item => {
-                return {
-                    thesis_title: item.title,
-                    student_id: item.id,
-                    student_name: item.name,
-                    student_surname: item.surname,
-                    application_date: item.apply_date,
-                    student_gender: item.gender,
-                    student_nationality: item.nationality,
-                    student_email: item.email,
-                    student_carrer: item.title_degree,
-                    student_ey: item.enrollment_year
-                };
-            });
-
-            res.json(cleanApplicationList);
-
+            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
+            const cleanApplication = {
+                thesis_title: applicationDetail.title,
+                student_id: applicationDetail.id,
+                student_name: applicationDetail.name,
+                student_surname: applicationDetail.surname,
+                application_date: applicationDetail.apply_date,
+                student_gender: applicationDetail.gender,
+                student_nationality: applicationDetail.nationality,
+                student_email: applicationDetail.email,
+                student_carrer: applicationDetail.title_degree,
+                student_ey: applicationDetail.enrollment_year
+            };
+            res.json(cleanApplication);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List` });
         }
@@ -124,12 +120,23 @@ app.get('/api/applicationDetail/:applicationid',
 );
 /*END Browse Application*/
 
+// GET /api/student/ApplicationsList
+// get the list of applications as a student to browse them and see their status
+app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) => {
+    try {
+        const applicationList = await applicationTable.getByStudentId(req.user.id);
+        res.json(applicationList);
+    }
+    catch (err) {
+        res.status(503).json({ error: `Database error during retrieving application List` });
+    }
+})
 
 /*Insert a new thesis proposal*/
-app.post('/api/insertProposal',
+app.post('/api/teacher/insertProposal',
+    isLoggedInAsTeacher,
     [
         check('title').isLength({ min: 1 }),
-        check('teacher_id').isInt(),
         check('supervisor').isLength({ min: 1 }),
         check('co_supervisor').isArray(),
         check('keywords').isArray(),
@@ -150,7 +157,7 @@ app.post('/api/insertProposal',
         }
         const proposal = {
             title: req.body.title,
-            teacher_id: req.body.teacher_id, //to do: use req.user.id instead of req.bosy.teacher.id 
+            teacher_id: req.user.id,
             supervisor: req.body.supervisor,
             co_supervisor: req.body.co_supervisor,
             keywords: req.body.keywords,

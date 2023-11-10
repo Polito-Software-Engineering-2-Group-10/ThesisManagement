@@ -40,8 +40,6 @@ class ApplicationTable {
         and student.id=application.student_id 
         and application.id=$1
         and application.proposal_id=thesis_proposal.id`;
-        //const aid = getNum(id);
-        //const result = await this.db.executeQueryExpectOne(query,id, `Application with id ${id} not found`);
         const result = await this.db.executeQueryExpectAny(query, id);
         return result;
 

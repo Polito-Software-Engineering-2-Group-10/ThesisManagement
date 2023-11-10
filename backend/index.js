@@ -20,11 +20,10 @@ import {
     applicationTable
 } from './dbentities.js';
 import { psqlDriver } from './dbdriver.js';
-
+import {check, validationResult} from "express-validator"; // validation middleware
 const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
-
 passportconfig(passport, config, currentStrategy);
 
 const app = express();
@@ -53,6 +52,7 @@ authrouteconfig(app, config, passport, currentStrategy);
 
 /*API*/
 
+/*to do: add a check to see if the user is loggen in and is the right type: student or professor for the called api (for all api)*/ 
 
 /*Browse Applications */
 
@@ -106,6 +106,56 @@ app.get('/api/applicationDetail/:applicationid',
 );
 /*END Browse Application*/ 
 
+
+/*Insert a new thesis proposal*/
+app.post('/api/insertProposal',
+[
+  check('title').isLength({min:1}),
+  check('teacher_id').isInt(),
+  check('supervisor').isLength({min:1}),
+  check('co_supervisor').isArray(),
+  check('keywords').isArray(),
+  check('type').isLength({min:1}),
+  check('groups').isArray(),
+  check('description').isLength({min:1}),
+  check('required_knowledge').isArray(),
+  check('notes').isLength({min:1}),
+  check('expiration').isDate({format: 'YYYY-MM-DD', strictMode: true}), 
+  check('level').isInt(),
+  check('programmes').isArray()
+],
+async(req,res)=>{
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({errors: errors.array()});
+  }
+  const proposal={
+    title: req.body.title, 
+    teacher_id: req.body.teacher_id, //to do: use req.user.id instead of req.bosy.teacher.id 
+    supervisor: req.body.supervisor, 
+    co_supervisor: req.body.co_supervisor, 
+    keywords: req.body.keywords, 
+    type: req.body.type, 
+    groups: req.body.groups, 
+    description: req.body.description, 
+    required_knowledge: req.body.required_knowledge, 
+    notes: req.body.notes, 
+    expiration: req.body.expiration, 
+    level: req.body.level, 
+    programmes: req.body.programmes
+  }
+  try
+  {
+    const proposalId= await thesisProposalTable.addThesisProposal(proposal)
+    res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
+  }catch(err)
+  {
+    res.status(503).json({ error: `Database error during the insert of proposal: ${err}` });
+  }
+
+}
+);
 
 
 

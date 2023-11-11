@@ -1,0 +1,26 @@
+## Retrieving ApplicationList by teacher id.
+GET http://localhost:3001/api/ApplicationsList HTTP/1.1
+###
+## Retrieving Application Detail by application id.
+GET http://localhost:3001/api/applicationDetail/1 HTTP/1.1
+###
+## Inserting a new thesis proposal.
+POST http://localhost:3001/api/insertProposal HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Machine Learning in Image Processing", 
+    "teacher_id": 1, 
+    "supervisor": "Dr. Smith", 
+    "co_supervisor": ["Dr. Johnson"], 
+    "keywords": ["Machine Learning", "Image Processing"], 
+    "type": "Master Thesis", 
+    "groups": ["Computer Vision", "Artificial Intelligence"], 
+    "description": "Explore the applications of machine learning in image processing to improve image recognition.", 
+    "required_knowledge": ["Machine Learning", "Computer Vision"], 
+    "notes": "Please contact for more details.", 
+    "expiration": "2023-12-31", 
+    "level": 1, 
+    "programmes": ["Computer Science"] 
+}
+###

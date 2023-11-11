@@ -39,6 +39,17 @@ The backend exposes the following APIs:
     }
     ```
     - The password is the ID of the user, this endpoint accepts both students and teachers
+    This endpoint returns a user object like so:
+    ```json
+    {
+        "id": 1,
+        "email": "mario.rossi@studenti.polito.it",
+        "name": "Mario",
+        "surname": "Rossi",
+        "role": "student"
+    }
+    ```
+    - The role field indicates if the user is a student or a teacher. Only valid values are `student` and `teacher` 
 
 - DELETE `/api/logout`
     - This API accepts no parameters, it will simply log out the user

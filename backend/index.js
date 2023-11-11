@@ -125,26 +125,26 @@ app.get('/api/teacher/applicationDetail/:applicationid',
 //should be used when the teacher clicks on the Accept or Reject button
 app.patch('/api/teacher/applicationDetail/:applicationid',
     isLoggedInAsTeacher,
+    [
+        check('status').isBoolean()
+    ],
     async (req, res) => {
         try {
-            const decision=req.body.status;
-            if(!decision)
-            {
-                return res.status(400).json({error: 'Please set a status!'});
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
             }
             const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
-            if(!applicationDetail)
-            {
-                return res.status(400).json({error: 'The application is not exist!'});
+            if (!applicationDetail) {
+                return res.status(400).json({ error: 'The application does not exist!' });
             }
-            if(applicationDetail.status!==null)
-            {
-                return res.status(400).json({error: 'The application has been decided!'});
+            if (applicationDetail.status !== undefined) {
+                return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
             }
-            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(decision));
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
             res.json(applicationResult);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List` });
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
         }
     }
 
@@ -167,25 +167,55 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
 /*Browse Active Proposals */
 
 //GET /api/teacher/ProposalsList
-//get the list of all active proposals
+// get the list of all active proposals
+// active may not mean that the proposal is not expired, active means that the proposal is not *archived*
+// waiting for response on tg channel from professor
+// in the meantime, the commented out code is the one that checks for expiration date
 app.get('/api/teacher/ProposalsList',
     isLoggedInAsTeacher,
+    // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+    /*
+    [
+         check('date').isDate().optional()           
+    ],
+    */
     async (req, res) => {
-       let setDate=req.body.date;
-       if(!req.body.date)
-       {
-        setDate=null;
-       }
         try {
-            const proposalList = await thesisProposalTable.getAll(setDate);
-            const proposalSummary = [];
-        for(const p of proposalList){
-                proposalSummary.push({thesis_title: p.title, thesis_expairation: p.expiration, thesis_level: p.level, thesis_type: p.type});
-        }
-            res.json({proposalSummary, date:setDate});
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            /*
+            if (req.body.date === undefined) {
+                const proposalList = await thesisProposalTable.getNotExpired();
+                const proposalSummary = proposalList.map(
+                    p => {
+                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    }
+                );
+                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            } else {
+                const proposalList = await thesisProposalTable.getNotExpiredFromDate(req.body.date); 
+                const proposalSummary = proposalList.map(
+                    p => {
+                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    }
+                );
+                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            }
+            */
+            // AND COMMENT THIS OUT INSTEAD
+            const proposalList = await thesisProposalTable.getActiveProposals();
+            const proposalSummary = proposalList.map(
+                p => {
+                    return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                }
+            );
+            res.json(proposalSummary);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List` });
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
         }
     }
 );

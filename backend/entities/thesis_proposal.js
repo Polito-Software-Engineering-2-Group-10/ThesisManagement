@@ -37,7 +37,7 @@ class ThesisProposalTable {
         thesisProposalTable.db = await psqlDriver.openDatabase('thesismanagement');
         return thesisProposalTable;
     }
-    async getAll(include_expired) {
+        /*async getAll(include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
         }
@@ -50,7 +50,23 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query);
             return result.map(ThesisProposal.fromRow);
         }
+    }*/
+
+    async getAll(expired_date) {
+        if(expired_date === null)
+        {
+            const query = `SELECT * FROM thesis_proposal WHERE expiration > NOW()`;
+            const result = await this.db.executeQueryExpectAny(query);
+            return result.map(ThesisProposal.fromRow);
+        }
+        else
+        {
+            const query = `SELECT * FROM thesis_proposal WHERE expiration > $1`;
+            const result = await this.db.executeQueryExpectAny(query, expired_date);
+            return result.map(ThesisProposal.fromRow);
+        }  
     }
+
     async getById(id, include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;

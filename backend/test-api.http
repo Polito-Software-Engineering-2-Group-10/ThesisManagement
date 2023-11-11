@@ -24,3 +24,8 @@ Content-Type: application/json
     "programmes": ["Computer Science"] 
 }
 ###
+## Retrieving the list of all active proposals.
+GET http://localhost:3001/api/teacher/ProposalsList HTTP/1.1
+Content-Type: proposal.date/json
+{"date" : "2023-11-12"}
+###

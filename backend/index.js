@@ -132,6 +132,32 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
     }
 })
 
+/*Browse Active Proposals */
+
+//GET /api/teacher/ProposalsList
+//get the list of all active proposals
+app.get('/api/teacher/ProposalsList',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+       let setDate=req.body.date;
+       if(!req.body.date)
+       {
+        setDate=null;
+       }
+        try {
+            const proposalList = await thesisProposalTable.getAll(setDate);
+            const proposalSummary = [];
+        for(const p of proposalList){
+                proposalSummary.push({thesis_title: p.title, thesis_expairation: p.expiration, thesis_level: p.level, thesis_type: p.type});
+        }
+            res.json({proposalSummary, date:setDate});
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List` });
+        }
+    }
+);
+
 /*Insert a new thesis proposal*/
 app.post('/api/teacher/insertProposal',
     isLoggedInAsTeacher,

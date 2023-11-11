@@ -22,7 +22,9 @@ Structure:
 
 ## How to use
 Simply run `npm install` to install all the dependencies and then `npm run dev` to start the backend.
+
 By default it will listen on port 3001 and accept connections from localhost:5173 (the frontend), these can be changed in the `.env` file under the keys `PORT`, `FRONTEND_URL` and `FRONTEND_PORT` respectively.
+
 The database `thesismanagement` will be attempted to be connected to using the credentials user: `thesismanager` and password: `thesismanager`, at the address `localhost:5432`, these can be changed in the `.env` file under the keys `DATABASE_HOST` and `DATABASE_PORT` respectively.
 
 ## APIs

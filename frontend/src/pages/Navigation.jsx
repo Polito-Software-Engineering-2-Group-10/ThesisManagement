@@ -17,7 +17,7 @@ function Navigation(props) {
           <Navbar.Collapse className="justify-content-end">
             <Nav>
               <Nav.Link>Login <i className="bi bi-person"></i></Nav.Link>
-              <Nav.Link>Logout <i class="bi bi-box-arrow-left"></i></Nav.Link>
+              <Nav.Link>Logout <i className="bi bi-box-arrow-left"></i></Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

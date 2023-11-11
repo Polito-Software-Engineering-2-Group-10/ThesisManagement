@@ -33,7 +33,7 @@ function localroutes(app, config, passport) {
         res.status(401).json({ error: 'Not authenticated' });
     };
 
-    app.post('/login', function (req, res, next) {
+    app.post('/api/login', function (req, res, next) {
         passport.authenticate(config.passport.strategy, (err, user, info) => {
             if (err)
                 return next(err);
@@ -47,11 +47,11 @@ function localroutes(app, config, passport) {
         })(req, res, next);
     });
 
-    app.delete('/logout', isLoggedIn, function (req, res) {
+    app.delete('/api/logout', isLoggedIn, function (req, res) {
         req.logout(() => { res.end(); });
     });
 
-    app.get('/session', function (req, res) {
+    app.get('/api/session', function (req, res) {
         if (req.isAuthenticated())
             res.status(200).json(req.user);
         else

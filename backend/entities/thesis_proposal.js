@@ -163,9 +163,10 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectAny(query, date);
         return result.map(ThesisProposal.fromRow);
     }
-    async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes) {
+    //OLD: async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
+    async addThesisProposal(proposal) {
         const query = `INSERT INTO thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
-        const result = await this.db.executeQueryExpectOne(query, title, getNum(teacher_id), supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes, `Failed to add ThesisProposal`);
+        const result = await this.db.executeQueryExpectOne(query, proposal.title, getNum(proposal.teacher_id), proposal.supervisor, proposal.co_supervisor, proposal.keywords, proposal.type, proposal.groups, proposal.description, proposal.required_knowledge, proposal.notes, proposal.expiration, proposal.level, proposal.programmes, `Failed to add ThesisProposal`);
         return ThesisProposal.fromRow(result);
     }
     async archiveThesisProposal(id) {

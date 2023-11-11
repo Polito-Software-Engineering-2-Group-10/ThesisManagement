@@ -136,18 +136,18 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
 app.post('/api/teacher/insertProposal',
     isLoggedInAsTeacher,
     [
-        check('title').isLength({ min: 1 }),
-        check('supervisor').isLength({ min: 1 }),
-        check('co_supervisor').isArray(),
-        check('keywords').isArray(),
-        check('type').isLength({ min: 1 }),
-        check('groups').isArray(),
-        check('description').isLength({ min: 1 }),
-        check('required_knowledge').isArray(),
-        check('notes').isLength({ min: 1 }),
+        check('title').isString().isLength({ min: 1 }),
+        check('supervisor').isEmail(),
+        check('co_supervisor').isArray().optional(),
+        check('keywords').isArray({ min: 1 }),
+        check('type').isString().isLength({ min: 1 }),
+        check('groups').isArray({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('required_knowledge').isArray().optional(),
+        check('notes').isString().optional(),
         check('expiration').isDate({ format: 'YYYY-MM-DD', strictMode: true }),
-        check('level').isInt(),
-        check('programmes').isArray()
+        check('level').isInt({ min: 1, max: 2 }),
+        check('programmes').isArray({ min: 1 })
     ],
     async (req, res) => {
 

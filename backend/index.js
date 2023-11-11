@@ -120,6 +120,38 @@ app.get('/api/teacher/applicationDetail/:applicationid',
 );
 /*END Browse Application*/
 
+//Accept or Reject Application
+//PATCH /api/teacher/applicationDetail/<applicationid>
+//should be used when the teacher clicks on the Accept or Reject button
+app.patch('/api/teacher/applicationDetail/:applicationid',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+        try {
+            const decision=req.body.status;
+            if(!decision)
+            {
+                return res.status(400).json({error: 'Please set a status!'});
+            }
+            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
+            if(!applicationDetail)
+            {
+                return res.status(400).json({error: 'The application is not exist!'});
+            }
+            if(applicationDetail.status!==null)
+            {
+                return res.status(400).json({error: 'The application has been decided!'});
+            }
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(decision));
+            res.json(applicationResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List` });
+        }
+    }
+
+
+);
+/*End Accept or Reject Application*/
+
 // GET /api/student/ApplicationsList
 // get the list of applications as a student to browse them and see their status
 app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) => {

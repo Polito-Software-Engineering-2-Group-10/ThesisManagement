@@ -19,4 +19,4 @@ function Navigation(props) {
     
 }
 
-export default Navigation;
+export { Navigation };

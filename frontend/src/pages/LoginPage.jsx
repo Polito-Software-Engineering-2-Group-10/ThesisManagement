@@ -51,7 +51,7 @@ function LoginPage(props){
 
     return(
         <>
-            <Navigation logout={props.logout}/>
+            <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
             <Container>
             <Row>
                 <Col xs={3}></Col>

@@ -12,7 +12,7 @@ function Navigation(props) {
             <Nav.Link>Feature 1</Nav.Link>
             <Nav.Link>Feature 2</Nav.Link>
             <Nav.Link>Feature 3</Nav.Link>
-            <Button className='mx-2' variant='light' onClick={props.logout}>Logout</Button>
+            { props.loggedIn? <Button className='mx-2' variant='light' onClick={props.logout}>Logout</Button> :""}
           </Nav>
         </Container>
       </Navbar>

@@ -48,9 +48,9 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-        <Route path='/*' element={loggedIn ? <MainPage logout={doLogOut} user={user}/> : <Navigate replace to='/login' /> }></Route>
-        <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loginSuccessful={loginSuccessful} />}  />
-        <Route path='/apply' element={<ApplyToProposal logout={doLogOut}/>}></Route>
+        <Route path='/*' element={loggedIn ? <MainPage loggedIn={loggedIn} logout={doLogOut} user={user}/> : <Navigate replace to='/login' /> }></Route>
+        <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
+        <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
       </Routes>
     </BrowserRouter>
     </>

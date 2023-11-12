@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row,Alert } from "react-bootstrap";
-import Navigation from "./Navigation";
+import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 function LoginPage(props){
     const [username, setUsername] = useState('');

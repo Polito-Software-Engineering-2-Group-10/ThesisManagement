@@ -1,5 +1,5 @@
 import {Container} from "react-bootstrap"
-import Navigation from "./Navigation";
+import { Navigation } from "./Navigation";
 
 function MainPage(props){
     return(

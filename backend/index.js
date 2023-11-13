@@ -317,7 +317,12 @@ app.get('/api/ProposalsList/filter',
     ],
     async (req, res) => {
             try {
-            
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                    return res.status(422).json({ errors: errors.array() });
+                }
+                // TODO: implement
+                res.status(501).json({ error: `Not implemented` });
             }
             catch(err){
                 res.status(503).json({ error: `Database error during the getting proposals: ${err}` });

@@ -171,7 +171,7 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
 // active may not mean that the proposal is not expired, active means that the proposal is not *archived*
 // waiting for response on tg channel from professor
 // in the meantime, the commented out code is the one that checks for expiration date
-app.get('/api/teacher/ProposalsList',
+app.get('/api/teacher/ProposalsList',  isLoggedInAsTeacher,
     
     // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
     /*
@@ -186,7 +186,7 @@ app.get('/api/teacher/ProposalsList',
                 return res.status(422).json({ errors: errors.array() });
             }
             // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
-            
+           /* 
             if (req.body.date === undefined) {
                 const proposalList = await thesisProposalTable.getNotExpired();
                 const proposalSummary = proposalList.map(
@@ -204,16 +204,16 @@ app.get('/api/teacher/ProposalsList',
                 );
                 res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
             }
-            
+            */
             // AND COMMENT THIS OUT INSTEAD
-          /*  const proposalList = await thesisProposalTable.getActiveProposals();
+            const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalSummary = proposalList.map(
                 p => {
                     return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
                 }
             );
             
-            res.json(proposalSummary);*/
+            res.json(proposalSummary);
         }
         catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });

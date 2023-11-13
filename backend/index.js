@@ -9,6 +9,9 @@ import cors from 'cors';
 import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
+import dayjs from 'dayjs'
+//let now=dayjs().format();
+//console.log(now)
 import {
     studentTable,
     teacherTable,
@@ -281,6 +284,7 @@ app.get('/api/student/ProposalsList',
                     res.json(proposalList);
                 }
                 else{
+                    //to do: multiple filter
                         let filteredArray =[];
                         if(req.body.professor)
                         {
@@ -334,10 +338,17 @@ app.get('/api/student/ProposalsList',
                                 });
                               });
                         }
+                        if (req.body.expiration_date)
+                        {
+                            
+                            filteredArray = proposalList.filter(function(obj) {
+                                return dayjs(req.body.expiration_date).isBefore(dayjs(obj.expiration));
+                              });
+                        }
                         res.json(filteredArray);
                     }
 
-                    //to do: implement expiration date
+                   
                     
                 }
             catch(err){

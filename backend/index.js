@@ -290,6 +290,33 @@ app.post('/api/teacher/insertProposal',
     }
 );
 
+/*Apply for a thesis proposal*/
+app.post('/api/student/applyProposal',
+    isLoggedInAsStudent,
+    [
+        check('propsal_id').isInt(),
+        check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
+    ],
+    async (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const Applyproposal = {
+            student_id:req.body.student_id, //req.user.id
+            proposal_id:req.body.proposal_id,
+            apply_date:req.body.apply_date
+        }
+        try {
+            const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id,Applyproposal.proposal_id,Applyproposal.apply_date);
+            res.json(applypropID); 
+        } catch (err) {
+            res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
+        }
+
+    }
+);
 
 app.get('/api/ProposalsList',
     async (req, res) => {

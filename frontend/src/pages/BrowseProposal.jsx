@@ -7,7 +7,7 @@ function BrowseProposal (props){
   const [data, setData] = useState([]);
   const fetchData = async () =>{
     const result = await API.getProposals();
-    setData(result.proposalSummary);
+    setData(result);
   }
   useEffect(() => {
     fetchData();
@@ -25,12 +25,12 @@ function BrowseProposal (props){
       </tr>
     </thead>
     <tbody>
-    {data.map((proposalSummary, index) => (
+    {data.map((result, index) => (
         <tr>
-          <td>{proposalSummary.thesis_title}</td>
-          <td>{proposalSummary.thesis_expiration}</td>
-          <td>{proposalSummary.thesis_level}</td>
-          <td>{proposalSummary.thesis_type}</td>
+          <td>{result.thesis_title}</td>
+          <td>{result.thesis_expiration}</td>
+          <td>{result.thesis_level}</td>
+          <td>{result.thesis_type}</td>
         </tr>
       ))}
     </tbody>

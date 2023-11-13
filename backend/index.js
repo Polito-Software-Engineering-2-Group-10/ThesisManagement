@@ -348,8 +348,16 @@ app.get('/api/ProposalsList/filter',
                 if (!errors.isEmpty()) {
                     return res.status(422).json({ errors: errors.array() });
                 }
-                // TODO: implement
-                res.status(501).json({ error: `Not implemented` });
+                const filterObject = {
+                    title: req.body.title || null,
+                    teacher_id: req.body.professor || null,
+                    date: req.body.date || null,
+                    type: req.body.type || null,
+                    keywords: req.body.keywords || null,
+                    level: req.body.level || null,
+                    groups: req.body.groups || null
+                }
+                res.json(await thesisProposalTable.getFilteredProposals(filterObject));
             }
             catch(err){
                 res.status(503).json({ error: `Database error during the getting proposals: ${err}` });

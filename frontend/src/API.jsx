@@ -45,7 +45,9 @@ async function logIn(credentials) {
 
 
   async function getProposals() {
-    const response = await fetch(`${URL}/teacher/ProposalsList`);
+    const response = await fetch(`${URL}/teacher/ProposalsList`,{
+      credentials: 'include'
+  });
     const data = await response.json();
     return data;
     

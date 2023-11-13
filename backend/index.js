@@ -291,97 +291,34 @@ app.post('/api/teacher/insertProposal',
 );
 
 
+app.get('/api/ProposalsList',
+    async (req, res) => {
+        try {
+            const proposalList = await thesisProposalTable.getAll();
+            res.json(proposalList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+)
 
 /*Search Proposal*/
-//GET /api/student/ProposalList
-app.get('/api/student/ProposalsList',
+//GET /api/ProposalList
+app.get('/api/ProposalsList/filter',
+    [
+        check('title').isString().optional(),
+        check('professor').isInt().optional(),
+        check('date').isDate().optional(),
+        check('type').isArray().optional(),
+        check('keywords').isArray().optional(),
+        check('level').isInt({ min: 1, max: 2 }).optional(),
+        check('groups').isArray().optional()
+    ],
     async (req, res) => {
-     
-            try{
-            const proposalList = await thesisProposalTable.getActiveProposalsStudent();
-                if(Object.keys(req.body).length === 0)
-                {
-                    res.json(proposalList);
-                }
-                else{
-                        let filteredArray =[];
-                        //multiple filtering
-                        /*TRIPLE*/
-
-                        /*DOUBLE*/
-                        if(req.body.title && req.body.professor)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=ProfessorFilter(filteredArray,req.body.professor);
-                        }
-                        else if(req.body.title && req.body.expiration_date)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=DateFilter(filteredArray,req.body.expiration_date);
-                        }
-                        else if(req.body.title && req.body.type)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=TypeFilter(filteredArray,req.body.type);
-                        }
-                        else if(req.body.title && req.body.tags)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=TagFilter(filteredArray,req.body.tags);
-                        }
-                        else if (req.body.title && req.body.tags)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=TagFilter(filteredArray,req.body.tags);
-                        }
-                        else if (req.body.title && req.body.level)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=LevelFilter(filteredArray,req.body.level);
-                        }
-                        else if (req.body.title && req.body.groups)
-                        {
-                            filteredArray=TitleFilter(proposalList,req.body.title);
-                            filteredArray=GroupFilter(filteredArray,req.body.groups);
-                        }
-                        
-
-                        
-                        //single filtering
-                        else if(req.body.professor)
-                        {
-                            filteredArray =ProfessorFilter(proposalList,req.body.professor);
-                        }
-                        else if(req.body.title)
-                        {
-                            filteredArray = TitleFilter(proposalList,req.body.title);
-                        }
-                        else if(req.body.type)
-                        {
-                            filteredArray = TypeFilter(proposalList,req.body.type); 
-                        }
-                        else if (req.body.tags)
-                        {
-                            filteredArray = TagFilter(proposalList,req.body.tags); 
-                        }
-                        else if(req.body.level)
-                        {
-                            filteredArray = LevelFilter(proposalList,req.body.level); 
-                        }
-                        else if (req.body.groups)
-                        {
-                            filteredArray = GroupFilter(proposalList,req.body.groups)
-                        }
-                        else if (req.body.expiration_date)
-                        { 
-                            filteredArray = DateFilter(proposalList,req.body.expiration_date)
-                        }
-                        res.json(filteredArray);
-                    }
-
-                   
-                    
-                }
+            try {
+            
+            }
             catch(err){
                 res.status(503).json({ error: `Database error during the getting proposals: ${err}` });
             }
@@ -389,7 +326,47 @@ app.get('/api/student/ProposalsList',
     }
 );
 
+app.get('/api/teacher/list', async (req, res) => {
+    try {
+        const teacherList = await teacherTable.getAll();
+        res.json(teacherList.map(t => {
+            return {
+                name: t.name,
+                surname: t.surname,
+                id: t.id
+            }
+        }));
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving teacher list ${err}` });
+    }
+})
 
+app.get('/api/thesis/types', async (req, res) => {
+    try {
+        const types = await thesisProposalTable.getTypes();
+        res.json(types);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving thesis types ${err}` });
+    }
+});
+
+app.get('/api/thesis/keywords', async (req, res) => {
+    try {
+        const keywords = await thesisProposalTable.getKeywords();
+        res.json(keywords);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving thesis keywords ${err}` });
+    }
+});
+
+app.get('/api/thesis/groups', async (req, res) => {
+    try {
+        const groups = await thesisProposalTable.getGroups();
+        res.json(groups);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving thesis groups ${err}` });
+    }
+});
 
 /*END API*/
 

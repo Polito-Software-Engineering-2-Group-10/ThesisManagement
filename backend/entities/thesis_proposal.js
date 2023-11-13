@@ -189,6 +189,21 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
         return ThesisProposal.fromRow(result);
     }
+    async getTypes() {
+        const query = `SELECT DISTINCT type FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.type);
+    }
+    async getKeywords() {
+        const query = `SELECT DISTINCT unnest(keywords) as keyword FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.keyword);
+    }
+    async getGroups() {
+        const query = `SELECT DISTINCT unnest(groups) as group FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.group);
+    }
 }
 
 export { ThesisProposal, ThesisProposalTable };

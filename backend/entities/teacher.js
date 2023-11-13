@@ -28,6 +28,11 @@ class TeacherTable {
         teacherTable.db = await psqlDriver.openDatabase('thesismanagement');
         return teacherTable;
     }
+    async getAll() {
+        const query = `SELECT * FROM teacher`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Teacher.fromRow);
+    }
     async getByAuthInfo(email, id) {
         const query = `SELECT * FROM teacher WHERE email = $1 AND id = $2`;
         const result = await this.db.executeQueryExpectAny(query, email, getNum(id));

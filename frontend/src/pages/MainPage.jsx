@@ -1,6 +1,10 @@
 import {Container, Button, Card, Col, Row} from "react-bootstrap"
 import Navigation from "./Navigation";
 
+import { Link, useParams, useLocation, Outlet } from 'react-router-dom';
+import ProposalForm from "./ProposalForm";
+import API from "../API";
+
 function MainPage(props){
     return(
         <>
@@ -61,9 +65,11 @@ function MainPage(props){
                 <Row style={{paddingTop: "30px"}}>
                     <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
                     <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
+                      <Link to="/insert" state={{nextpage: location.pathname}} style={{textDecoration: 'none', color: 'white'}}>
                         <Card.Body>
                             <Card.Title>Insert a new thesis proposal</Card.Title>
                         </Card.Body>
+                      </Link>
                     </Card>
                     </Col>
                     <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
@@ -92,4 +98,24 @@ function MainPage(props){
     )
 }
 
-export default MainPage;
+
+// function InsertProposal(props) {
+//     // const {handleErrors} = useContext(MessageContext);
+//     // const [authorList,setAuthorList] = useState([]);
+  
+//     // const setDirty = props.setDirty;
+//     // const onlyView = false;
+  
+  
+//     // add a proposal
+//     const addProposal = (page) => {
+//       API.addProposal(page)
+//         .catch(e => handleErrors(e)); 
+//     }
+//     return (
+//         //this line might need other parameters
+//       <ProposalForm addProposal={addProposal}  />
+//     );
+// }
+
+export {MainPage};

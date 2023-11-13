@@ -288,6 +288,9 @@ app.get('/api/student/ProposalsList',
                 else{
                         let filteredArray =[];
                         //multiple filtering
+                        /*TRIPLE*/
+
+                        /*DOUBLE*/
                         if(req.body.title && req.body.professor)
                         {
                             filteredArray=TitleFilter(proposalList,req.body.title);
@@ -313,11 +316,19 @@ app.get('/api/student/ProposalsList',
                             filteredArray=TitleFilter(proposalList,req.body.title);
                             filteredArray=TagFilter(filteredArray,req.body.tags);
                         }
-                        /*else if (req.body.title && req.body.level)
+                        else if (req.body.title && req.body.level)
                         {
-                            filteredArray=TitleFilter(proposalList, req.bo)
-                        }*/
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=LevelFilter(filteredArray,req.body.level);
+                        }
+                        else if (req.body.title && req.body.groups)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=GroupFilter(filteredArray,req.body.groups);
+                        }
+                        
 
+                        
                         //single filtering
                         else if(req.body.professor)
                         {

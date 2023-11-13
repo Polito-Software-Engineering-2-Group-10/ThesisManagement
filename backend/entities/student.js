@@ -40,6 +40,11 @@ class StudentTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `Student with id ${id} not found`);
         return Student.fromRow(result);
     }
+    async getDetailsById(id) {
+        const query = `SELECT s.*, d.title_degree FROM student as s, degree as d WHERE s.id = $1 AND s.cod_degree = d.cod_degree`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Student with id ${id} not found`);
+        return result;
+    }
     async getByEmail(email) {
         const query = `SELECT * FROM student WHERE email = $1`;
         const result = await this.db.executeQueryExpectAny(query, email);

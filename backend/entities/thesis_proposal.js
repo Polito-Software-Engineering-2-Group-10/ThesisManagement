@@ -37,6 +37,7 @@ class ThesisProposalTable {
         thesisProposalTable.db = await psqlDriver.openDatabase('thesismanagement');
         return thesisProposalTable;
     }
+    
     async getAll(include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
@@ -51,6 +52,7 @@ class ThesisProposalTable {
             return result.map(ThesisProposal.fromRow);
         }
     }
+
     async getById(id, include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
@@ -153,15 +155,28 @@ class ThesisProposalTable {
             return result.map(ThesisProposal.fromRow);
         }
     }
-    async getValid() {
+    async getNotExpired() {
         const query = `SELECT * FROM thesis_proposal WHERE expiration > NOW()`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }
-    async getValidFromDate(date) {
+    async getNotExpiredFromDate(date) {
         const query = `SELECT * FROM thesis_proposal WHERE expiration > $1`;
         const result = await this.db.executeQueryExpectAny(query, date);
         return result.map(ThesisProposal.fromRow);
+    }
+    async getActiveProposals() {
+        const query = `SELECT * FROM thesis_proposal WHERE archived = false AND expiration > NOW()`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(ThesisProposal.fromRow);
+    }
+    async getActiveProposalsStudent() {
+        const query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname
+        FROM thesis_proposal,teacher WHERE thesis_proposal.teacher_id=teacher.id and archived = false 
+        and thesis_proposal.expiration > NOW()`;
+        const result = await this.db.executeQueryExpectAny(query);
+        //return result.map(ThesisProposal.fromRow);
+        return result;
     }
     //OLD: async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
     async addThesisProposal(proposal) {
@@ -173,6 +188,21 @@ class ThesisProposalTable {
         const query = `UPDATE thesis_proposal SET archived = true WHERE id = $1 RETURNING *`;
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
         return ThesisProposal.fromRow(result);
+    }
+    async getTypes() {
+        const query = `SELECT DISTINCT type FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.type);
+    }
+    async getKeywords() {
+        const query = `SELECT DISTINCT unnest(keywords) as keyword FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.keyword);
+    }
+    async getGroups() {
+        const query = `SELECT DISTINCT unnest(groups) as group FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.group);
     }
 }
 

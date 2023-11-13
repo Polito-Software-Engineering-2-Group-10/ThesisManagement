@@ -1,5 +1,5 @@
-import {Navbar, Nav} from 'react-bootstrap';
-import {Container} from 'react-bootstrap';
+import {Navbar, Nav,Container,Button} from 'react-bootstrap';
+
 
 
 function Navigation(props) {
@@ -12,6 +12,7 @@ function Navigation(props) {
             <Nav.Link>Feature 1</Nav.Link>
             <Nav.Link>Feature 2</Nav.Link>
             <Nav.Link>Feature 3</Nav.Link>
+            { props.loggedIn? <Button className='mx-2' variant='light' onClick={props.logout}>Logout</Button> :""}
           </Nav>
         </Container>
       </Navbar>

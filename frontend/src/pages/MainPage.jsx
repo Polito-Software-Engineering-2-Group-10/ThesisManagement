@@ -4,8 +4,12 @@ import { Navigation } from "./Navigation";
 function MainPage(props){
     return(
         <>
-            <Navigation/>
-            <h1>This will be the main page</h1>
+            <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
+            {props.user.role=="teacher"?
+            <h1>Welcome back teacher: {props.user.name} {props.user.surname}</h1>
+            :
+            <h1>Welcome back student: {props.user.name} {props.user.surname}</h1>
+            }
         </>
     )
 }

@@ -170,6 +170,14 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }
+    async getActiveProposalsStudent() {
+        const query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname
+        FROM thesis_proposal,teacher WHERE thesis_proposal.teacher_id=teacher.id and archived = false 
+        and thesis_proposal.expiration > NOW()`;
+        const result = await this.db.executeQueryExpectAny(query);
+        //return result.map(ThesisProposal.fromRow);
+        return result;
+    }
     //OLD: async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
     async addThesisProposal(proposal) {
         const query = `INSERT INTO thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;

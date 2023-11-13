@@ -269,6 +269,84 @@ app.post('/api/teacher/insertProposal',
 );
 
 
+/*Search Proposal*/
+//GET /api/student/ProposalList
+app.get('/api/student/ProposalsList',
+    async (req, res) => {
+     
+            try{
+            const proposalList = await thesisProposalTable.getActiveProposalsStudent();
+                if(Object.keys(req.body).length === 0)
+                {
+                    res.json(proposalList);
+                }
+                else{
+                        let filteredArray =[];
+                        if(req.body.professor)
+                        {
+                            filteredArray = proposalList.filter(function (obj) {
+                            
+                                    let FullProfName=obj.teacher_name.toString()+" "+obj.teacher_surname.toString();
+                                    return FullProfName.toLowerCase().includes(req.body.professor.toLowerCase());  
+                            });
+                        }
+                        
+                        
+                        if(req.body.title)
+                        {
+                            filteredArray = proposalList.filter(function (obj) {                                
+                                    return obj.title.toLowerCase().includes(req.body.title.toLowerCase());  
+                            });
+                        }
+
+                        if(req.body.type)
+                        {
+                            filteredArray = proposalList.filter(function (obj) {                                
+                                    return obj.type.toLowerCase()==req.body.type.toLowerCase();  
+                                    // for this filter could be good in the frontend to select the type from predefined one
+                                    //and not from writing in a text box
+                            });
+                        }
+
+                        if (req.body.tags)
+                        {
+                            filteredArray = proposalList.filter(function(obj) {
+                                //find and keep only the objects that have at least one keyword containing a specific search string.
+                                return obj.keywords.some(function(keyword) {
+                                  return keyword.includes(req.body.tags);
+                                });
+                              });
+                        }
+                        if(req.body.level)
+                        {
+                            filteredArray = proposalList.filter(function (obj) {                                
+                                    return obj.level==req.body.level;  
+                                    // for this filter could be good in the frontend to select the type from predefined one
+                                    //and not from writing in a text box
+                            });
+                        }
+                        if (req.body.groups)
+                        {
+                            filteredArray = proposalList.filter(function(obj) {
+                                //find and keep only the objects that have at least one group containing a specific search string.
+                                return obj.groups.some(function(keyword) {
+                                  return keyword.includes(req.body.groups);
+                                });
+                              });
+                        }
+                        res.json(filteredArray);
+                    }
+
+                    //to do: implement expiration date
+                    
+                }
+            catch(err){
+                res.status(503).json({ error: `Database error during the getting proposals: ${err}` });
+            }
+        
+    }
+);
+
 
 
 /*END API*/

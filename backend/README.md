@@ -55,6 +55,33 @@ The backend exposes the following APIs:
     - This API accepts no parameters, it will simply log out the user
 - GET `/api/session`
     - This API accepts no parameters, it will return the current logged-in user
+- GET `/api/student/details`
+    - This API requires authentication as a student, it will return the details about the logged in student in a form such as
+    ```json
+    {
+        "id": 1,
+        "surname": "Rossi",
+        "name": "Mario",
+        "gender": "M",
+        "nationality": "Italian",
+        "email": "mario.rossi@studenti.polito.it",
+        "cod_degree": "L-08",
+        "enrollment_year": "2022-09-09T22:00:00.000Z",
+        "title_degree": "Computer Engineering"
+    }
+    ```
+- GET `/api/teacher/details`
+    - This API requires authentication as a teacher, it will return the details about the logged in teacher in a form such as
+    ```json
+    {
+        "surname": "FASANA",
+        "name": "SARA",
+        "email": "fasana.sara@polito.it",
+        "group_name": "Group 1 - DAD",
+        "department_name": "Dipartimento Interateneo di Scienze, progetto e politiche del Territorio",
+        "department_short_name": "DIST"
+    }
+    ```
 - GET `/api/teacher/ApplicationsList`
     - This API accepts no parameters, it will return an array of applications for the current teacher.
 

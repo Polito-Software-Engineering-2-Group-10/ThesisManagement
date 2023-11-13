@@ -38,6 +38,11 @@ class TeacherTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `Teacher with id ${id} not found`);
         return Teacher.fromRow(result);
     }
+    async getDetailsById(id) {
+        const query = `SELECT t.surname, t.name, t.email, g.name as group_name, d.full_name as department_name, d.nick_name as department_short_name FROM teacher as t, department as d, public.group as g WHERE t.id = $1 AND t.cod_group = g.cod_group AND t.cod_department = d.cod_department`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Teacher with id ${id} not found`);
+        return result;
+    }
     async getByEmail(email) {
         const query = `SELECT * FROM teacher WHERE email = $1`;
         const result = await this.db.executeQueryExpectAny(query, email);

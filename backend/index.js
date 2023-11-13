@@ -74,6 +74,24 @@ const isLoggedInAsStudent = (req, res, next) => {
     res.status(401).json({ error: 'Not authenticated' });
 };
 
+app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        const teacher = await teacherTable.getDetailsById(req.user.id);
+        res.json(teacher);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving teacher details ${err}` });
+    }
+});
+
+app.get('/api/student/details', isLoggedInAsStudent, async (req, res) => {
+    try {
+        const student = await studentTable.getDetailsById(req.user.id);
+        res.json(student);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving student details ${err}` });
+    }
+});
+
 /*Browse Applications */
 
 //Applications List

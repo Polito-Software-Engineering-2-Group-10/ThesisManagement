@@ -120,6 +120,38 @@ app.get('/api/teacher/applicationDetail/:applicationid',
 );
 /*END Browse Application*/
 
+//Accept or Reject Application
+//PATCH /api/teacher/applicationDetail/<applicationid>
+//should be used when the teacher clicks on the Accept or Reject button
+app.patch('/api/teacher/applicationDetail/:applicationid',
+    isLoggedInAsTeacher,
+    [
+        check('status').isBoolean()
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
+            if (!applicationDetail) {
+                return res.status(400).json({ error: 'The application does not exist!' });
+            }
+            if (applicationDetail.status !== undefined) {
+                return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
+            }
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
+            res.json(applicationResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+
+
+);
+/*End Accept or Reject Application*/
+
 // GET /api/student/ApplicationsList
 // get the list of applications as a student to browse them and see their status
 app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) => {
@@ -131,6 +163,63 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
         res.status(503).json({ error: `Database error during retrieving application List` });
     }
 })
+
+/*Browse Active Proposals */
+
+//GET /api/teacher/ProposalsList
+// get the list of all active proposals
+// active may not mean that the proposal is not expired, active means that the proposal is not *archived*
+// waiting for response on tg channel from professor
+// in the meantime, the commented out code is the one that checks for expiration date
+app.get('/api/teacher/ProposalsList',
+    
+    // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+    /*
+    [
+         check('date').isDate().optional()           
+    ],
+    */
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            
+            if (req.body.date === undefined) {
+                const proposalList = await thesisProposalTable.getNotExpired();
+                const proposalSummary = proposalList.map(
+                    p => {
+                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    }
+                );
+                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            } else {
+                const proposalList = await thesisProposalTable.getNotExpiredFromDate(req.body.date); 
+                const proposalSummary = proposalList.map(
+                    p => {
+                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    }
+                );
+                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
+            }
+            
+            // AND COMMENT THIS OUT INSTEAD
+          /*  const proposalList = await thesisProposalTable.getActiveProposals();
+            const proposalSummary = proposalList.map(
+                p => {
+                    return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                }
+            );
+            
+            res.json(proposalSummary);*/
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+);
 
 /*Insert a new thesis proposal*/
 app.post('/api/teacher/insertProposal',

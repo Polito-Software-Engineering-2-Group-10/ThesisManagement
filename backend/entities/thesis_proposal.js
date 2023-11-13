@@ -37,6 +37,7 @@ class ThesisProposalTable {
         thesisProposalTable.db = await psqlDriver.openDatabase('thesismanagement');
         return thesisProposalTable;
     }
+    
     async getAll(include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
@@ -51,6 +52,7 @@ class ThesisProposalTable {
             return result.map(ThesisProposal.fromRow);
         }
     }
+
     async getById(id, include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
@@ -153,14 +155,19 @@ class ThesisProposalTable {
             return result.map(ThesisProposal.fromRow);
         }
     }
-    async getValid() {
+    async getNotExpired() {
         const query = `SELECT * FROM thesis_proposal WHERE expiration > NOW()`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }
-    async getValidFromDate(date) {
+    async getNotExpiredFromDate(date) {
         const query = `SELECT * FROM thesis_proposal WHERE expiration > $1`;
         const result = await this.db.executeQueryExpectAny(query, date);
+        return result.map(ThesisProposal.fromRow);
+    }
+    async getActiveProposals() {
+        const query = `SELECT * FROM thesis_proposal WHERE archived = false`;
+        const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }
     //OLD: async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)

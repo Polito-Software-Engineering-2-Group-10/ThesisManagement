@@ -44,12 +44,18 @@ async function logIn(credentials) {
   }
 
 
-
+  async function getProposals() {
+    const response = await fetch(`${URL}/teacher/ProposalsList`);
+    const data = await response.json();
+    return data;
+    
+}
 
 
 const API = {
 logIn,
 logOut,
-getUserInfo
+getUserInfo,
+getProposals
 };
 export default API;

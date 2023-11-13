@@ -7,6 +7,7 @@ import ApplyToProposal from './pages/ApplyToProposal';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
 import API from './API';
+import BrowseProposal from './pages/BrowseProposal';
 
 function App() {
 
@@ -51,6 +52,7 @@ function App() {
         <Route path='/*' element={loggedIn ? <MainPage loggedIn={loggedIn} logout={doLogOut} user={user}/> : <Navigate replace to='/login' /> }></Route>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
         <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/proposal' element={<BrowseProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
       </Routes>
     </BrowserRouter>
     </>

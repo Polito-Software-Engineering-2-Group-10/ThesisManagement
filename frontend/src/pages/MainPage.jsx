@@ -88,6 +88,12 @@ function MainPage(props){
                     </Col>
                 </Row>
             </Container>
+            <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
+            {props.user.role=="teacher"?
+            <h1>Welcome back teacher: {props.user.name} {props.user.surname}</h1>
+            :
+            <h1>Welcome back student: {props.user.name} {props.user.surname}</h1>
+            }
         </>
     )
 }

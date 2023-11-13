@@ -286,39 +286,65 @@ app.get('/api/student/ProposalsList',
                     res.json(proposalList);
                 }
                 else{
-                    
                         let filteredArray =[];
-                        if(req.body.professor)
+                        //multiple filtering
+                        if(req.body.title && req.body.professor)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=ProfessorFilter(filteredArray,req.body.professor);
+                        }
+                        else if(req.body.title && req.body.expiration_date)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=DateFilter(filteredArray,req.body.expiration_date);
+                        }
+                        else if(req.body.title && req.body.type)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=TypeFilter(filteredArray,req.body.type);
+                        }
+                        else if(req.body.title && req.body.tags)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=TagFilter(filteredArray,req.body.tags);
+                        }
+                        else if (req.body.title && req.body.tags)
+                        {
+                            filteredArray=TitleFilter(proposalList,req.body.title);
+                            filteredArray=TagFilter(filteredArray,req.body.tags);
+                        }
+                        /*else if (req.body.title && req.body.level)
+                        {
+                            filteredArray=TitleFilter(proposalList, req.bo)
+                        }*/
+
+                        //single filtering
+                        else if(req.body.professor)
                         {
                             filteredArray =ProfessorFilter(proposalList,req.body.professor);
                         }
-                        
-                        
-                        if(req.body.title)
+                        else if(req.body.title)
                         {
                             filteredArray = TitleFilter(proposalList,req.body.title);
                         }
-
-                        if(req.body.type)
+                        else if(req.body.type)
                         {
                             filteredArray = TypeFilter(proposalList,req.body.type); 
                         }
-
-                        if (req.body.tags)
+                        else if (req.body.tags)
                         {
                             filteredArray = TagFilter(proposalList,req.body.tags); 
                         }
-                        if(req.body.level)
+                        else if(req.body.level)
                         {
                             filteredArray = LevelFilter(proposalList,req.body.level); 
                         }
-                        if (req.body.groups)
+                        else if (req.body.groups)
                         {
                             filteredArray = GroupFilter(proposalList,req.body.groups)
                         }
-                        if (req.body.expiration_date)
-                        {
-                            
+                        else if (req.body.expiration_date)
+                        { 
                             filteredArray = DateFilter(proposalList,req.body.expiration_date)
                         }
                         res.json(filteredArray);

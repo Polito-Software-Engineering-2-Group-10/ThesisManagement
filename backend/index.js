@@ -10,6 +10,7 @@ import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
 import dayjs from 'dayjs'
+import { TitleFilter,ProfessorFilter,DateFilter,TypeFilter,TagFilter,LevelFilter,GroupFilter } from './filteringFunction.js';
 //let now=dayjs().format();
 //console.log(now)
 import {
@@ -272,6 +273,7 @@ app.post('/api/teacher/insertProposal',
 );
 
 
+
 /*Search Proposal*/
 //GET /api/student/ProposalList
 app.get('/api/student/ProposalsList',
@@ -284,66 +286,40 @@ app.get('/api/student/ProposalsList',
                     res.json(proposalList);
                 }
                 else{
-                    //to do: multiple filter
+                    
                         let filteredArray =[];
                         if(req.body.professor)
                         {
-                            filteredArray = proposalList.filter(function (obj) {
-                            
-                                    let FullProfName=obj.teacher_name.toString()+" "+obj.teacher_surname.toString();
-                                    return FullProfName.toLowerCase().includes(req.body.professor.toLowerCase());  
-                            });
+                            filteredArray =ProfessorFilter(proposalList,req.body.professor);
                         }
                         
                         
                         if(req.body.title)
                         {
-                            filteredArray = proposalList.filter(function (obj) {                                
-                                    return obj.title.toLowerCase().includes(req.body.title.toLowerCase());  
-                            });
+                            filteredArray = TitleFilter(proposalList,req.body.title);
                         }
 
                         if(req.body.type)
                         {
-                            filteredArray = proposalList.filter(function (obj) {                                
-                                    return obj.type.toLowerCase()==req.body.type.toLowerCase();  
-                                    // for this filter could be good in the frontend to select the type from predefined one
-                                    //and not from writing in a text box
-                            });
+                            filteredArray = TypeFilter(proposalList,req.body.type); 
                         }
 
                         if (req.body.tags)
                         {
-                            filteredArray = proposalList.filter(function(obj) {
-                                //find and keep only the objects that have at least one keyword containing a specific search string.
-                                return obj.keywords.some(function(keyword) {
-                                  return keyword.includes(req.body.tags);
-                                });
-                              });
+                            filteredArray = TagFilter(proposalList,req.body.tags); 
                         }
                         if(req.body.level)
                         {
-                            filteredArray = proposalList.filter(function (obj) {                                
-                                    return obj.level==req.body.level;  
-                                    // for this filter could be good in the frontend to select the type from predefined one
-                                    //and not from writing in a text box
-                            });
+                            filteredArray = LevelFilter(proposalList,req.body.level); 
                         }
                         if (req.body.groups)
                         {
-                            filteredArray = proposalList.filter(function(obj) {
-                                //find and keep only the objects that have at least one group containing a specific search string.
-                                return obj.groups.some(function(keyword) {
-                                  return keyword.includes(req.body.groups);
-                                });
-                              });
+                            filteredArray = GroupFilter(proposalList,req.body.groups)
                         }
                         if (req.body.expiration_date)
                         {
                             
-                            filteredArray = proposalList.filter(function(obj) {
-                                return dayjs(req.body.expiration_date).isBefore(dayjs(obj.expiration));
-                              });
+                            filteredArray = DateFilter(proposalList,req.body.expiration_date)
                         }
                         res.json(filteredArray);
                     }

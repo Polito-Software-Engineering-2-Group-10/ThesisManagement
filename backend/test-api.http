@@ -38,7 +38,7 @@ GET http://localhost:3001/api/student/ProposalsList HTTP/1.1
 Content-Type: application/json
 
 {
-    "expiration_date": "2023-12-31"
+    "expiration_date": "2023-12-30"
 }
 
 ###

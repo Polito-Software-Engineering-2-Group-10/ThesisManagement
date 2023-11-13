@@ -166,7 +166,7 @@ class ThesisProposalTable {
         return result.map(ThesisProposal.fromRow);
     }
     async getActiveProposals() {
-        const query = `SELECT * FROM thesis_proposal WHERE archived = false`;
+        const query = `SELECT * FROM thesis_proposal WHERE archived = false AND expiration > NOW()`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }

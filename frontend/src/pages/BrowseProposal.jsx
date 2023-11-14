@@ -4,6 +4,7 @@ import API from "../API";
 import { Button,Container, Col, Row,Table } from "react-bootstrap";
 import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
+import dayjs from 'dayjs'
 
 function BrowseProposal (props){
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ function BrowseProposal (props){
     {data.map((result, index) => (
         <tr>
           <td>{result.thesis_title}</td>
-          <td>{result.thesis_expiration}</td>
+          <td>{dayjs(result.thesis_expiration).format('DD/MM/YYYY')}</td>
           <td>{result.thesis_level}</td>
           <td>{result.thesis_type}</td>
         </tr>

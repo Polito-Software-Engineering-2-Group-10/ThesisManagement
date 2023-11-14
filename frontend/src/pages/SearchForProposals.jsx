@@ -1,31 +1,46 @@
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
-import { Form, Table, Button, Badge, Card } from 'react-bootstrap';
+import {Form, Table, Button, Badge, Card, FormGroup} from 'react-bootstrap';
 import Navigation from './Navigation.jsx';
 import API from '../API.jsx';
 
 function SearchForProposals(props) {
-    const thesisData = [
-        { title: "Tesi 1", professor: "Prof. Rossi", expirationDate: "2023-12-31", type: "A" },
-        { title: "Tesi 2", professor: "Prof. Bianchi", expirationDate: "2023-11-30", type: "B" },
-        { title: "Tesi 3", professor: "Prof. Verdi", expirationDate: "2023-10-15", type: "A" },
-        { title: "Tesi 4", professor: "Prof. Rossi", expirationDate: "2023-09-31", type: "C" },
-        { title: "Tesi 5", professor: "Prof. Rossi", expirationDate: "2023-11-22", type: "B" },
-        { title: "Tesi 6", professor: "Prof. Verdi", expirationDate: "2023-01-15", type: "B" },
-    ];
 
-    /*useEffect( () => {
+    const [proposals, setProposals] = useState([]);
+    const [professors, setProfessors] = useState([]);
+    const [types, setTypes] = useState(['']);
+    const [keywords, setKeywords] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [filters, setFilters] = useState({});
+    const [activeFilter, setActiveFilter] = useState(null);
+
+    useEffect( () => {
         API.getAllProposals()
             .then((data) => {
-                console.log(data)
                 setProposals(data);
             })
             .catch((err) => console.log(err));
-    }, []);*/
-
-    const [proposals, setProposals] = useState([])
-    const [filters, setFilters] = useState({});
-    const [activeFilter, setActiveFilter] = useState(null);
+        API.getAllTeachers()
+            .then((data) => {
+                setProfessors(data);
+            })
+            .catch((err) => console.log(err));
+        API.getAllTypes()
+            .then((data) => {
+                setTypes(data);
+            })
+            .catch((err) => console.log(err));
+        API.getAllKeywords()
+            .then((data) => {
+                setKeywords(data);
+            })
+            .catch((err) => console.log(err));
+        API.getAllGroups()
+            .then((data) => {
+                setGroups(data);
+            })
+            .catch((err) => console.log(err));
+    }, []);
 
     const handleFilterClick = (filter) => {
         if (activeFilter && filters[activeFilter]) {
@@ -41,6 +56,11 @@ function SearchForProposals(props) {
 
     const handleApplyFilter = () => {
         setFilters({ ...filters, [activeFilter]: filters[activeFilter] });
+        API.getFilteredProposals(filters)
+            .then((data) => {
+                setProposals(data);
+            })
+            .catch((err) => console.log(err));
         setActiveFilter(null);
     };
 
@@ -52,16 +72,32 @@ function SearchForProposals(props) {
     const handleRemoveFilter = (filter) => {
         const { [filter]: removedFilter, ...restFilters } = filters;
         setFilters(restFilters);
+        API.getFilteredProposals(restFilters)
+            .then((data) => {
+                setProposals(data);
+            })
+            .catch((err) => console.log(err));
+        setActiveFilter(null);
     };
 
-    const filteredThesisData = thesisData.filter(thesis => {
-        return (
-            (!filters.title || thesis.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-            (!filters.professor || thesis.professor.toLowerCase().includes(filters.professor.toLowerCase())) &&
-            (!filters.expirationDate || thesis.expirationDate.toLowerCase().includes(filters.expirationDate.toLowerCase())) &&
-            (!filters.type || thesis.type.toLowerCase() === filters.type.toLowerCase())
-        );
-    });
+    const handleTypeCheckboxChange = (selection, filter) => {
+        setFilters((prevFilters) => {
+            let updatedFilters;
+            if (prevFilters[filter] && prevFilters[filter].includes(selection)) {
+                updatedFilters = prevFilters[filter].filter((type) => type !== selection);
+            }
+            else if (prevFilters[filter]) {
+                updatedFilters = [...prevFilters[filter], selection];
+            }
+            else {
+                updatedFilters = [selection];
+            }
+            return {
+                ...prevFilters,
+                [filter]: updatedFilters,
+            };
+        });
+    };
 
     return (
         <>
@@ -77,14 +113,14 @@ function SearchForProposals(props) {
                                 className="mr-2"
                                 onClick={() => handleFilterClick('title')}
                             >
-                                Thesis Title
+                                Title
                             </Button>
                             <Button
                                 variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
                                 className="mr-2"
                                 onClick={() => handleFilterClick('professor')}
                             >
-                                Professor's Name
+                                Professor
                             </Button>
                             <Button
                                 variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
@@ -97,7 +133,25 @@ function SearchForProposals(props) {
                                 variant={activeFilter === 'type' ? 'info' : 'outline-info'}
                                 onClick={() => handleFilterClick('type')}
                             >
-                                Thesis Type
+                                Type
+                            </Button>
+                            <Button
+                                variant={activeFilter === 'level' ? 'info' : 'outline-info'}
+                                onClick={() => handleFilterClick('level')}
+                            >
+                                Level
+                            </Button>
+                            <Button
+                                variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
+                                onClick={() => handleFilterClick('keywords')}
+                            >
+                                Keywords
+                            </Button>
+                            <Button
+                                variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
+                                onClick={() => handleFilterClick('groups')}
+                            >
+                                Groups
                             </Button>
                         </div>
                         <div className="mb-3">
@@ -115,7 +169,8 @@ function SearchForProposals(props) {
                                     >
                                         {filter}
                                         :
-                                        {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : value}{' '}
+                                        {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : ''}{' '}
+                                        {filter === 'professor' ? professors.find((a) => a.id == value).surname : value}
                                         <span
                                             className="badge-close"
                                             onClick={() => handleRemoveFilter(filter)}
@@ -129,28 +184,119 @@ function SearchForProposals(props) {
                         </div>
                         {activeFilter && (
                             <Form className="mt-3">
-                                {activeFilter === 'expirationDate' ? (
-                                    <>
+                                {activeFilter === 'title' && (
+                                    <Form.Group controlId='titleFilter'>
+                                        <Form.Label>Filter by title:</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="title"
+                                            placeholder={`Enter title...`}
+                                            value={filters.title || ''}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </Form.Group>
+                                )}
+                                {activeFilter === 'professor' && (
+                                    <div>
+                                        <Form.Group controlId="professorFilter">
+                                            <Form.Label>Filter by Professor:</Form.Label>
+                                            <Form.Control
+                                                as="select"
+                                                name="professor"
+                                                value={filters.professor || ''}
+                                                onChange={handleFilterChange}
+                                            >
+                                                <option value="">All Professors</option>
+                                                {professors.map((professor) => (
+                                                    <option key={professor.id} value={professor.id}>
+                                                        {`${professor.surname} ${professor.name}`}
+                                                    </option>
+                                                ))}
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </div>
+                                )}
+                                {activeFilter === 'expirationDate' && (
+                                    <FormGroup>
+                                        <Form.Label>Filter by expiration date:</Form.Label>
                                         <input
                                             type="date"
-                                            name={activeFilter}
-                                            value={filters[activeFilter] || ''}
+                                            name="date"
+                                            value={filters.date || ''}
                                             onChange={handleFilterChange}
                                         />
                                         <span
                                             style={{ marginRight: '10px'}}
                                         />
-                                    </>
-                                ) : (
-                                    <Form.Group controlId={`filter${activeFilter}`}>
-                                        <Form.Control
-                                            type="text"
-                                            name={activeFilter}
-                                            placeholder={`Enter ${activeFilter}...`}
-                                            value={filters[activeFilter] || ''}
-                                            onChange={handleFilterChange}
-                                        />
-                                    </Form.Group>
+                                    </FormGroup>
+                                )}
+                                {activeFilter === 'level' && (
+                                    <div>
+                                        <Form.Group controlId="levelFilter">
+                                            <Form.Label>Filter by Level:</Form.Label>
+                                            <Form.Control
+                                                as="select"
+                                                name="level"
+                                                value={filters.level || ''}
+                                                onChange={handleFilterChange}
+                                            >
+                                                <option value="">All Levels</option>
+                                                <option value='1'>Bachelor</option>
+                                                <option value='2'>Master</option>
+                                            </Form.Control>
+                                        </Form.Group>
+                                    </div>
+                                )}
+                                {activeFilter === 'type' && (
+                                    <div>
+                                        <Form.Group controlId="typeFilter">
+                                            <Form.Label>Filter by type:</Form.Label>
+                                            {types.map((type) => (
+                                                <Form.Check
+                                                    key={type}
+                                                    type="checkbox"
+                                                    id={`checkbox-${type}`}
+                                                    label={type}
+                                                    checked={filters.type && filters.type.includes(type)}
+                                                    onChange={() => handleTypeCheckboxChange(type, "type")}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </div>
+                                )}
+                                {activeFilter === 'keywords' && (
+                                    <div>
+                                        <Form.Group controlId="keywordsFilter">
+                                            <Form.Label>Filter by keywords:</Form.Label>
+                                            {keywords.map((keyword) => (
+                                                <Form.Check
+                                                    key={keyword}
+                                                    type="checkbox"
+                                                    id={`checkbox-${keyword}`}
+                                                    label={keyword}
+                                                    checked={filters.keywords && filters.keywords.includes(keyword)}
+                                                    onChange={() => handleTypeCheckboxChange(keyword, "keywords")}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </div>
+                                )}
+                                {activeFilter === 'groups' && (
+                                    <div>
+                                        <Form.Group controlId="groupsFilter">
+                                            <Form.Label>Filter by groups:</Form.Label>
+                                            {groups.map((group) => (
+                                                <Form.Check
+                                                    key={group}
+                                                    type="checkbox"
+                                                    id={`checkbox-${group}`}
+                                                    label={group}
+                                                    checked={filters.groups && filters.groups.includes(group)}
+                                                    onChange={() => handleTypeCheckboxChange(group, "groups")}
+                                                />
+                                            ))}
+                                        </Form.Group>
+                                    </div>
                                 )}
                                 <Button
                                     variant="success"
@@ -174,26 +320,29 @@ function SearchForProposals(props) {
                 <Table striped bordered hover responsive>
                     <thead>
                     <tr>
-                        <th>Thesis' Title</th>
-                        <th>Professor's Name</th>
-                        <th>Expiration Date</th>
-                        <th>Thesis' Type</th>
+                        <th style={{ textAlign: 'center' }}>Title</th>
+                        <th style={{ textAlign: 'center' }}>Professor</th>
+                        <th style={{ textAlign: 'center' }}>Expiration Date</th>
+                        <th style={{ textAlign: 'center' }}>Type</th>
+                        <th style={{ textAlign: 'center' }}>Level</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredThesisData.map((thesis, index) => (
+                    {proposals.map((proposal, index) => (
                         <tr key={index}>
                             <td>
                                 <Link
-                                    to={`./${thesis.title}`}
+                                    to={`./${proposals.title}`}
                                     className="text-primary"
                                 >
-                                    {thesis.title}
+                                    {proposal.title}
                                 </Link>
                             </td>
-                            <td>{thesis.professor}</td>
-                            <td>{thesis.expirationDate}</td>
-                            <td>{thesis.type}</td>
+                            <td>{professors.find((a) => a.id == proposal.teacher_id).surname + " " +
+                                professors.find((a) => a.id == proposal.teacher_id).name}</td>
+                            <td>{proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}</td>
+                            <td>{proposal.type}</td>
+                            <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>
                         </tr>
                     ))}
                     </tbody>

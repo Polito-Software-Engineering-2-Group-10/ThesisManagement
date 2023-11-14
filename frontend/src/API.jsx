@@ -1,9 +1,5 @@
 const URL ='http://localhost:3001/api';
 
-
-
-
-
 // login,logout,session
 
 async function logIn(credentials) {
@@ -43,6 +39,30 @@ async function logIn(credentials) {
     }
   }
 
+  async function getTeacherDetail() {
+    const response = await fetch(URL+'/teacher/details', {
+      credentials: 'include'
+    });
+    const teacherDetail = await response.json();
+    if (response.ok) {
+      return teacherDetail;
+    } else {
+      throw teacherDetail;
+    }
+  }
+
+  async function getStudentDetail() {
+    const response = await fetch(URL+'/student/details', {
+      credentials: 'include'
+    });
+    const studentDetail = await response.json();
+    if (response.ok) {
+      return studentDetail;
+    } else {
+      throw studentDetail;
+    }
+  }
+
 
 
 
@@ -50,6 +70,8 @@ async function logIn(credentials) {
 const API = {
 logIn,
 logOut,
-getUserInfo
+getUserInfo,
+getTeacherDetail,
+getStudentDetail
 };
 export default API;

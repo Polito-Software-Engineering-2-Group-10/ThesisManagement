@@ -42,6 +42,9 @@ function BrowseProposal (props){
       ))}
     </tbody>
   </Table>
+  <div style={{marginRight: 1000+'em'}}>
+  <Button className='my-2'  variant='secondary' disabled>Modify</Button>
+  </div>
   <Button className='my-2'  variant='info' onClick={()=>navigate('/')}>Back</Button>
   </Container>
   </>

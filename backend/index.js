@@ -132,7 +132,10 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_carrer: applicationDetail.title_degree,
                 student_ey: applicationDetail.enrollment_year
             };
-            res.json(cleanApplication);
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+           // console.log(applicationStatus);
+            const applicationResult = {status: applicationStatus.status}
+            res.json({detail:cleanApplication, status:applicationResult});
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List` });
         }
@@ -156,13 +159,14 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
             }
-            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
-            if (!applicationDetail) {
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+            if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }
-            if (applicationDetail.status !== undefined) {
-                return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
+            if ( applicationStatus.status !== null) {
+                return res.status(400).json({ error: `This application has already been ${ applicationStatus.status ? 'accepted' : 'rejected'}` });
             }
+
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
             res.json(applicationResult);
         } catch (err) {

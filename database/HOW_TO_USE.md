@@ -19,8 +19,9 @@ Alternatively you can try using PGAdmin (the GUI for PostgreSQL) to run the sql 
 ## Populate the database
 
 In order to add the data to the database you can run (all these commands are to be executed in the PostgreSQL shell, after having logged in with `psql -U postgres -d thesismanagement`):
-
+ 
 ```postgresql
+SET CLIENT_ENCODING TO 'utf8'
 \i init_data.sql
 \i thesis_data_raw.sql
 ```

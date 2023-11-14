@@ -1,5 +1,5 @@
-import {Navbar, Nav} from 'react-bootstrap';
-import {Container} from 'react-bootstrap';
+import {Navbar, Nav,Container,Button} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 
 function Navigation(props) {
@@ -8,16 +8,17 @@ function Navigation(props) {
       <Navbar expand="lg" bg='primary' data-bs-theme="dark">
         <Container>
           <Navbar.Brand href="#home">Thesis Managment</Navbar.Brand>
-          <Nav className="justify-content-center">
-            <Nav.Item>
-              <Nav.Link>Signed in as: User Name</Nav.Link>
-            </Nav.Item>
-          </Nav>
+          { props.loggedIn ? 
+              <Nav className="justify-content-center">
+                <Nav.Item>
+                  <Nav.Link>Signed in as: {props.user.name} {props.user.surname}</Nav.Link>
+                </Nav.Item>
+              </Nav> : ""
+          }
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Nav>
-              <Nav.Link>Login <i className="bi bi-person"></i></Nav.Link>
-              <Nav.Link>Logout <i className="bi bi-box-arrow-left"></i></Nav.Link>
+              { props.loggedIn? <Button className='mx-2' variant='light' onClick={props.logout}><i className="bi bi-box-arrow-left"></i> Logout</Button> : <Link to='/login'><Button className='mx-2' variant='light'><i className="bi bi-person"></i> Login</Button></Link>}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -26,4 +27,4 @@ function Navigation(props) {
     
 }
 
-export default Navigation;
+export { Navigation };

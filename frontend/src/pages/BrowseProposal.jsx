@@ -41,7 +41,7 @@ function BrowseProposal (props){
       ))}
     </tbody>
   </Table>
-  <Button className='my-2 mx-2'  color='blue' onClick={()=>navigate('/')}>Back</Button>
+  <Button className='my-2'  variant='info' onClick={()=>navigate('/')}>Back</Button>
   </Container>
   </>
   )

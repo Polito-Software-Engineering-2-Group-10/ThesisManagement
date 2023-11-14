@@ -55,6 +55,33 @@ The backend exposes the following APIs:
     - This API accepts no parameters, it will simply log out the user
 - GET `/api/session`
     - This API accepts no parameters, it will return the current logged-in user
+- GET `/api/student/details`
+    - This API requires authentication as a student, it will return the details about the logged in student in a form such as
+    ```json
+    {
+        "id": 1,
+        "surname": "Rossi",
+        "name": "Mario",
+        "gender": "M",
+        "nationality": "Italian",
+        "email": "mario.rossi@studenti.polito.it",
+        "cod_degree": "L-08",
+        "enrollment_year": "2022-09-09T22:00:00.000Z",
+        "title_degree": "Computer Engineering"
+    }
+    ```
+- GET `/api/teacher/details`
+    - This API requires authentication as a teacher, it will return the details about the logged in teacher in a form such as
+    ```json
+    {
+        "surname": "FASANA",
+        "name": "SARA",
+        "email": "fasana.sara@polito.it",
+        "group_name": "Group 1 - DAD",
+        "department_name": "Dipartimento Interateneo di Scienze, progetto e politiche del Territorio",
+        "department_short_name": "DIST"
+    }
+    ```
 - GET `/api/teacher/ApplicationsList`
     - This API accepts no parameters, it will return an array of applications for the current teacher.
 
@@ -198,4 +225,71 @@ The backend exposes the following APIs:
         ],
         "archived": false
     }
+    ```
+- GET `/api/ProposalsList`
+    - This API will return all the thesis proposals
+- GET `/api/ProposalsList/filter`
+    - This API will return all the thesis proposals that match the given filters, it expects a json object of type:
+    ```json
+    {
+        "title": "<title>",
+        "professor": <professor id as integer>,
+        "date": "<date>",
+        "type": ["<type 1>", "<type 2>"],
+        "keywords": ["<keyword 1>", "<keyword 2>"],
+        "level": <1 or 2 (1 for Bachelor and 2 for Masters)>,
+        "groups": ["<group 1>", "<group 2>"],
+    }
+    ```
+    All the fields are **optional**, if a field is not specified it will not be used as a filter.
+- GET `/api/teacher/list`
+    - This API will return all the teachers in the database in the form:
+    ```json
+    {
+        "name": "DANIEL",
+        "surname": "MILANESE",
+        "id": 1
+    },
+    {
+        "name": "BARBARA",
+        "surname": "ONIDA",
+        "id": 2
+    },
+    ...
+    ```
+- GET `/api/thesis/types`
+    - This API will return all the unique thesis types in the database, as a list of strings.
+    ```json
+    [
+        "SIMULATIVA E SPERIMENTALE",
+        "RICERCA APPLICATA",
+        "DI RICERCA, PROGETTAZIONE"
+        ...
+    ]
+    ```
+- GET `/api/thesis/keywords`
+    - This API will return all the unique thesis keywords in the database, as a list of strings.
+    ```json
+    [
+        "CARATTERIZZAZIONE MAGNETICA",
+        "RILIEVO GEOSTRUTTURALE",
+        "tesi vuole esaminare e confrontare alcune",
+        "MUSCLE POWER",
+        "IMMAGINI DIGITALI",
+        "STRUTTURE TRABECOLARI",
+        "SIMULAZIONI"
+        ...
+    ]
+    ```
+- GET `/api/thesis/groups`
+    - This API will return all the unique thesis groups in the database, as a list of strings.
+    ```json
+    [
+        "Microwaves And Optoelectronics Group",
+        "Centro Interdipartimentale Cars",
+        "Aa - Materiali Ceramici",
+        "16-Astra: Additive Manufacturing For Systems And Structures In Aerospace",
+        "L-15 group 1"
+        ...
+    ]
     ```

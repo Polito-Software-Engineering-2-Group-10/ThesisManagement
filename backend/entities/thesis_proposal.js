@@ -37,7 +37,7 @@ class ThesisProposalTable {
         thesisProposalTable.db = await psqlDriver.openDatabase('thesismanagement');
         return thesisProposalTable;
     }
-    
+
     async getAll(include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
@@ -170,6 +170,14 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(ThesisProposal.fromRow);
     }
+    async getActiveProposalsStudent() {
+        const query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname
+        FROM thesis_proposal,teacher WHERE thesis_proposal.teacher_id=teacher.id and archived = false 
+        and thesis_proposal.expiration > NOW()`;
+        const result = await this.db.executeQueryExpectAny(query);
+        //return result.map(ThesisProposal.fromRow);
+        return result;
+    }
     //OLD: async addThesisProposal(title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
     async addThesisProposal(proposal) {
         const query = `INSERT INTO thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
@@ -180,6 +188,99 @@ class ThesisProposalTable {
         const query = `UPDATE thesis_proposal SET archived = true WHERE id = $1 RETURNING *`;
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
         return ThesisProposal.fromRow(result);
+    }
+    async getTypes() {
+        const query = `SELECT DISTINCT type FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.type);
+    }
+    async getKeywords() {
+        const query = `SELECT DISTINCT unnest(keywords) as keyword FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.keyword);
+    }
+    async getGroups() {
+        const query = `SELECT DISTINCT unnest(groups) as group FROM thesis_proposal`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(row => row.group);
+    }
+    async getFilteredProposals(filterObject) {
+        console.log(filterObject)
+        let query = `SELECT * FROM thesis_proposal WHERE `;
+        let params = [];
+        let i = 1;
+        if (filterObject.title !== null) {
+            query += `title ILIKE $${i}`;
+            params.push(`%${filterObject.title}%`);
+            i++;
+        }
+        if (filterObject.teacher_id !== null) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `teacher_id = $${i}`;
+            params.push(getNum(filterObject.teacher_id));
+            i++;
+        }
+        if (filterObject.date !== null) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `expiration > $${i}`;
+            params.push(filterObject.date);
+            i++;
+        }
+        if (filterObject.type !== null && filterObject.type.length > 0) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `type ILIKE ANY($${i}) `;
+            params.push(filterObject.type);
+            i++;
+        }
+        if (filterObject.keywords !== null && filterObject.keywords.length > 0) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `NOT EXISTS (
+SELECT FROM unnest($${i}::text[]) as p(pattern)
+WHERE NOT EXISTS (
+    SELECT FROM unnest(thesis_proposal.keywords) as a(elem)
+    WHERE a.elem ILIKE p.pattern
+    )
+)`
+            const keywords = filterObject.keywords.map(keyword => `%${keyword}%`);
+            params.push(keywords);
+            i++;
+        }
+        if (filterObject.level !== null) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `level = $${i}`;
+            params.push(getNum(filterObject.level));
+            i++;
+        }
+        if (filterObject.groups !== null && filterObject.groups.length > 0) {
+            if (params.length > 0) {
+                query += ` AND `;
+            }
+            query += `NOT EXISTS (
+SELECT FROM unnest($${i}::text[]) as p(pattern)
+WHERE NOT EXISTS (
+    SELECT FROM unnest(thesis_proposal.groups) as a(elem)
+    WHERE a.elem ILIKE p.pattern
+    )
+)`
+            const groups = filterObject.groups.map(group => `%${group}%`);
+            params.push(groups);
+            i++;
+        }
+        if (params.length === 0) {
+            query = `SELECT * FROM thesis_proposal`;
+        }
+        const result = await this.db.executeQueryExpectAny(query, ...params);
+        return result.map(ThesisProposal.fromRow);
     }
 }
 

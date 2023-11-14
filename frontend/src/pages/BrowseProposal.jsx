@@ -1,9 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import API from "../API";
-import { Container, Col, Row,Table } from "react-bootstrap";
+import { Button,Container, Col, Row,Table } from "react-bootstrap";
+import { Navigation } from "./Navigation";
+import { useNavigate} from "react-router-dom";
 
 function BrowseProposal (props){
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const fetchData = async () =>{
     const result = await API.getProposals();
@@ -14,7 +17,10 @@ function BrowseProposal (props){
   }, []);
     
   return (
+    <>
+    <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
     <Container>
+      <h3>Teacher ID: </h3>
     <Table striped>
     <thead>
       <tr>
@@ -35,7 +41,9 @@ function BrowseProposal (props){
       ))}
     </tbody>
   </Table>
+  <Button className='my-2 mx-2'  color='blue' onClick={()=>navigate('/')}>Back</Button>
   </Container>
+  </>
   )
 }
 

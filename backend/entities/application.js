@@ -44,6 +44,12 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `Application with id ${id} not found`);
         return result;
     }
+    async getTeacherAppStatusById(id) {
+        const query= `SELECT application.status from application
+        where application.id=$1`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Application with id ${id} not found`);
+        return result;
+    }
     async getByStudentId(student_id) {
         const query = `SELECT application.*, tp.title as thesis_title, teacher.name as teacher_name, teacher.surname as teacher_surname, teacher.email as teacher_email FROM application, thesis_proposal as tp, teacher 
             WHERE student_id = $1 AND application.proposal_id = tp.id AND tp.teacher_id = teacher.id ORDER BY apply_date DESC`;
@@ -69,27 +75,27 @@ class ApplicationTable {
         const query = `INSERT INTO application (student_id, proposal_id, apply_date) VALUES ($1, $2, NOW()) RETURNING *`;
         const sid = getNum(student_id);
         const pid = getNum(proposal_id);
-        const result = await this.db.executeQueryExpectOne(query, sid, pid);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Application with student_id ${student_id} and proposal_id ${proposal_id} already exists`);
         return Application.fromRow(result);
     }
     async addApplicationWithDate(student_id, proposal_id, apply_date) {
         const query = `INSERT INTO application (student_id, proposal_id, apply_date) VALUES ($1, $2, $3) RETURNING *`;
         const sid = getNum(student_id);
         const pid = getNum(proposal_id);
-        const result = await this.db.executeQueryExpectOne(query, sid, pid, apply_date);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, apply_date, `Application with student_id ${student_id} and proposal_id ${proposal_id} already exists`);
         return Application.fromRow(result);
     }
     async updateApplicationStatusById(id, status) {
         const query = `UPDATE application SET status = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);
-        const result = await this.db.executeQueryExpectOne(query, aid, status);
+        const result = await this.db.executeQueryExpectOne(query, aid, status, `Application with id ${id} not found`);
         return Application.fromRow(result);
     }
     async updateApplicationStatus(student_id, proposal_id, status) {
         const query = `UPDATE application SET status = $3 WHERE student_id = $1 AND proposal_id = $2 RETURNING *`;
         const sid = getNum(student_id);
         const pid = getNum(proposal_id);
-        const result = await this.db.executeQueryExpectOne(query, sid, pid, status);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, status, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
         return Application.fromRow(result);
     }
 }

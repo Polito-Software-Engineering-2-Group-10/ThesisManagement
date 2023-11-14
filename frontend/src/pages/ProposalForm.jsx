@@ -1,29 +1,29 @@
 //import dayjs from 'dayjs';
 
-import {useState, useContext} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {Form, Button, Alert, Image, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-import Navigation from "./Navigation";
+import { Navigation } from "./Navigation";
 import API from '../API';
 // import MessageContext from '../messageCtx';
 
 
 
 const ProposalForm = (props) => {
-   
-    const [title, setTitle] = useState(props.page ? props.page.title : '');
-    const [supervisor, setSupervisor] = useState(props.page ? props.page.supervisor : '');
-    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
-    const [type, setType] = useState(props.page ? props.page.type : '');
-    const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '');
-    const [level, setLevel] = useState(props.page ? parseInt(props.page.level, 10) : '');
-    const [groups, setGroups] = useState(props.page ? props.page.groups : []);
-    const [keywords, setKeywords] = useState(props.page ? props.page.keywords : []);
-    const [description, setDescription] = useState(props.page ? props.page.description : '');
-    const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : []);
-    const [notes, setNotes] = useState(props.page ? props.page.notes : '');
-    const [programmes, setPrograms] = useState(props.page ? props.page.programmes : []);
+    const { loggedIn, user } = props;
+    const [title, setTitle] = useState(props.page ? props.page.title : 'Test title');
+    const [supervisor, setSupervisor] = useState(user !== null ? user.email : 'test@polito.it'); // this should be taken from the logged in user
+    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : ['another.test@polito.it']);
+    const [type, setType] = useState(props.page ? props.page.type : 'This is a test thesis proposal');
+    const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '2024-12-31');
+    const [level, setLevel] = useState(props.page ? parseInt(props.page.level, 10) : 1);
+    const [groups, setGroups] = useState(props.page ? props.page.groups : ['Test group']);
+    const [keywords, setKeywords] = useState(props.page ? props.page.keywords : ['Test keyword']);
+    const [description, setDescription] = useState(props.page ? props.page.description : 'Test description');
+    const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : ['Test required knowledge']);
+    const [notes, setNotes] = useState(props.page ? props.page.notes : 'Test notes');
+    const [programmes, setPrograms] = useState(props.page ? props.page.programmes : ['Test programme']);
     
 
     // useNavigate hook to change page
@@ -36,6 +36,7 @@ const ProposalForm = (props) => {
     const addProposal = (proposal) => {
       API.addProposal(proposal)
       .then(response => {
+        console.log('proposal added')
         console.log(response);
       })
         .catch(e => {
@@ -43,6 +44,13 @@ const ProposalForm = (props) => {
           console.log(e);
         })
     }
+
+    useEffect(() => {
+        if (!loggedIn || !user || user.role !== 'teacher') {
+            navigate(nextpage);
+        }
+
+    }, [loggedIn])
 
     const handleSubmit = (event) => {
       event.preventDefault();
@@ -68,8 +76,7 @@ const ProposalForm = (props) => {
         "programmes": programmes_array,
         "teacher_id": "1",
       };
-  
-      console.log(proposal);
+
       addProposal(proposal);
 
      navigate(nextpage);
@@ -77,7 +84,7 @@ const ProposalForm = (props) => {
     
     return (
         <>
-            <Navigation/>
+            <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">
               <p>Insert a New Proposal</p>
@@ -119,7 +126,7 @@ const ProposalForm = (props) => {
                           <Form.Label>Supervisor</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="email" required={true} value={supervisor} onChange={event => setSupervisor(event.target.value)} />
+                          <Form.Control type="email" readOnly required={true} defaultValue={supervisor} />
                         </Col>
                       </Row>
                     </Form.Group>
@@ -187,16 +194,11 @@ const ProposalForm = (props) => {
                         </Col>
                         <Col xs={12} md={6}>
                           <Form.Control
-                            as="select"
+                            type="text"
                             required={true}
                             value={type}
                             onChange={(event) => setType(event.target.value)}
                             style={{ backgroundColor: type ? 'white' : 'azure' }}>
-                            <option value="" style={{ fontSize: '12px', color: 'gray' }}>
-                            Choose one of the options below
-                            </option>
-                            <option value="Bachelor Thesis">Bachelor's degree</option>
-                            <option value="Master Thesis">Master's degree</option>
                           </Form.Control>
                        </Col>
                       </Row>

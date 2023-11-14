@@ -39,7 +39,7 @@ function addProposal(proposal) {
         headers: {
           'Content-Type': 'application/json',
         },
-        
+        credentials: 'include',
         body: JSON.stringify(proposal) 
       })
     )

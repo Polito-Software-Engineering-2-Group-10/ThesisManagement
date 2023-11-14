@@ -14,25 +14,23 @@ const ProposalForm = (props) => {
    
     const [title, setTitle] = useState(props.page ? props.page.title : '');
     const [supervisor, setSupervisor] = useState(props.page ? props.page.supervisor : '');
-    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : '');
+    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
     const [type, setType] = useState(props.page ? props.page.type : '');
     const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '');
-    const [level, setLevel] = useState(props.page ? props.page.level : '');
-    const [groups, setGroups] = useState(props.page ? props.page.groups : '');
-    const [keywords, setKeywords] = useState(props.page ? props.page.keywords : '');
+    const [level, setLevel] = useState(props.page ? parseInt(props.page.level, 10) : '');
+    const [groups, setGroups] = useState(props.page ? props.page.groups : []);
+    const [keywords, setKeywords] = useState(props.page ? props.page.keywords : []);
     const [description, setDescription] = useState(props.page ? props.page.description : '');
-    const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : '');
+    const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : []);
     const [notes, setNotes] = useState(props.page ? props.page.notes : '');
-    const [programmes, setPrograms] = useState(props.page ? props.page.programmes : '');
+    const [programmes, setPrograms] = useState(props.page ? props.page.programmes : []);
     
 
     // useNavigate hook to change page
     const navigate = useNavigate();
     const location = useLocation();
-    //const {handleErrors} = useContext(MessageContext);
-
-    // if the page is successfully added or edited we return to the user's page(logged in), 
-    // otherwise, if cancel is pressed, we go back to the previous location.
+    
+    
     const nextpage = location.state?.nextpage || '/';
 
     const addProposal = (proposal) => {
@@ -45,53 +43,34 @@ const ProposalForm = (props) => {
 
     const handleSubmit = (event) => {
       event.preventDefault();
-  
+
+      const groups_array = [groups]
+      const keywords_array = [keywords]
+      const co_supervisor_array = [co_supervisor]
+      const required_knowledge_array = [required_knowledge]
+      const programmes_array = [programmes]
+
       const proposal = {
         "title": title.trim(),
         "supervisor": supervisor,
-        "co_supervisor": co_supervisor,
+        "co_supervisor": co_supervisor_array,
         "type": type,
         "expiration": expiration,
         "level": level,
-        "groups": groups,
-        "keywords": keywords,
+        "groups": groups_array,
+        "keywords": keywords_array,
         "description": description.trim(),
-        "required_knowledge": required_knowledge.trim(),
+        "required_knowledge": required_knowledge_array,
         "notes": notes.trim(),
-        "programmes": programmes.trim(),
+        "programmes": programmes_array,
         "teacher_id": "1",
       };
   
       console.log(proposal);
       addProposal(proposal);
-  
-
-      // API.addProposal(proposal)
-      // .then(() => {
-      //   // Optionally, you can do something after a successful submission
-
-      //   // Navigate to the next page
-      //   navigate(nextpage);
-      // })
-      // .catch(error => {
-      //   console.error('Error submitting proposal:', error);
-      //   // Handle errors appropriately
-      // });
-
 
      navigate(nextpage);
     }
-
-
-    
-
-    const handleTextChange = (index, value) => {
-        const updatedBlocks = [...blocks];
-        updatedBlocks[index].value = value;
-        setBlocks(updatedBlocks);
-    };
-      
-
     
     return (
         <>
@@ -137,7 +116,7 @@ const ProposalForm = (props) => {
                           <Form.Label>Supervisor</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={true} value={supervisor} onChange={event => setSupervisor(event.target.value)} />
+                          <Form.Control type="email" required={true} value={supervisor} onChange={event => setSupervisor(event.target.value)} />
                         </Col>
                       </Row>
                     </Form.Group>
@@ -149,7 +128,20 @@ const ProposalForm = (props) => {
                           <Form.Label>Level</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={true} value={level} onChange={event => setLevel(event.target.value)} />
+                          
+                          <Form.Control
+                            as="select"
+                            type="number"
+                            required={true}
+                            value={level}
+                            onChange={(event) => setLevel(parseInt(event.target.value, 10))}
+                            style={{ backgroundColor: level ? 'white' : 'azure' }}>
+                            <option value="" style={{ fontSize: '12px', color: 'gray' }} >
+                            Choose the Level of the proposal
+                            </option>
+                            <option value= "1">1</option>
+                            <option value="2" >2</option>
+                          </Form.Control>
                         </Col>
                       </Row>
                     </Form.Group>
@@ -195,12 +187,13 @@ const ProposalForm = (props) => {
                             as="select"
                             required={true}
                             value={type}
-                            onChange={(event) => setType(event.target.value)}>
-                            <option value="" >
+                            onChange={(event) => setType(event.target.value)}
+                            style={{ backgroundColor: type ? 'white' : 'azure' }}>
+                            <option value="" style={{ fontSize: '12px', color: 'gray' }}>
                             Choose one of the options below
                             </option>
-                            <option value="option1">Bachelor's degree</option>
-                            <option value="option2">Master's degree</option>
+                            <option value="Bachelor Thesis">Bachelor's degree</option>
+                            <option value="Master Thesis">Master's degree</option>
                           </Form.Control>
                        </Col>
                       </Row>
@@ -270,10 +263,7 @@ const ProposalForm = (props) => {
                 <Button className="m-2" variant="success" type="submit">Insert</Button>&nbsp;  
                 <Link className="btn btn-danger m-2"  to={nextpage}>Go Back </Link>   
               </div>
-
-
-
-              
+ 
             </Form>
         </>
     )

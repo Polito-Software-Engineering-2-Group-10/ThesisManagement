@@ -22,6 +22,7 @@ In order to add the data to the database you can run (all these commands are to 
 
 ```postgresql
 \i init_data.sql
+\i thesis_data_raw.sql
 ```
 
 To remove the data from the database you can run:

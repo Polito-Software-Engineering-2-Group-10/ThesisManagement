@@ -51,8 +51,8 @@ function LoginPage(props){
 
     return(
         <>
-            <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
-            <Container>
+            {/*<Navigation logout={props.logout} loggedIn={props.loggedIn}/>*/}
+            <Container style={{paddingTop: "50px"}}>
             <Row>
                 <Col xs={3}></Col>
                 <Col xs={6}>

@@ -43,13 +43,13 @@ class ThesisProposalTable {
             include_expired = true;
         }
         if (include_expired) {
-            const query = `SELECT * FROM thesis_proposal`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id`;
             const result = await this.db.executeQueryExpectAny(query);
-            return result.map(ThesisProposal.fromRow);
+            return result;
         } else {
-            const query = `SELECT * FROM thesis_proposal WHERE expiration > NOW()`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id and expiration > NOW()`;
             const result = await this.db.executeQueryExpectAny(query);
-            return result.map(ThesisProposal.fromRow);
+            return result;
         }
     }
 
@@ -206,43 +206,31 @@ class ThesisProposalTable {
     }
     async getFilteredProposals(filterObject) {
         console.log(filterObject)
-        let query = `SELECT * FROM thesis_proposal WHERE `;
+        let query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname FROM thesis_proposal, teacher WHERE thesis_proposal.teacher_id = teacher.id`;
         let params = [];
         let i = 1;
         if (filterObject.title !== null) {
-            query += `title ILIKE $${i}`;
+            query += ` AND title ILIKE $${i}`;
             params.push(`%${filterObject.title}%`);
             i++;
         }
         if (filterObject.teacher_id !== null) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `teacher_id = $${i}`;
+            query += ` AND teacher_id = $${i}`;
             params.push(getNum(filterObject.teacher_id));
             i++;
         }
         if (filterObject.date !== null) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `expiration > $${i}`;
+            query += ` AND expiration > $${i}`;
             params.push(filterObject.date);
             i++;
         }
         if (filterObject.type !== null && filterObject.type.length > 0) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `type ILIKE ANY($${i}) `;
+            query += ` AND type ILIKE ANY($${i}) `;
             params.push(filterObject.type);
             i++;
         }
         if (filterObject.keywords !== null && filterObject.keywords.length > 0) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `NOT EXISTS (
+            query += ` AND NOT EXISTS (
 SELECT FROM unnest($${i}::text[]) as p(pattern)
 WHERE NOT EXISTS (
     SELECT FROM unnest(thesis_proposal.keywords) as a(elem)
@@ -254,18 +242,12 @@ WHERE NOT EXISTS (
             i++;
         }
         if (filterObject.level !== null) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `level = $${i}`;
+            query += ` AND level = $${i}`;
             params.push(getNum(filterObject.level));
             i++;
         }
         if (filterObject.groups !== null && filterObject.groups.length > 0) {
-            if (params.length > 0) {
-                query += ` AND `;
-            }
-            query += `NOT EXISTS (
+            query += ` AND NOT EXISTS (
 SELECT FROM unnest($${i}::text[]) as p(pattern)
 WHERE NOT EXISTS (
     SELECT FROM unnest(thesis_proposal.groups) as a(elem)
@@ -276,11 +258,9 @@ WHERE NOT EXISTS (
             params.push(groups);
             i++;
         }
-        if (params.length === 0) {
-            query = `SELECT * FROM thesis_proposal`;
-        }
+        console.log(query);
         const result = await this.db.executeQueryExpectAny(query, ...params);
-        return result.map(ThesisProposal.fromRow);
+        return result;
     }
 }
 

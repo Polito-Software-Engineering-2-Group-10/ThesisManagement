@@ -253,7 +253,9 @@ The backend exposes the following APIs:
         "level": <level>,
         "programmes": [
             "<programme>"
-        ]
+        ],
+        "teacher_name": "<teacher name>",
+        "teacher_surname": "<teacher surname>"
     },
     ```
 - GET `/api/ProposalsList/filter`
@@ -270,6 +272,7 @@ The backend exposes the following APIs:
     }
     ```
     All the fields are **optional**, if a field is not specified it will not be used as a filter.
+    The returned object is a list with objects of the same shape as the ones returned by `/api/ProposalsList` (the above).
 - GET `/api/teacher/list`
     - This API will return all the teachers in the database in the form:
     ```json

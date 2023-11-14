@@ -298,7 +298,7 @@ app.post('/api/teacher/insertProposal',
 app.post('/api/student/applyProposal',
     isLoggedInAsStudent,
     [
-        check('propsal_id').isInt(),
+        check('proposal_id').isInt(),
         check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
     ],
     async (req, res) => {

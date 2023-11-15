@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS public.application
     proposal_id integer NOT NULL,
     apply_date date NOT NULL,
     status boolean,
-    CONSTRAINT application_pk PRIMARY KEY (id),
+    CONSTRAINT application_pk PRIMARY KEY (student_id, proposal_id),
     CONSTRAINT application_student_id_fkey FOREIGN KEY (student_id)
         REFERENCES public.student(id)
         ON UPDATE NO ACTION

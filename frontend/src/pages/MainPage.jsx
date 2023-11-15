@@ -1,14 +1,18 @@
 import { Navigation } from "./Navigation";
 import Infobox from "./InfoBox.jsx";
-import { useEffect, useState } from "react";
-import API from "../API.jsx";
+import SearchForProposals from "./SearchForProposals";
 
 function MainPage(props){
 
     return(
         <>
-            <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
-            <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail}></Infobox>  
+            { props.loggedIn ? 
+                <>
+                    <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
+                    <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail}></Infobox>
+                </>
+                :
+                <SearchForProposals logout={props.logout} loggedIn={props.loggedIn} user={props.user}></SearchForProposals>}
         </>
     )
 }

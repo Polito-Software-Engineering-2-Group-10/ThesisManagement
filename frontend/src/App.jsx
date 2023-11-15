@@ -6,8 +6,12 @@ import { useState, useEffect } from 'react';
 import ApplyToProposal from './pages/ApplyToProposal';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
-// import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication';
-import API from './API.jsx';
+import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
+import ProposalForm from './pages/ProposalForm';
+import API from './API';
+import SearchForProposals from "./pages/SearchForProposals.jsx";
+
+import BrowseProposal from './pages/BrowseProposal';
 
 function App() {
 
@@ -15,6 +19,16 @@ function App() {
   const [user, setUser] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
   const [dirty, setDirty] = useState(false);
+  const [appList, setAppList] = useState(undefined);
+
+  const [proposalList, setProposalList] = useState([]);
+  const fetchData = async () =>{
+    const result = await API.getProposals();
+    setProposalList(result);
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,6 +52,7 @@ function App() {
         API.getTeacherDetail()
             .then((teacher) => {
                 setUserDetail(teacher);
+                fetchData();
                 setDirty(false);
             })
             .catch((err) => console.log(err));
@@ -45,7 +60,12 @@ function App() {
           API.getStudentDetail()
               .then((student) => {
                   setUserDetail(student);
-                  setDirty(false);
+                  API.getApplicationsList()
+                    .then((list) => {
+                        setAppList(list);
+                        setDirty(false);
+                    })
+                    .catch((err) => console.log(err));
               })
               .catch((err) => console.log(err));
       }
@@ -60,12 +80,16 @@ function App() {
     setUserDetail(null);
   }
 
-
-
   const loginSuccessful = (user) => {
     setUser(user);
     setLoggedIn(true);
     setDirty(true);
+  }
+
+  function addApplication(application, success_callback, error_callback){
+    API.addApplication(application)
+      .then(() => { setDirty(true); success_callback(); })
+      .catch((err) => error_callback(err));
   }
 
   return (
@@ -74,8 +98,11 @@ function App() {
       <Routes>
         <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail}/>}></Route>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
-        <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        {/* <Route path='/browseAndAccept' element={<BrowseAndAcceptApplication/>} loggedIn={loggedIn} user={user}></Route> */}
+        <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+        <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
+        <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>
     </BrowserRouter>
     </>

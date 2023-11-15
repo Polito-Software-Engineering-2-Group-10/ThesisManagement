@@ -29,7 +29,7 @@ class TeacherTable {
         return teacherTable;
     }
     async getAll() {
-        const query = `SELECT * FROM teacher`;
+        const query = `SELECT * FROM teacher ORDER BY surname ASC, name ASC`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(Teacher.fromRow);
     }

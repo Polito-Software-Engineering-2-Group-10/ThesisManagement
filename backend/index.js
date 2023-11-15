@@ -9,10 +9,6 @@ import cors from 'cors';
 import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
-import dayjs from 'dayjs'
-import { TitleFilter,ProfessorFilter,DateFilter,TypeFilter,TagFilter,LevelFilter,GroupFilter } from './filteringFunction.js';
-//let now=dayjs().format();
-//console.log(now)
 import {
     studentTable,
     teacherTable,
@@ -132,7 +128,10 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_carrer: applicationDetail.title_degree,
                 student_ey: applicationDetail.enrollment_year
             };
-            res.json(cleanApplication);
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+           // console.log(applicationStatus);
+            const applicationResult = {status: applicationStatus.status}
+            res.json({detail:cleanApplication, status:applicationResult});
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List` });
         }
@@ -163,6 +162,14 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             if (applicationDetail.status !== undefined) {
                 return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
             }
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+            if (!applicationStatus) {
+                return res.status(400).json({ error: 'The application does not exist!' });
+            }
+            if ( applicationStatus.status !== null) {
+                return res.status(400).json({ error: `This application has already been ${ applicationStatus.status ? 'accepted' : 'rejected'}` });
+            }
+
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
             res.json(applicationResult);
         } catch (err) {
@@ -228,10 +235,11 @@ app.get('/api/teacher/ProposalsList',
             }
             */
             // AND COMMENT THIS OUT INSTEAD
-            const proposalList = await thesisProposalTable.getActiveProposals();
+            //const proposalList = await thesisProposalTable.getActiveProposals();
+            const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
             const proposalSummary = proposalList.map(
                 p => {
-                    return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    return { id:p.id,thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
                 }
             );
             res.json(proposalSummary);
@@ -294,7 +302,7 @@ app.post('/api/teacher/insertProposal',
 app.post('/api/student/applyProposal',
     isLoggedInAsStudent,
     [
-        check('propsal_id').isInt(),
+        check('proposal_id').isInt(),
         check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
     ],
     async (req, res) => {
@@ -304,7 +312,7 @@ app.post('/api/student/applyProposal',
             return res.status(422).json({ errors: errors.array() });
         }
         const Applyproposal = {
-            student_id:req.body.student_id, //req.user.id
+            student_id: req.user.id,
             proposal_id:req.body.proposal_id,
             apply_date:req.body.apply_date
         }
@@ -332,7 +340,7 @@ app.get('/api/ProposalsList',
 
 /*Search Proposal*/
 //GET /api/ProposalList
-app.get('/api/ProposalsList/filter',
+app.post('/api/ProposalsList/filter',
     [
         check('title').isString().optional(),
         check('professor').isInt().optional(),

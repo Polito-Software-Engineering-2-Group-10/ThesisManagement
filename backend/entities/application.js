@@ -44,6 +44,12 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `Application with id ${id} not found`);
         return result;
     }
+    async getTeacherAppStatusById(id) {
+        const query= `SELECT application.status from application
+        where application.id=$1`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Application with id ${id} not found`);
+        return result;
+    }
     async getByStudentId(student_id) {
         const query = `SELECT application.*, tp.title as thesis_title, teacher.name as teacher_name, teacher.surname as teacher_surname, teacher.email as teacher_email FROM application, thesis_proposal as tp, teacher 
             WHERE student_id = $1 AND application.proposal_id = tp.id AND tp.teacher_id = teacher.id ORDER BY apply_date DESC`;

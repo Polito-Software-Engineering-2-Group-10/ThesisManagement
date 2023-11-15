@@ -1,6 +1,25 @@
 const URL ='http://localhost:3001/api';
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 
+
+async function addProposal(proposal) {
+  let response = await fetch(URL + '/teacher/insertProposal', {
+    credentials: 'include',
+    method: 'POST',
+    
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(proposal)
+  });
+  if (response.ok) {
+    const respDetail = await response.json();
+    return respDetail;
+  } else {
+    const errDetail = await response.json();
+    throw errDetail;
+  }
+}
 // login,logout,session
 
 async function logIn(credentials) {
@@ -64,6 +83,7 @@ async function logIn(credentials) {
     }
   }
 
+<<<<<<< HEAD
   async function getAllProposals() {
     const response = await fetch(URL+'/ProposalsList', {
       credentials: 'include'
@@ -176,7 +196,9 @@ const API = {
   getFilteredProposals,
   getAllKeywords,
   getAllGroups,
-  getApplicationsList
+  getApplicationsList,
+addProposal
+
 };
 
 export default API;

@@ -7,8 +7,10 @@ import ApplyToProposal from './pages/ApplyToProposal';
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/LoginPage';
 import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
-import API from './API.jsx';
+import ProposalForm from './pages/ProposalForm';
+import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
+
 
 function App() {
 
@@ -88,6 +90,7 @@ function App() {
         <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
       </Routes>
     </BrowserRouter>
     </>

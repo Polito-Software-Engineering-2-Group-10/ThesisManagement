@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Form, Table, Button, Badge, Card } from 'react-bootstrap';
+import {Table, Button} from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
-import API from "../API";
+
 
 function BrowseAndAcceptApplication(props) {
-    
-    let applicationList = API.
-    
+
+    let {appList} = props;
 
     return (
         <>
-            <div id="left-box">
+        <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
+            <div id="left-box" style={{width: 60+'%'}}>
                 <input id="search" />
         
                 <Table>

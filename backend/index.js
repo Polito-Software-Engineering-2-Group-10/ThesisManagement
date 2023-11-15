@@ -335,7 +335,7 @@ app.get('/api/ProposalsList',
 
 /*Search Proposal*/
 //GET /api/ProposalList
-app.get('/api/ProposalsList/filter',
+app.post('/api/ProposalsList/filter',
     [
         check('title').isString().optional(),
         check('professor').isInt().optional(),

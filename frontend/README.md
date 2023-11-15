@@ -40,5 +40,39 @@ ThesisManagement
 
 ## Pages Guide
 
-1. First Common page for all. Everyone can browse all active thesis.
+### Common Page
+
+#### 1. First Common page. 
+Everyone can browse all active thesis.
 ![normal_MainPage_nofilter](images/normal_MainPage_nofilter.png)
+
+#### 2. First Common page - with filter. 
+Everyone can browse interested thesis by applying filter .
+![normal_MainPage_withfilter](images/normal_MainPage_withfilter.png)
+
+#### 3. login page. 
+User can click top-right button to enter `login` page.
+When submit username and password, the system will identify students or teachers automatically.
+![normal_MainPage_withfilter-Redarrow](images/normal_MainPage_withfilter-Redarrow.png)
+![login](images/login.png)
+
+### Student Side. 
+When user login as a student, he/she will enter in the Main Page for Student
+![MainPage_Student](images/MainPage_Student.png)
+
+#### 1. Search Proposal page. 
+Students can browse interested thesis by applying filter.
+![Thesis_Search_Student](images/Thesis_Search_Student.png)
+
+#### 2. Thesis apply page. 
+Students can click on the thesis title directly to enter apply page when they find interested thesis.
+![Thesis_Apply_Student](images/Thesis_Apply_Student.png)
+
+When they click 'Apply now!' button, they can view the status
+![Thesis_afterApply_Student](images/Thesis_afterApply_Student.png)
+
+#### 3. Browse Decision page. 
+Students can click on the right big button in the main page to view the descisions of their own applications by professor.
+![Browse_appDec_Student](images/Browse_appDec_Student.png)
+
+

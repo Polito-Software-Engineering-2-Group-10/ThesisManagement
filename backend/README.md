@@ -227,7 +227,37 @@ The backend exposes the following APIs:
     }
     ```
 - GET `/api/ProposalsList`
-    - This API will return all the thesis proposals
+    - This API will return all the thesis proposals inserted in the database, it expects no parameters. It returns a list of thesis proposals in the form:
+    ```json
+      {
+        "id": <id>,
+        "title": "<title of the thesis>",
+        "teacher_id": <id of the teacher>,
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": [
+           "<email of the co-supervisor>" 
+        ],
+        "keywords": [
+            "<keyword>",
+        ],
+        "type": "<type of the thesis>",
+        "groups": [
+            "<group>"
+        ],
+        "description": "<explanation of the thesis>",
+        "required_knowledge": [
+            "<requirement>"
+        ],
+        "notes": "<notes>",
+        "expiration": "<timestamp of expiration>",
+        "level": <level>,
+        "programmes": [
+            "<programme>"
+        ],
+        "teacher_name": "<teacher name>",
+        "teacher_surname": "<teacher surname>"
+    },
+    ```
 - GET `/api/ProposalsList/filter`
     - This API will return all the thesis proposals that match the given filters, it expects a json object of type:
     ```json
@@ -242,6 +272,7 @@ The backend exposes the following APIs:
     }
     ```
     All the fields are **optional**, if a field is not specified it will not be used as a filter.
+    The returned object is a list with objects of the same shape as the ones returned by `/api/ProposalsList` (the above).
 - GET `/api/teacher/list`
     - This API will return all the teachers in the database in the form:
     ```json
@@ -292,4 +323,55 @@ The backend exposes the following APIs:
         "L-15 group 1"
         ...
     ]
+    ```
+- POST `/api/student/applyProposal`
+    - This API will accept a JSON object with the following structure:
+    ```json
+    {
+        "student_id": <student id>,
+        "proposal_id": <proposal id>,
+        "apply_date": <YYYY-MM-DD>
+    }
+    ```
+    - It adds in the database the application of the student to the proposal.
+    - It returns the application object:
+    ```json
+    {
+        "id": <id>,
+        "student_id": <student id>,
+        "proposal_id": <proposal id>,
+        "apply_date": <YYYY-MM-DD>,
+        "status": <boolean>
+    }
+    ```
+- GET `/api/teacher/ProposalsList`:
+    - This API will return a list of all active proposals in the following format:
+    ```json
+      {
+        "id": <id>,
+        "title": "<title of the thesis>",
+        "teacher_id": <id of the teacher>,
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": [
+           "<email of the co-supervisor>" 
+        ],
+        "keywords": [
+            "<keyword>",
+        ],
+        "type": "<type of the thesis>",
+        "groups": [
+            "<group>"
+        ],
+        "description": "<explanation of the thesis>",
+        "required_knowledge": [
+            "<requirement>"
+        ],
+        "notes": "<notes>",
+        "expiration": "<timestamp of expiration>",
+        "level": <level>,
+        "programmes": [
+            "<programme>"
+        ],
+        "archived": <boolean>
+    },
     ```

@@ -1,4 +1,5 @@
 const URL ='http://localhost:3001/api';
+import dayjs from 'dayjs'
 
 // login,logout,session
 
@@ -63,17 +64,41 @@ async function logIn(credentials) {
     }
   }
 
-  async function getApplicationsList() {
-    const response = await fetch(URL+'/student/ApplicationsList', {
+  async function getAllProposals() {
+    const response = await fetch(URL+'/ProposalsList', {
       credentials: 'include'
     });
-    const appList = await response.json();
+    const propList = await response.json();
     if (response.ok) {
-      return appList;
+      return propList;
     } else {
-      throw appList;
+      throw propList;
     }
   }
+
+  function addApplication(application) {
+    return new Promise((resolve, reject) => {
+      fetch(URL+`/student/applyProposal`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.assign({}, application, {proposal_id: application.proposal_id, apply_date: dayjs(application.apply_date).format('YYYY-MM-DD')}))
+      }).then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((id) => resolve(id))
+            .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
+        } else {
+          // analyze the cause of error
+          response.json()
+            .then((message) => { reject(message); }) // error message in the response body
+            .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
+        }
+      }).catch(() => { reject({ error: "Cannot communicate with the server." }) }); // connection errors
+    });
+}
 
 
 
@@ -85,6 +110,8 @@ logOut,
 getUserInfo,
 getTeacherDetail,
 getStudentDetail,
+getAllProposals,
+addApplication,
 getApplicationsList
 };
 export default API;

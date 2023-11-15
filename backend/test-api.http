@@ -43,13 +43,43 @@ Content-Type: application/json
 # "level":
 # "groups":
 #}
-GET http://localhost:3001/api/student/ProposalsList HTTP/1.1
+POST http://localhost:3001/api/student/ProposalsList HTTP/1.1
 Content-Type: application/json
 
 {
     "title": "Machine",
     "professor": "Lettieri"
 }
-
-
 ###
+
+##
+POST http://localhost:3001/api/student/applyProposal HTTP/1.1
+Content-Type: application/json
+
+{
+    "student_id": 6,
+    "proposal_id": 2,
+    "apply_date":"2023-11-13"
+}
+###
+
+GET http://localhost:3001/api/student/ApplicationsList
+Content-Type: application/json
+
+{
+    "id": 1
+}
+
+#[
+ # {
+ #   "id": 1,
+ #   "student_id": 1,
+ #   "proposal_id": 199,
+ #   "apply_date": "2023-11-12T23:00:00.000Z",
+ #   "status": true,
+ #   "thesis_title": "Analisi mediante machine learning delle caratteristiche di forma degli idrogrammi di piena a supporto della progettazione e verifica delle casse di espansione fluviali",
+ #   "teacher_name": "PIERLUIGI",
+ #   "teacher_surname": "CLAPS",
+ #   "teacher_email": "claps.pierluigi@polito.it"
+#  }
+#]

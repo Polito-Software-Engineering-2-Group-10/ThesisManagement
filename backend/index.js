@@ -132,7 +132,10 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_carrer: applicationDetail.title_degree,
                 student_ey: applicationDetail.enrollment_year
             };
-            res.json(cleanApplication);
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+           // console.log(applicationStatus);
+            const applicationResult = {status: applicationStatus.status}
+            res.json({detail:cleanApplication, status:applicationResult});
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List` });
         }
@@ -156,13 +159,14 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
             }
-            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
-            if (!applicationDetail) {
+            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+            if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }
-            if (applicationDetail.status !== undefined) {
-                return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
+            if ( applicationStatus.status !== null) {
+                return res.status(400).json({ error: `This application has already been ${ applicationStatus.status ? 'accepted' : 'rejected'}` });
             }
+
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
             res.json(applicationResult);
         } catch (err) {
@@ -290,6 +294,32 @@ app.post('/api/teacher/insertProposal',
     }
 );
 
+/*Apply for a thesis proposal*/
+app.post('/api/student/applyProposal',
+    isLoggedInAsStudent,
+    [
+        check('proposal_id').isInt(),
+        check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const Applyproposal = {
+            student_id: req.user.id,
+            proposal_id:req.body.proposal_id,
+            apply_date:req.body.apply_date
+        }
+        try {
+            const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id,Applyproposal.proposal_id,Applyproposal.apply_date);
+            res.json(applypropID); 
+        } catch (err) {
+            res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
+        }
+
+    }
+);
 
 app.get('/api/ProposalsList',
     async (req, res) => {
@@ -321,8 +351,16 @@ app.get('/api/ProposalsList/filter',
                 if (!errors.isEmpty()) {
                     return res.status(422).json({ errors: errors.array() });
                 }
-                // TODO: implement
-                res.status(501).json({ error: `Not implemented` });
+                const filterObject = {
+                    title: req.body.title || null,
+                    teacher_id: req.body.professor || null,
+                    date: req.body.date || null,
+                    type: req.body.type || null,
+                    keywords: req.body.keywords || null,
+                    level: req.body.level || null,
+                    groups: req.body.groups || null
+                }
+                res.json(await thesisProposalTable.getFilteredProposals(filterObject));
             }
             catch(err){
                 res.status(503).json({ error: `Database error during the getting proposals: ${err}` });

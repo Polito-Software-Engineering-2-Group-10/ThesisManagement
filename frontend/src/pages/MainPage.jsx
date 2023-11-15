@@ -1,7 +1,5 @@
 import { Navigation } from "./Navigation";
 import Infobox from "./InfoBox.jsx";
-import { useEffect, useState } from "react";
-import API from "../API.jsx";
 
 function MainPage(props){
 

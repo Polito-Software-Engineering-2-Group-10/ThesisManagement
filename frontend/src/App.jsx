@@ -66,12 +66,16 @@ function App() {
     setUserDetail(null);
   }
 
-
-
   const loginSuccessful = (user) => {
     setUser(user);
     setLoggedIn(true);
     setDirty(true);
+  }
+
+  function addApplication(application){
+    API.addApplication(application)
+      .then(() => setDirty(true))
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -80,6 +84,7 @@ function App() {
       <Routes>
         <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail}/>}></Route>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
+        <Route path='/applyToProp' element={loggedIn ? <ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>

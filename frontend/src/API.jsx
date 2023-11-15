@@ -63,6 +63,18 @@ async function logIn(credentials) {
     }
   }
 
+  async function getApplicationsList() {
+    const response = await fetch(URL+'/student/ApplicationsList', {
+      credentials: 'include'
+    });
+    const appList = await response.json();
+    if (response.ok) {
+      return appList;
+    } else {
+      throw appList;
+    }
+  }
+
 
 
 
@@ -72,6 +84,7 @@ logIn,
 logOut,
 getUserInfo,
 getTeacherDetail,
-getStudentDetail
+getStudentDetail,
+getApplicationsList
 };
 export default API;

@@ -1,9 +1,9 @@
 //import dayjs from 'dayjs';
 
 import {useState, useContext, useEffect} from 'react';
-import {Form, Button, Alert, Image, Row, Col} from 'react-bootstrap';
+import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import Select from "react-select";
 import { Navigation } from "./Navigation";
 import API from '../API';
 // import MessageContext from '../messageCtx';
@@ -14,11 +14,15 @@ const ProposalForm = (props) => {
     const { loggedIn, user } = props;
     const [title, setTitle] = useState(props.page ? props.page.title : 'Test title');
     const [supervisor, setSupervisor] = useState(user !== null ? user.email : 'test@polito.it'); // this should be taken from the logged in user
-    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : ['another.test@polito.it']);
-    const [type, setType] = useState(props.page ? props.page.type : 'This is a test thesis proposal');
+    const [co_supervisor, setCoSupervisor] = useState([]);
+    const [co_supervisorOptions, setCoSupervisorOptions] = useState([]);
+    const [type, setType] = useState([]);
+    const [typeOptions, setTypeOptions] = useState([]);
     const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '2024-12-31');
-    const [level, setLevel] = useState(props.page ? parseInt(props.page.level, 10) : 1);
-    const [groups, setGroups] = useState(props.page ? props.page.groups : ['Test group']);
+    const [level, setLevel] = useState([]);
+    const [levelOptions, setLevelOptions] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [groupsOptions, setGroupsOptions] = useState([]);
     const [keywords, setKeywords] = useState(props.page ? props.page.keywords : ['Test keyword']);
     const [description, setDescription] = useState(props.page ? props.page.description : 'Test description');
     const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : ['Test required knowledge']);
@@ -55,9 +59,7 @@ const ProposalForm = (props) => {
     const handleSubmit = (event) => {
       event.preventDefault();
 
-      const groups_array = [groups]
       const keywords_array = [keywords]
-      const co_supervisor_array = [co_supervisor]
       const required_knowledge_array = [required_knowledge]
       const programmes_array = [programmes]
 
@@ -68,7 +70,7 @@ const ProposalForm = (props) => {
         "type": type,
         "expiration": expiration,
         "level": level,
-        "groups": groups_array,
+        "groups": groups,
         "keywords": keywords_array,
         "description": description.trim(),
         "required_knowledge": required_knowledge_array,
@@ -77,11 +79,53 @@ const ProposalForm = (props) => {
         "teacher_id": "1",
       };
 
-      addProposal(proposal);
+      console.log(proposal)
+    //   addProposal(proposal);
 
-     navigate(nextpage);
+    //  navigate(nextpage);
     }
-    
+
+    useEffect(()=> {
+      API.getFormGroups()
+              .then((GroupDetail) => {
+                const jsonList = GroupDetail.map((str, index) => ({
+                  value: str,
+                  label: str,
+                }));
+                  setGroupsOptions(jsonList);
+              })
+              .catch((err) => console.log(err));
+      API.getFormCo_supervisor()
+              .then((co_supervisorDetail) => {
+                const jsonList = co_supervisorDetail.map((str, index) => ({
+                  value: str,
+                  label: str,
+                }));
+                  setCoSupervisorOptions(jsonList);
+              })
+              .catch((err) => console.log(err));
+      API.getFormType()
+              .then((typeDetail) => {
+                const jsonList = typeDetail.map((str, index) => ({
+                  value: str,
+                  label: str,
+                }));
+                  setTypeOptions(jsonList);
+              })
+              .catch((err) => console.log(err));
+      API.getFormLevel()
+              .then((levelDetail) => {
+                const jsonList = levelDetail.map((str, index) => ({
+                  value: str,
+                  label: str,
+                }));
+                  setLevelOptions(jsonList);
+              })
+              .catch((err) => console.log(err));
+    })
+
+
+
     return (
         <>
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
@@ -138,20 +182,16 @@ const ProposalForm = (props) => {
                           <Form.Label>Level</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          
-                          <Form.Control
-                            as="select"
-                            type="number"
-                            required={true}
-                            value={level}
-                            onChange={(event) => setLevel(parseInt(event.target.value, 10))}
-                            style={{ backgroundColor: level ? 'white' : 'azure' }}>
-                            <option value="" style={{ fontSize: '12px', color: 'gray' }} >
-                            Choose the Level of the proposal
-                            </option>
-                            <option value= "1">1</option>
-                            <option value="2" >2</option>
-                          </Form.Control>
+                          <div className="dropdown-container">
+                            <Select
+                              required={false}
+                              options={levelOptions}
+                              placeholder="Select color"
+                              value={level}
+                              onChange={setLevel}
+                              isSearchable={true}
+                            />
+                          </div>
                         </Col>
                       </Row>
                     </Form.Group>
@@ -166,7 +206,18 @@ const ProposalForm = (props) => {
                           <Form.Label>Co-Supervisors</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={co_supervisor} onChange={event => setCoSupervisor(event.target.value)} />
+                          {/* <Form.Control type="text" required={false} value={co_supervisor} onChange={event => setCoSupervisor(event.target.value)} /> */}
+                          <div className="dropdown-container">
+                              <Select
+                                required={false}
+                                options={co_supervisorOptions}
+                                placeholder="Select color"
+                                value={co_supervisor}
+                                onChange={setCoSupervisor}
+                                isSearchable={true}
+                                isMulti
+                              />
+                            </div>
                         </Col>
                       </Row>
                     </Form.Group>
@@ -178,7 +229,18 @@ const ProposalForm = (props) => {
                           <Form.Label>Groups</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={groups} onChange={event => setGroups(event.target.value)} />
+                          {/* <Form.Control type="text" required={false} value={groups} onChange={event => setGroups(event.target.value)} /> */}
+                            <div className="dropdown-container">
+                              <Select
+                                required={false}
+                                options={groupsOptions}
+                                placeholder="Select color"
+                                value={groups}
+                                onChange={setGroups}
+                                isSearchable={true}
+                                isMulti
+                              />
+                            </div>
                         </Col>
                       </Row>
                     </Form.Group>
@@ -193,13 +255,16 @@ const ProposalForm = (props) => {
                           <Form.Label>Type</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control
-                            type="text"
-                            required={true}
-                            value={type}
-                            onChange={(event) => setType(event.target.value)}
-                            style={{ backgroundColor: type ? 'white' : 'azure' }}>
-                          </Form.Control>
+                          <div className="dropdown-container">
+                            <Select
+                              required={false}
+                              options={typeOptions}
+                              placeholder="Select color"
+                              value={type}
+                              onChange={setType}
+                              isSearchable={true}
+                            />
+                          </div>
                        </Col>
                       </Row>
                     </Form.Group>

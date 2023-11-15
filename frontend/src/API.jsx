@@ -83,9 +83,53 @@ async function logIn(credentials) {
     }
   }
 
+  async function getFormGroups() {
+    const response = await fetch(URL+'/thesis/groups', {
+      credentials: 'include'
+    });
+    const GroupDetail = await response.json();
+    if (response.ok) {
+      return GroupDetail;
+    } else {
+      throw GroupDetail;
+    }
+  }
 
+  async function getFormCo_supervisor() {
+    const response = await fetch(URL+'/thesis/types', {
+      credentials: 'include'
+    });
+    const co_supervisorDetail = await response.json();
+    if (response.ok) {
+      return co_supervisorDetail;
+    } else {
+      throw co_supervisorDetail;
+    }
+  }
 
+  async function getFormType() {
+    const response = await fetch(URL+'/thesis/types', {
+      credentials: 'include'
+    });
+    const typeDetail = await response.json();
+    if (response.ok) {
+      return typeDetail;
+    } else {
+      throw typeDetail;
+    }
+  }
 
+  async function getFormLevel() {
+    const response = await fetch(URL+'/thesis/types', {
+      credentials: 'include'
+    });
+    const levelDetail = await response.json();
+    if (response.ok) {
+      return levelDetail;
+    } else {
+      throw levelDetail;
+    }
+  }
 
 const API = {
 logIn,
@@ -93,6 +137,10 @@ logOut,
 getUserInfo,
 getTeacherDetail,
 getStudentDetail,
-addProposal
+addProposal,
+getFormGroups,
+getFormCo_supervisor,
+getFormType,
+getFormLevel
 };
 export default API;

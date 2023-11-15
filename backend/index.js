@@ -302,13 +302,12 @@ app.post('/api/student/applyProposal',
         check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
     ],
     async (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
         const Applyproposal = {
-            student_id:req.body.student_id, //req.user.id
+            student_id: req.user.id,
             proposal_id:req.body.proposal_id,
             apply_date:req.body.apply_date
         }

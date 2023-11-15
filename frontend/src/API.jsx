@@ -1,4 +1,5 @@
 const URL ='http://localhost:3001/api';
+import dayjs from 'dayjs'
 
 // login,logout,session
 
@@ -63,6 +64,42 @@ async function logIn(credentials) {
     }
   }
 
+  async function getAllProposals() {
+    const response = await fetch(URL+'/ProposalsList', {
+      credentials: 'include'
+    });
+    const propList = await response.json();
+    if (response.ok) {
+      return propList;
+    } else {
+      throw propList;
+    }
+  }
+
+  function addApplication(application) {
+    return new Promise((resolve, reject) => {
+      fetch(URL+`/student/applyProposal`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(Object.assign({}, application, {proposal_id: application.proposal_id, apply_date: dayjs(application.apply_date).format('YYYY-MM-DD')}))
+      }).then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((id) => resolve(id))
+            .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
+        } else {
+          // analyze the cause of error
+          response.json()
+            .then((message) => { reject(message); }) // error message in the response body
+            .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
+        }
+      }).catch(() => { reject({ error: "Cannot communicate with the server." }) }); // connection errors
+    });
+}
+
 
 
 
@@ -72,6 +109,8 @@ logIn,
 logOut,
 getUserInfo,
 getTeacherDetail,
-getStudentDetail
+getStudentDetail,
+getAllProposals,
+addApplication
 };
 export default API;

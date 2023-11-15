@@ -11,6 +11,7 @@ import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
 
+import BrowseProposal from './pages/BrowseProposal';
 
 function App() {
 
@@ -19,6 +20,15 @@ function App() {
   const [userDetail, setUserDetail] = useState(null);
   const [dirty, setDirty] = useState(false);
   const [appList, setAppList] = useState(undefined);
+
+  const [proposalList, setProposalList] = useState([]);
+  const fetchData = async () =>{
+    const result = await API.getProposals();
+    setProposalList(result);
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -91,6 +101,7 @@ function App() {
         <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
+        <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>
     </BrowserRouter>
     </>

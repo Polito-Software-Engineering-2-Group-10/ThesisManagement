@@ -182,10 +182,22 @@ async function getFilteredProposals(filters) {
     return data;
 }
 
+  async function getProposals() {
+    const response = await fetch(`${URL}/teacher/ProposalsList`,{
+      credentials: 'include'
+  });
+    const data = await response.json();
+    return data;
+    
+}
+
+
+
 const API = {
   logIn,
   logOut,
   getUserInfo,
+getProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,

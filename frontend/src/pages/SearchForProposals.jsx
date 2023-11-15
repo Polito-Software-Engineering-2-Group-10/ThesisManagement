@@ -43,19 +43,26 @@ function SearchForProposals(props) {
     }, []);
 
     const handleFilterClick = (filter) => {
-        if (activeFilter && filters[activeFilter]) {
-            setFilters({ ...filters, [activeFilter]: '' });
+        if(activeFilter && activeFilter!=filter) {
+            const { [activeFilter]: removedFilter, ...restFilters } = filters;
+            setFilters(restFilters);
         }
         setActiveFilter(filter);
     };
 
     const handleFilterChange = (event) => {
         const { name, value } = event.target;
-        setFilters({ ...filters, [name]: value });
+        if(value!='' && value!=[]) {
+            setFilters({...filters, [name]: value});
+        }
+        else{
+            const { [name]: removedFilter, ...restFilters } = filters;
+            setFilters(restFilters);
+        }
     };
 
     const handleApplyFilter = () => {
-        setFilters({ ...filters, [activeFilter]: filters[activeFilter] });
+        console.log(filters)
         API.getFilteredProposals(filters)
             .then((data) => {
                 setProposals(data);
@@ -65,13 +72,15 @@ function SearchForProposals(props) {
     };
 
     const handleCancelFilter = () => {
-        setFilters({ ...filters, [activeFilter]: '' });
+        const { [activeFilter]: removedFilter, ...restFilters } = filters;
+        setFilters(restFilters);
         setActiveFilter(null);
     };
 
     const handleRemoveFilter = (filter) => {
         const { [filter]: removedFilter, ...restFilters } = filters;
         setFilters(restFilters);
+        console.log(restFilters)
         API.getFilteredProposals(restFilters)
             .then((data) => {
                 setProposals(data);
@@ -159,7 +168,7 @@ function SearchForProposals(props) {
                             <span
                                 style={{ marginRight: '10px'}}
                             />
-                            {Object.entries(filters).map(([filter, value]) => (
+                            {!activeFilter && (Object.entries(filters).map(([filter, value]) => (
                                 value && (
                                     <Badge
                                         key={filter}
@@ -169,8 +178,11 @@ function SearchForProposals(props) {
                                     >
                                         {filter}
                                         :
-                                        {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : ''}{' '}
-                                        {filter === 'professor' ? professors.find((a) => a.id == value).surname : value}
+                                        {filter === 'title' ? value : ''}
+                                        {filter === 'professor' ? professors.find((a) => a.id == value).surname : ''}
+                                        {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : ''}
+                                        {filter === 'level' ? ((value==1) ? 'Bachelor' : 'Master') : ''}
+                                        {(filter === 'type' || filter === 'keywords' || filter === 'groups') ? ' ...' : ''}
                                         <span
                                             className="badge-close"
                                             onClick={() => handleRemoveFilter(filter)}
@@ -180,7 +192,7 @@ function SearchForProposals(props) {
                                         </span>
                                     </Badge>
                                 )
-                            ))}
+                            )))}
                         </div>
                         {activeFilter && (
                             <Form className="mt-3">
@@ -240,7 +252,7 @@ function SearchForProposals(props) {
                                                 value={filters.level || ''}
                                                 onChange={handleFilterChange}
                                             >
-                                                <option value="">All Levels</option>
+                                                <option value=''>All Levels</option>
                                                 <option value='1'>Bachelor</option>
                                                 <option value='2'>Master</option>
                                             </Form.Control>
@@ -328,7 +340,7 @@ function SearchForProposals(props) {
                     </tr>
                     </thead>
                     <tbody>
-                    {proposals.map((proposal, index) => (
+                    {proposals && (proposals.map((proposal, index) => (
                         <tr key={index}>
                             <td>
                                 <Link
@@ -344,7 +356,7 @@ function SearchForProposals(props) {
                             <td>{proposal.type}</td>
                             <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>
                         </tr>
-                    ))}
+                    )))}
                     </tbody>
                 </Table>
             </div>

@@ -85,6 +85,15 @@ describe('isLoggedInAsStudent middleware', () => {
     });
 });
 
+function registerMockMiddleware(app, index, middleware) {
+    function mockWare(req, res, next) {
+        middleware(req, res, next)
+        app._router.stack.splice(index, 1);
+    }
+    app.use(mockWare)
+    app._router.stack.splice(index, 0, app._router.stack.find(r => r.name === 'mockWare'));
+}
+
 describe('GET /api/teacher/details', () => {
     test('Should successfully return the details of the logged professor', async () => {
         const teacherDetails = {
@@ -95,23 +104,23 @@ describe('GET /api/teacher/details', () => {
             cod_group: 1,
             cod_department: 1,
         };
-        app.use((req, res, next) => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1 };
+            req.user = { id: 1, role: 'teacher' };
             next();
-        });
-        jest.spyOn(teacherTable, 'getDetailsById').mockImplementationOnce(() => mockedTeacherDetails);
+        })
+        jest.spyOn(teacherTable, 'getDetailsById').mockImplementationOnce(() => teacherDetails);
         const response = await request(app).get('/api/teacher/details');
         expect(response.status).toBe(200);
-        expect(response.body).toEqual(mockedTeacherDetails);
+        expect(response.body).toEqual(teacherDetails);
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
-        app.use((req, res, next) => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1 };
+            req.user = { id: 1, role: 'teacher' };
             next();
-        });
+        })
         jest.spyOn(teacherTable, 'getDetailsById').mockImplementationOnce(() => {
             throw new Error("Database error")
         });

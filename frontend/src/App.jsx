@@ -84,7 +84,7 @@ function App() {
         <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail}/>}></Route>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
         <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        <Route path='/proposal' element={<BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> :<LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}/>  
       </Routes>
     </BrowserRouter>
     </>

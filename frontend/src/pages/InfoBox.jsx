@@ -2,6 +2,7 @@ import {Container, Button, Card, Col, Row} from "react-bootstrap"
 import dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
 
+
 function InfoBox(props){
 
     const navigate = useNavigate();
@@ -97,8 +98,9 @@ function InfoBox(props){
                     </Container>
                     )
                  : 
-                 //fare pagina non autenticato
-                 ''}
+                 //pagina non autenticato
+                ''
+                 }
                  </>
     )
 }

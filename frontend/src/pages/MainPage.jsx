@@ -1,12 +1,19 @@
 import { Navigation } from "./Navigation";
 import Infobox from "./InfoBox.jsx";
+import SearchForProposals from "./SearchForProposals";
+import ApplyToProposal from "./ApplyToProposal";
 
 function MainPage(props){
 
     return(
         <>
-            <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
-            <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail}></Infobox>  
+            { props.loggedIn ? 
+                <>
+                    <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
+                    <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail}></Infobox>
+                </>
+                :
+                <SearchForProposals logout={props.logout} loggedIn={props.loggedIn} user={props.user}></SearchForProposals>}
         </>
     )
 }

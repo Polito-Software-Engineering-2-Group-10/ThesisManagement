@@ -117,13 +117,15 @@ function SearchForProposals(props) {
                 (
                     <div className="container mt-4">
                         <h1 className="text-center mt-4 mb-4">Thesis Proposals</h1>
-                        <Container>
-                            <Row>
-                                <Col style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Button variant='primary' onClick={() => navigate('/')}>Main Page</Button>
-                                </Col>
-                            </Row>
-                        </Container>
+                        { props.loggedIn ? 
+                            <Container>
+                                <Row>
+                                    <Col style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                                        <Button variant='primary' onClick={() => navigate('/')}>Main Page</Button>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        : ''}
                         <Card className="mb-4" style={{marginTop: '20px'}}>
                             <Card.Body>
                                 <div className="mb-3">

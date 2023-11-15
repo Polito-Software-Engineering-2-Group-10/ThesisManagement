@@ -76,7 +76,9 @@ function ApplyToProposal(props) {
                             </Col>
                         </Row>
                         <Row style={{marginTop: '15px', marginBottom: '30px'}}>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => addApplication(p.id)} variant='success'>Apply Now!</Button></Col>
+                            { props.loggedIn ? 
+                                <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => addApplication(p.id)} variant='success'>Apply Now!</Button></Col>
+                            : ''}
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => navigate('/search')} variant='danger'>Go Back</Button></Col>
                         </Row>
                         </Container>

@@ -83,7 +83,6 @@ async function logIn(credentials) {
     }
   }
 
-<<<<<<< HEAD
   async function getAllProposals() {
     const response = await fetch(URL+'/ProposalsList', {
       credentials: 'include'
@@ -197,8 +196,7 @@ const API = {
   getAllKeywords,
   getAllGroups,
   getApplicationsList,
-addProposal
-
+  addProposal
 };
 
 export default API;

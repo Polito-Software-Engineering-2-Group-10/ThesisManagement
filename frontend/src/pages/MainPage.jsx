@@ -1,11 +1,6 @@
 import { Navigation } from "./Navigation";
 import Infobox from "./InfoBox.jsx";
 import SearchForProposals from "./SearchForProposals";
-import ApplyToProposal from "./ApplyToProposal";
-import { useEffect, useState } from "react";
-import { Link, useParams, useLocation, Outlet } from 'react-router-dom';
-import ProposalForm from "./ProposalForm";
-import API from "../API";
 
 function MainPage(props){
 

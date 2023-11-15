@@ -16,7 +16,7 @@ function BrowseProposal (props){
   }
   return (
     <>
-    <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
+    <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
     <Container>
       {/*<h3>Teacher ID: </h3>*/}
     <Table hover>
@@ -35,7 +35,7 @@ function BrowseProposal (props){
         >
           <td>{result.thesis_title}</td>
           <td>{dayjs(result.thesis_expiration).format('DD/MM/YYYY')}</td>
-          <td>{result.thesis_level}</td>
+          <td>{result.thesis_level==1? "Bachelor":"Master"}</td>
           <td>{result.thesis_type}</td>
         </tr>
       ))}

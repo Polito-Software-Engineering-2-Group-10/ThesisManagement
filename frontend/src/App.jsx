@@ -52,6 +52,7 @@ function App() {
         API.getTeacherDetail()
             .then((teacher) => {
                 setUserDetail(teacher);
+                fetchData();
                 setDirty(false);
             })
             .catch((err) => console.log(err));

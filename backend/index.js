@@ -163,6 +163,13 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
             }
+            const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
+            if (!applicationDetail) {
+                return res.status(400).json({ error: 'The application does not exist!' });
+            }
+            if (applicationDetail.status !== undefined) {
+                return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
+            }
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
             if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
@@ -307,6 +314,7 @@ app.post('/api/student/applyProposal',
         check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
     ],
     async (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });

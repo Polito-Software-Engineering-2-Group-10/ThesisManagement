@@ -43,6 +43,7 @@ Content-Type: application/json
 # "level":
 # "groups":
 #}
+GET http://localhost:3001/api/student/ProposalsList HTTP/1.1
 POST http://localhost:3001/api/student/ProposalsList HTTP/1.1
 Content-Type: application/json
 
@@ -50,6 +51,9 @@ Content-Type: application/json
     "title": "Machine",
     "professor": "Lettieri"
 }
+
+
+###
 ###
 
 ##

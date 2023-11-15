@@ -65,8 +65,6 @@ async function logIn(credentials) {
 
 
 
-
-
 const API = {
 logIn,
 logOut,

@@ -28,12 +28,21 @@ function InfoBox(props){
                         </Row>
                         <Row style={{paddingTop: "30px"}}>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                <Card  onClick={() => navigate('/search')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
+                                    <Card.Body>
+                                        <Card.Title>Browse all thesis proposals</Card.Title>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
                             <Card  onClick={() => navigate('/insert')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
                                 <Card.Body>
                                     <Card.Title>Insert a new thesis proposal</Card.Title>
                                 </Card.Body>
                             </Card>
                             </Col>
+                        </Row>
+                        <Row style={{paddingTop: "30px"}}>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
                                 <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
                                 <Card.Body>
@@ -47,7 +56,7 @@ function InfoBox(props){
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
                                 <Card onClick={() => navigate('/proposal')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
                                 <Card.Body>
-                                    <Card.Title >Browse proposals</Card.Title>
+                                    <Card.Title >Browse your proposals</Card.Title>
                                     <Card.Text>
                                         and operate on them
                                     </Card.Text>

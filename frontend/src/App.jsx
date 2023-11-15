@@ -86,10 +86,10 @@ function App() {
     setDirty(true);
   }
 
-  function addApplication(application){
+  function addApplication(application, success_callback, error_callback){
     API.addApplication(application)
-      .then(() => setDirty(true))
-      .catch((err) => console.log(err));
+      .then(() => { setDirty(true); success_callback(); })
+      .catch((err) => error_callback(err));
   }
 
   return (

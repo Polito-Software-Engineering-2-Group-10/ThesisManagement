@@ -2,11 +2,11 @@ import { Navigation } from './Navigation.jsx';
 import API from '../API.jsx';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs'
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 function ApplyToProposal(props) {
-
+    const [ errorMessage, setErrorMessage ] = useState('');
     const navigate = useNavigate();
     const {propId} = useParams();
 
@@ -25,9 +25,12 @@ function ApplyToProposal(props) {
             proposal_id: p_id,
             apply_date: dayjs()
         }
-
-        props.addApplication(application);
-        navigate('/');
+        setErrorMessage('');
+        props.addApplication(application, () => {
+            navigate('/');
+        }, (err) => {
+            setErrorMessage("You can't apply to the same proposal twice");
+        });
     }
 
     return (
@@ -75,8 +78,9 @@ function ApplyToProposal(props) {
                             })}</p>
                             </Col>
                         </Row>
+                        {errorMessage ? <Alert variant='danger' dismissible onClick={()=>setErrorMessage('')}>{errorMessage}</Alert> : ''}
                         <Row style={{marginTop: '15px', marginBottom: '30px'}}>
-                            { props.loggedIn ? 
+                            { (props.loggedIn && props.user.role === 'student') ? 
                                 <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => addApplication(p.id)} variant='success'>Apply Now!</Button></Col>
                             : ''}
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => navigate('/search')} variant='danger'>Go Back</Button></Col>

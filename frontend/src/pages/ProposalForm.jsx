@@ -52,11 +52,11 @@ const ProposalForm = (props) => {
     const handleSubmit = (event) => {
       event.preventDefault();
 
-      const keywords_array = [keywords]
-      const required_knowledge_array = [required_knowledge]
-      const programmes_array = [programmes]
-      const groups_array = [groups]
-      const co_supervisor_array = [co_supervisor]
+      const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
+      const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const programmes_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const co_supervisor_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
 
       const proposal = {
         "title": title.trim(),

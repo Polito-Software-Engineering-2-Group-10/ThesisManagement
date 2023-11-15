@@ -190,17 +190,17 @@ class ThesisProposalTable {
         return ThesisProposal.fromRow(result);
     }
     async getTypes() {
-        const query = `SELECT DISTINCT type FROM thesis_proposal`;
+        const query = `SELECT DISTINCT type FROM thesis_proposal ORDER BY type ASC`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(row => row.type);
     }
     async getKeywords() {
-        const query = `SELECT DISTINCT unnest(keywords) as keyword FROM thesis_proposal`;
+        const query = `SELECT DISTINCT unnest(keywords) as keyword FROM thesis_proposal ORDER BY keyword ASC`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(row => row.keyword);
     }
     async getGroups() {
-        const query = `SELECT DISTINCT unnest(groups) as group FROM thesis_proposal`;
+        const query = `SELECT DISTINCT unnest(groups) as group FROM thesis_proposal ORDER BY "group" ASC`;
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(row => row.group);
     }

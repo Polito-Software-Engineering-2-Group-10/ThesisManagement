@@ -9,14 +9,6 @@ import cors from 'cors';
 import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
-import dayjs from 'dayjs'
-import { TitleFilter,ProfessorFilter,DateFilter,TypeFilter,TagFilter,LevelFilter,GroupFilter } from './filteringFunction.js';
-//let now=dayjs().format();
-//console.log(now)
-import dayjs from 'dayjs'
-import { TitleFilter,ProfessorFilter,DateFilter,TypeFilter,TagFilter,LevelFilter,GroupFilter } from './filteringFunction.js';
-//let now=dayjs().format();
-//console.log(now)
 import {
     studentTable,
     teacherTable,

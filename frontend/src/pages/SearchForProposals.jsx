@@ -52,10 +52,46 @@ function SearchForProposals(props) {
         setActiveFilter(filter);
     };
 
+    const getProfessorsInformation = (professors, proposal) => {
+        if (professors) {
+            const prof = professors.find((a) => a.id == proposal.teacher_id);
+            if (prof) {
+                return `${prof.surname} ${prof.name}`;
+            }
+        }
+        return '';
+    }
+
     const handleFilterChange = (event) => {
         const { name, value } = event.target;
         if(value!='' && value!=[]) {
-            setFilters({...filters, [name]: value});
+            if (name === 'type') {
+                if (filters.type && filters.type.includes(value)) {
+                    setFilters({...filters, [name]: filters.type.filter((type) => type !== value)});
+                } else if (filters.type) {
+                    setFilters({...filters, [name]: [...filters.type, value]});
+                } else {
+                    setFilters({...filters, [name]: [value]});
+                }
+            } else if (name === 'keywords') {
+                if (filters.keywords && filters.keywords.includes(value)) {
+                    setFilters({...filters, [name]: filters.keywords.filter((keyword) => keyword !== value)});
+                } else if (filters.keywords) {
+                    setFilters({...filters, [name]: [...filters.keywords, value]});
+                } else {
+                    setFilters({...filters, [name]: [value]});
+                }
+            } else if (name == groups) {
+                if (filters.groups && filters.groups.includes(value)) {
+                    setFilters({...filters, [name]: filters.groups.filter((groups) => groups !== value)});
+                } else if (filters.groups) {
+                    setFilters({...filters, [name]: [...filters.groups, value]});
+                } else {
+                    setFilters({...filters, [name]: [value]});
+                }
+            } else {
+                setFilters({...filters, [name]: value});
+            }
         }
         else{
             const { [name]: removedFilter, ...restFilters } = filters;
@@ -74,8 +110,6 @@ function SearchForProposals(props) {
     };
 
     const handleCancelFilter = () => {
-        const { [activeFilter]: removedFilter, ...restFilters } = filters;
-        setFilters(restFilters);
         setActiveFilter(null);
     };
 
@@ -134,6 +168,7 @@ function SearchForProposals(props) {
                                         variant={activeFilter === 'title' ? 'info' : 'outline-info'}
                                         className="mr-2"
                                         onClick={() => handleFilterClick('title')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Title
                                     </Button>
@@ -141,6 +176,7 @@ function SearchForProposals(props) {
                                         variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
                                         className="mr-2"
                                         onClick={() => handleFilterClick('professor')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Professor
                                     </Button>
@@ -148,30 +184,35 @@ function SearchForProposals(props) {
                                         variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
                                         className="mr-2"
                                         onClick={() => handleFilterClick('expirationDate')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Expiration Date
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'type' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('type')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Type
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'level' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('level')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Level
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('keywords')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Keywords
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('groups')}
+                                        style={{ marginLeft: '10px', marginRight: '10px' }}
                                     >
                                         Groups
                                     </Button>
@@ -181,7 +222,7 @@ function SearchForProposals(props) {
                                     <span
                                         style={{ marginRight: '10px'}}
                                     />
-                                    {!activeFilter && (Object.entries(filters).map(([filter, value]) => (
+                                    {(Object.entries(filters).map(([filter, value]) => (
                                         value && (
                                             <Badge
                                                 key={filter}
@@ -276,16 +317,20 @@ function SearchForProposals(props) {
                                             <div>
                                                 <Form.Group controlId="typeFilter">
                                                     <Form.Label>Filter by type:</Form.Label>
-                                                    {types.map((type) => (
-                                                        <Form.Check
-                                                            key={type}
-                                                            type="checkbox"
-                                                            id={`checkbox-${type}`}
-                                                            label={type}
-                                                            checked={filters.type && filters.type.includes(type)}
-                                                            onChange={() => handleTypeCheckboxChange(type, "type")}
-                                                        />
-                                                    ))}
+                                                    <Form.Control
+                                                        as="select"
+                                                        name="type"
+                                                        value={filters.type || []}
+                                                        onChange={handleFilterChange}
+                                                        multiple={true}
+                                                    >
+                                                        {types.map((type) => (
+                                                            <option key={type} value={type}>
+                                                                {type}
+                                                            </option>
+                                                        ))}
+                                                    </Form.Control>
+
                                                 </Form.Group>
                                             </div>
                                         )}
@@ -293,16 +338,19 @@ function SearchForProposals(props) {
                                             <div>
                                                 <Form.Group controlId="keywordsFilter">
                                                     <Form.Label>Filter by keywords:</Form.Label>
-                                                    {keywords.map((keyword) => (
-                                                        <Form.Check
-                                                            key={keyword}
-                                                            type="checkbox"
-                                                            id={`checkbox-${keyword}`}
-                                                            label={keyword}
-                                                            checked={filters.keywords && filters.keywords.includes(keyword)}
-                                                            onChange={() => handleTypeCheckboxChange(keyword, "keywords")}
-                                                        />
-                                                    ))}
+                                                    <Form.Control
+                                                        as="select"
+                                                        name="keywords"
+                                                        value={filters.keywords || []}
+                                                        onChange={handleFilterChange}
+                                                        multiple={true}
+                                                    >
+                                                        {keywords.map((keyword) => (
+                                                            <option key={keyword} value={keyword}>
+                                                                {keyword}
+                                                            </option>
+                                                        ))}
+                                                    </Form.Control>
                                                 </Form.Group>
                                             </div>
                                         )}
@@ -310,16 +358,19 @@ function SearchForProposals(props) {
                                             <div>
                                                 <Form.Group controlId="groupsFilter">
                                                     <Form.Label>Filter by groups:</Form.Label>
-                                                    {groups.map((group) => (
-                                                        <Form.Check
-                                                            key={group}
-                                                            type="checkbox"
-                                                            id={`checkbox-${group}`}
-                                                            label={group}
-                                                            checked={filters.groups && filters.groups.includes(group)}
-                                                            onChange={() => handleTypeCheckboxChange(group, "groups")}
-                                                        />
-                                                    ))}
+                                                    <Form.Control
+                                                        as="select"
+                                                        name="groups"
+                                                        value={filters.groups || []}
+                                                        onChange={handleFilterChange}
+                                                        multiple={true}
+                                                    >
+                                                        {groups.map((group) => (
+                                                            <option key={group} value={group}>
+                                                                {group}
+                                                            </option>
+                                                        ))}
+                                                    </Form.Control>
                                                 </Form.Group>
                                             </div>
                                         )}
@@ -363,8 +414,7 @@ function SearchForProposals(props) {
                                             {proposal.title}
                                         </Link>
                                     </td>
-                                    <td>{professors.find((a) => a.id == proposal.teacher_id).surname + " " +
-                                        professors.find((a) => a.id == proposal.teacher_id).name}</td>
+                                    <td>{getProfessorsInformation(professors, proposal)}</td>
                                     <td>{proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}</td>
                                     <td>{proposal.type}</td>
                                     <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>

@@ -7,7 +7,7 @@ function Navigation(props) {
     return (
       <Navbar expand="lg" bg='primary' data-bs-theme="dark">
         <Container>
-          <Navbar.Brand href="#home">Thesis Managment</Navbar.Brand>
+          <Navbar.Brand href="/">Thesis Managment</Navbar.Brand>
           { props.loggedIn ? 
               <Nav className="justify-content-center">
                 <Nav.Item>

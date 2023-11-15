@@ -4,8 +4,8 @@ import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import API from "../API";
 function LoginPage(props){
-    const [email, setEmail] = useState('g.lettieri@polito.it');
-    const [password, setPassword] = useState('1');
+    const [email, setEmail] = useState('ferrero.renato@polito.it');
+    const [password, setPassword] = useState('2');
     const [errorMessage, setErrorMessage] = useState('') ;
     const navigate = useNavigate();
     

@@ -232,10 +232,11 @@ app.get('/api/teacher/ProposalsList',
             }
             */
             // AND COMMENT THIS OUT INSTEAD
-            const proposalList = await thesisProposalTable.getActiveProposals();
+            //const proposalList = await thesisProposalTable.getActiveProposals();
+            const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
             const proposalSummary = proposalList.map(
                 p => {
-                    return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
+                    return { id:p.id,thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
                 }
             );
             res.json(proposalSummary);

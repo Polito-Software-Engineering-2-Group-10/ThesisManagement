@@ -8,21 +8,18 @@ import dayjs from 'dayjs'
 
 function BrowseProposal (props){
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const fetchData = async () =>{
-    const result = await API.getProposals();
-    setData(result);
+  
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  
+  const handleProposalClick = (proposal) => {
+    setSelectedProposal(proposal);
   }
-  useEffect(() => {
-    fetchData();
-  }, []);
-    
   return (
     <>
     <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
     <Container>
-      <h3>Teacher ID: </h3>
-    <Table striped>
+      {/*<h3>Teacher ID: </h3>*/}
+    <Table hover>
     <thead>
       <tr>
         <th>Title</th>
@@ -32,8 +29,10 @@ function BrowseProposal (props){
       </tr>
     </thead>
     <tbody>
-    {data.map((result, index) => (
-        <tr>
+    {props.proposalList.map((result, index) => (
+        <tr key={result.id} onClick={() => handleProposalClick(result)}
+        className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
+        >
           <td>{result.thesis_title}</td>
           <td>{dayjs(result.thesis_expiration).format('DD/MM/YYYY')}</td>
           <td>{result.thesis_level}</td>
@@ -43,9 +42,9 @@ function BrowseProposal (props){
     </tbody>
   </Table>
   <div style={{marginRight: 1000+'em'}}>
-  <Button className='my-2'  variant='secondary' disabled>Modify</Button>
+  <Button className='my-2'  variant='success' disabled={!selectedProposal}>Modify</Button>
   </div>
-  <Button className='my-2'  variant='info' onClick={()=>navigate('/')}>Back</Button>
+  <Button className='my-2'  variant='warning' onClick={()=>navigate('/')}>Back</Button>
   </Container>
   </>
   )

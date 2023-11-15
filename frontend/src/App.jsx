@@ -13,6 +13,15 @@ function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(undefined);
+  const [proposalList, setProposalList] = useState([]);
+  const fetchData = async () =>{
+    const result = await API.getProposals();
+    setProposalList(result);
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -52,7 +61,7 @@ function App() {
         <Route path='/*' element={loggedIn ? <MainPage loggedIn={loggedIn} logout={doLogOut} user={user}/> : <Navigate replace to='/login' /> }></Route>
         <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
         <Route path='/apply' element={<ApplyToProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        <Route path='/proposal' element={<BrowseProposal loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+        <Route path='/proposal' element={<BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
       </Routes>
     </BrowserRouter>
     </>

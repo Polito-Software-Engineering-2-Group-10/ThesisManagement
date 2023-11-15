@@ -16,7 +16,7 @@ function BrowseProposal (props){
   }
   return (
     <>
-    <Navigation logout={props.logout} loggedIn={props.loggedIn}/>
+    <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
     <Container>
       {/*<h3>Teacher ID: </h3>*/}
     <Table hover>

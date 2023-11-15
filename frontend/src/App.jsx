@@ -20,9 +20,9 @@ function App() {
     const result = await API.getProposals();
     setProposalList(result);
   }
-  useEffect(() => {
+  /*useEffect(() => {
     fetchData();
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -46,6 +46,7 @@ function App() {
         API.getTeacherDetail()
             .then((teacher) => {
                 setUserDetail(teacher);
+                fetchData();
                 setDirty(false);
             })
             .catch((err) => console.log(err));

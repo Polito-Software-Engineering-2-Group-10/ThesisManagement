@@ -1,7 +1,9 @@
 import {Container, Button, Card, Col, Row} from "react-bootstrap"
 import dayjs from 'dayjs'
+import { useNavigate } from "react-router-dom";
 
 function InfoBox(props){
+    const navigate=useNavigate();
     return(
         <>
         { (props.loggedIn && props.userDetail) ? 
@@ -40,9 +42,9 @@ function InfoBox(props){
                             </Card>
                             </Col>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
+                                <Card onClick={() => navigate('/proposal')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
                                 <Card.Body>
-                                    <Card.Title>Browse proposals</Card.Title>
+                                    <Card.Title >Browse proposals</Card.Title>
                                     <Card.Text>
                                         and operate on them
                                     </Card.Text>

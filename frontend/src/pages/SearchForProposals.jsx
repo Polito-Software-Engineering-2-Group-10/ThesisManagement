@@ -81,9 +81,9 @@ function SearchForProposals(props) {
                 } else {
                     setFilters({...filters, [name]: [value]});
                 }
-            } else if (name == groups) {
+            } else if (name == 'groups') {
                 if (filters.groups && filters.groups.includes(value)) {
-                    setFilters({...filters, [name]: filters.groups.filter((groups) => groups !== value)});
+                    setFilters({...filters, [name]: filters.groups.filter((group) => group !== value)});
                 } else if (filters.groups) {
                     setFilters({...filters, [name]: [...filters.groups, value]});
                 } else {
@@ -123,25 +123,6 @@ function SearchForProposals(props) {
             })
             .catch((err) => console.log(err));
         setActiveFilter(null);
-    };
-
-    const handleTypeCheckboxChange = (selection, filter) => {
-        setFilters((prevFilters) => {
-            let updatedFilters;
-            if (prevFilters[filter] && prevFilters[filter].includes(selection)) {
-                updatedFilters = prevFilters[filter].filter((type) => type !== selection);
-            }
-            else if (prevFilters[filter]) {
-                updatedFilters = [...prevFilters[filter], selection];
-            }
-            else {
-                updatedFilters = [selection];
-            }
-            return {
-                ...prevFilters,
-                [filter]: updatedFilters,
-            };
-        });
     };
 
     return (

@@ -111,6 +111,7 @@ getUserInfo,
 getTeacherDetail,
 getStudentDetail,
 getAllProposals,
-addApplication
+addApplication,
+getApplicationsList
 };
 export default API;

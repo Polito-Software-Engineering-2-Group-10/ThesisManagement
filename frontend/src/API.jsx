@@ -76,6 +76,18 @@ async function logIn(credentials) {
     }
   }
 
+  async function getApplicationsList() {
+    const response = await fetch(URL+'/student/ApplicationsList', {
+      credentials: 'include'
+    });
+    const appList = await response.json();
+    if (response.ok) {
+      return appList;
+    } else {
+      throw appList;
+    }
+  }
+
   function addApplication(application) {
     return new Promise((resolve, reject) => {
       fetch(URL+`/student/applyProposal`, {
@@ -100,26 +112,11 @@ async function logIn(credentials) {
     });
 }
 
-
-
-
-
-const API = {
-logIn,
-logOut,
-getUserInfo,
-getTeacherDetail,
-getStudentDetail,
-getAllProposals,
-addApplication,
-getApplicationsList
-};
-
-async function getAllProposals() {
+/*async function getAllProposals() {
     const response = await fetch(`${URL}/ProposalsList`);
     const data = await response.json();
     return data;
-}
+}*/
 
 async function getAllTeachers() {
     const response = await fetch(`${URL}/teacher/list`);
@@ -167,11 +164,19 @@ async function getFilteredProposals(filters) {
 }
 
 const API = {
-    getAllProposals,
-    getAllTeachers,
-    getAllTypes,
-    getFilteredProposals,
-    getAllKeywords,
-    getAllGroups,
+  logIn,
+  logOut,
+  getUserInfo,
+  getTeacherDetail,
+  getStudentDetail,
+  getAllProposals,
+  addApplication,
+  getAllTeachers,
+  getAllTypes,
+  getFilteredProposals,
+  getAllKeywords,
+  getAllGroups,
+  getApplicationsList
 };
+
 export default API;

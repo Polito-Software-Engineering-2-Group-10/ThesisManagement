@@ -3,11 +3,12 @@ import API from '../API.jsx';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs'
 import { Button, Container, Row, Col } from 'react-bootstrap';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 function ApplyToProposal(props) {
 
     const navigate = useNavigate();
+    const {propId} = useParams();
 
     const [proposals, setProposals] = useState(null);
 
@@ -26,16 +27,15 @@ function ApplyToProposal(props) {
         }
 
         props.addApplication(application);
-        //navigate('/search')
+        navigate('/');
     }
 
     return (
         <>
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
         {
-            proposals ? (
-
-                proposals.filter((p) => p.id == 1).map((p)=> {
+            (proposals && propId) ? (
+                proposals.filter((p) => p.id == propId).map((p)=> {
                     return(
                         <Container key={p.id} style={{paddingTop: '30px', width: '70%', margin: '0 auto'}}>
                         <Row>
@@ -75,9 +75,9 @@ function ApplyToProposal(props) {
                             })}</p>
                             </Col>
                         </Row>
-                        <Row style={{marginTop: '15px'}}>
+                        <Row style={{marginTop: '15px', marginBottom: '30px'}}>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => addApplication(p.id)} variant='success'>Apply Now!</Button></Col>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant='danger'>Go Back</Button></Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => navigate('/search')} variant='danger'>Go Back</Button></Col>
                         </Row>
                         </Container>
                     )

@@ -10,7 +10,7 @@ Professors can view all or some thesis that they are interested in, create new t
 
 The frontend is implemented by 'HTML+CSS+JavaScript+React+Vite'
 
-## Fronted schema
+## Frontend schema
 ![Front_Schema](images/Front_Schema.png)
 
 ## Fronted architecture
@@ -35,17 +35,17 @@ ThesisManagement
         └── index.css
         └── main.jsx
 ```
-ApplyToProposal.jsx: page for applying a proposal.
-BrowseApplicaionDecision.jsx: page for browsing students' application decisions.
-BrowseProposal.jsx: page for browsing active proposals.
-InfoBox.jsx: page for displaying all kinds of service information.
-LoginPage.jsx: page for login function.
-MainPage.jsx: main page of the application.
-Navigation.jsx: page for identifying user's status.
-ProposalForm.jsx: page for format data of proposals.
-SearchForProposals.jsx: page for searching proposals with no/some filters.
-API.JSX: page for connecting to backend.
-APP.jsx: page for routing all pages.
+1. ApplyToProposal.jsx: page for applying a proposal.
+2. BrowseApplicaionDecision.jsx: page for browsing students' application decisions.
+3. BrowseProposal.jsx: page for browsing active proposals.
+4. InfoBox.jsx: page for displaying all kinds of service information.
+5. LoginPage.jsx: page for login function.
+6. MainPage.jsx: main page of the application.
+7. Navigation.jsx: page for identifying user's status.
+8. ProposalForm.jsx: page for format data of proposals.
+9. SearchForProposals.jsx: page for searching proposals with no/some filters.
+10. API.JSX: page for connecting to backend.
+11. APP.jsx: page for routing all pages.
 
 
 
@@ -74,7 +74,7 @@ When submit username and password, the system will identify students or teachers
 ![login](images/login.png)
 
 ### Student Side. 
-When user login as a student, he/she will enter in the Main Page for Student.
+When user login as a student, he/she will enter in the `Main Page` for Student.
 ![MainPage_Student](images/MainPage_Student.png)
 
 #### 1. Search Proposal page. 
@@ -82,10 +82,10 @@ Students can browse interested thesis by applying filter.
 ![Thesis_Search_Student](images/Thesis_Search_Student.png)
 
 #### 2. Thesis apply page. 
-Students can click on the thesis title directly to enter apply page when they find interested thesis.
+Students can click on the thesis title directly to enter `apply` page when they find interested thesis.
 ![Thesis_Apply_Student](images/Thesis_Apply_Student.png)
 
-When they click 'Apply now!' button, they can view the new application status in 'Browse Decision' page later.
+When they click 'Apply now!' button, they can view the new application status in `Browse Decision` page later.
 ![Thesis_afterApply_Student](images/Thesis_afterApply_Student.png)
 
 #### 3. Browse Decision page. 
@@ -94,7 +94,7 @@ Students can click on the right BIG button in the main page to view the descisio
 
 
 ### Teacher Side. 
-When user login as a professor, he/she will enter in the Main Page for Professor.
+When user login as a professor, he/she will enter in the `Main Page` for Professor.
 ![MainPage_Prof](images/MainPage_Prof.png)
 
 #### 1. Search Proposal page. 
@@ -106,18 +106,18 @@ Professors can browse interested thesis details by clicking on the thesis title 
 ![Thesis_detail_Prof](images/Thesis_detail_Prof.png)
 
 #### 3. Insert thesis page. 
-Professors can click on button 'Insert a new thesis proposal' in the main page to create a new proposal.
+Professors can click on button `Insert a new thesis proposal` in the main page to create a new proposal.
 When enter in the page, they can input data and insert.
 ![insertThesis_Prof](images/insertThesis_Prof.png)
 
-When they finish inerting, they can view the new proposal summary in 'Browse your Proposals' page.
+When they finish inerting, they can view the new proposal summary in `Browse your Proposals` page.
 ![insertThesis_Prof_Result](images/insertThesis_Prof_Result.png)
 
 #### 4. Browse thesis page. 
-Professors can click on button 'Browse your Proposals' in the main page to browse their own proposals.
+Professors can click on button `Browse your Proposals` in the main page to browse their own proposals.
 ![Browse_app_Prof_noclick](images/Browse_app_Prof_noclick.png)
 
-When they click on a proposal, they can active the 'Modify' button and enter a page to modify the proposal information.
+When they click on a proposal, they can active the `Modify` button and enter a page to modify the proposal information.
 ![Browse_app_Prof_withclick](images/Browse_app_Prof_withclick.png)
 
 

@@ -10,6 +10,9 @@ Professors can view all or some thesis that they are interested in, create new t
 
 The frontend is implemented by 'HTML+CSS+JavaScript+React+Vite'
 
+## Fronted schema
+![Front_Schema](images/Front_Schema.png)
+
 ## Fronted architecture
 
 ```
@@ -26,12 +29,26 @@ ThesisManagement
            └── Navigation.jsx
            └── ProposalForm.jsx 
            └── SearchForProposals.jsx    
-        ├── API.JSX  --To connect to backend
+        ├── API.JSX  
         └── APP.css
-        └── APP.jsx  --Containing all pages routing
+        └── APP.jsx 
         └── index.css
         └── main.jsx
 ```
+ApplyToProposal.jsx: page for applying a proposal.
+BrowseApplicaionDecision.jsx: page for browsing students' application decisions.
+BrowseProposal.jsx: page for browsing active proposals.
+InfoBox.jsx: page for displaying all kinds of service information.
+LoginPage.jsx: page for login function.
+MainPage.jsx: main page of the application.
+Navigation.jsx: page for identifying user's status.
+ProposalForm.jsx: page for format data of proposals.
+SearchForProposals.jsx: page for searching proposals with no/some filters.
+API.JSX: page for connecting to backend.
+APP.jsx: page for routing all pages.
+
+
+
 ## How to start using
 1. Open a terminal in `frontend` folder.
 2. Run `npm install` to install all the dependencies

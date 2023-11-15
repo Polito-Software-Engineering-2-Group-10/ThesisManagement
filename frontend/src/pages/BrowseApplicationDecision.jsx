@@ -15,7 +15,7 @@ function BrowseAppDecision(props){
             
             { props.appList ? 
                 <>
-                    <Table style={{width: '70%', margin: '0 auto'}}>
+                    <Table style={{width: '70%', margin: '0 auto', marginTop: "40px"}}>
                         <thead>
                             <tr>
                                 <th>Thesis Title</th>
@@ -26,7 +26,6 @@ function BrowseAppDecision(props){
                         <tbody>
                             {
                                 props.appList.map((a) => {
-                                    console.log(a);
                                     return(
                                         <tr key={a.id}>
                                             <td>{a.thesis_title}</td>
@@ -40,8 +39,12 @@ function BrowseAppDecision(props){
                             }
                         </tbody>
                     </Table>
-                    <Button>New Apply</Button>
-                    <Button onClick={() => navigate('/')}>Back</Button>
+                    <Container style={{marginTop: "30px"}}>
+                        <Row>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="success">New Apply</Button></Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="danger" onClick={() => navigate('/')}>Back</Button></Col>
+                        </Row>
+                    </Container>                    
                 </>
             : ''}
         </>

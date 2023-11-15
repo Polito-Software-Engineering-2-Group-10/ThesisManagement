@@ -109,7 +109,7 @@ const ProposalForm = (props) => {
                           <Form.Label>Expiration Date</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="date" value={expiration} onChange={event => setExpirationDate(event.target.value) } />
+                          <Form.Control type="date" required={true} value={expiration} onChange={event => setExpirationDate(event.target.value) } />
                         </Col>
                       </Row>
                     </Form.Group>

@@ -44,7 +44,7 @@ ThesisManagement
 7. Navigation.jsx: page for identifying user's status.
 8. ProposalForm.jsx: page for format data of proposals.
 9. SearchForProposals.jsx: page for searching proposals with no/some filters.
-10. API.JSX: page for connecting to backend.
+10. API.jsx: page for connecting to backend.
 11. APP.jsx: page for routing all pages.
 
 
@@ -69,7 +69,7 @@ Everyone can browse interested thesis by applying filter .
 
 #### 3. login page. 
 User can click top-right button to enter `login` page.
-When submit username and password, the system will identify students or teachers automatically.
+When submit username and password, the system will identify student or teacher automatically.
 ![normal_MainPage_withfilter-Redarrow](images/normal_MainPage_withfilter-Redarrow.png)
 ![login](images/login.png)
 

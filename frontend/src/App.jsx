@@ -20,6 +20,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
   const [dirty, setDirty] = useState(false);
+  const [proposalsDirty, setProposalsDirty] = useState(true);
   const [appList, setAppList] = useState(undefined);
 
   const [proposalList, setProposalList] = useState([]);
@@ -28,8 +29,11 @@ function App() {
     setProposalList(result);
   }
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (proposalsDirty) {
+        fetchData();
+        setProposalsDirty(false);
+    }
+  }, [proposalsDirty]);
 
   const fetchData2 = async () =>{
     const result = await API.getApplicationsListTeacher();
@@ -118,7 +122,7 @@ function App() {
         <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
+        <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
         <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchData2}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>

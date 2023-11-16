@@ -8,7 +8,7 @@ import API from '../API';
 
 
 const ProposalForm = (props) => {
-  const { loggedIn, user } = props;
+  const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
   const [title, setTitle] = useState(props.page ? props.page.title : '');
   const [supervisor, setSupervisor] = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
   const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
@@ -33,6 +33,7 @@ const ProposalForm = (props) => {
     const addProposal = (proposal) => {
       API.addProposal(proposal)
       .then(response => {
+        setProposalsDirty(true);
       })
         .catch(e => {
           console.log(e);

@@ -240,7 +240,8 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
             student_carrer: 'career1',
             student_ey: '01/01/2022',
         }
-        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockResolvedValue(applicationDetailed);
+        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockResolvedValueOnce(applicationDetailed);
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockResolvedValueOnce({status: true});
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -248,7 +249,7 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
         });
         const response = await request(app).get('/api/teacher/applicationDetail/1');
         expect(response.status).toBe(200);
-        expect(response.body).toEqual(application);
+        expect(response.body).toEqual({detail:application, status: {status: true}});
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
@@ -278,7 +279,7 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             next();
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
-        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockResolvedValue(true);
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockResolvedValueOnce(true);
         const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
@@ -404,7 +405,7 @@ describe('GET /api/teacher/ProposalsList', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'getActiveProposals').mockImplementationOnce(() => proposals);
+        jest.spyOn(thesisProposalTable, 'getByTeacherId').mockImplementationOnce(() => proposals);
         const response = await request(app).get('/api/teacher/ProposalsList');
         expect(response.status).toBe(200);
         expect(response.body).toEqual(proposalsSummary);
@@ -416,7 +417,7 @@ describe('GET /api/teacher/ProposalsList', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'getActiveProposals').mockImplementationOnce(() => {
+        jest.spyOn(thesisProposalTable, 'getByTeacherId').mockImplementationOnce(() => {
             throw new Error('Database error')
         });
         const response = await request(app).get('/api/teacher/ProposalsList');
@@ -499,7 +500,7 @@ describe('POST /api/teacher/insertProposal', () => {
         });
         const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({error: 'Database error during the insert of proposal: Error: Database errpr'});
+        expect(response.body).toEqual({error: 'Database error during the insert of proposal: Error: Database error'});
     });
 });
 
@@ -556,7 +557,7 @@ describe('GET /api/ProposalsList', () => {
     });
 });
 
-describe('GET /api/ProposalsList/filter', () => {
+describe('POST /api/ProposalsList/filter', () => {
     test('Should successfully retrieve the list of filtered thesis proposals', async () => {
         const proposalList = [
             {
@@ -579,7 +580,7 @@ describe('GET /api/ProposalsList/filter', () => {
         ]
         jest.spyOn(thesisProposalTable, 'getFilteredProposals').mockImplementationOnce(() => proposalList)
         const response = await request(app)
-            .get('/api/ProposalsList/filter')
+            .post('/api/ProposalsList/filter')
             .send({
                 title: 'Proposal1',
                 professor: 1,
@@ -595,7 +596,7 @@ describe('GET /api/ProposalsList/filter', () => {
 
     test('Should throw an error with 422 status code when a validation error occurs', async () => {
         const response = await request(app)
-            .get('/api/ProposalsList/filter')
+            .post('/api/ProposalsList/filter')
             .send({ date: 'invalid_date' });
         expect(response.status).toBe(422);
         expect(response.body).toBeTruthy();
@@ -606,7 +607,7 @@ describe('GET /api/ProposalsList/filter', () => {
             throw new Error('Database error');
         })
         const response = await request(app)
-            .get('/api/ProposalsList/filter')
+            .post('/api/ProposalsList/filter')
             .send({});
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during the getting proposals: Error: Database error' });

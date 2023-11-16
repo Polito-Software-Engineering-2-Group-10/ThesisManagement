@@ -12,6 +12,7 @@ import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
 
 import BrowseProposal from './pages/BrowseProposal';
+import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 
 function App() {
 
@@ -30,6 +31,11 @@ function App() {
     fetchData();
   }, []);
 
+  const fetchData2 = async () =>{
+    const result = await API.getApplicationsListTeacher();
+    setAppList(result);
+  }
+  
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -53,8 +59,19 @@ function App() {
             .then((teacher) => {
                 setUserDetail(teacher);
                 fetchData();
+                fetchData2();
+                // fetching information about the applications
+                /*API.getApplicationsList()
+                    .then((list) => {
+                        console.log(list);
+                        setAppList(list);
+                        setDirty(false);
+                    })
+
+                .catch((err) => console.log(err));*/
+
                 setDirty(false);
-            })
+               })
             .catch((err) => console.log(err));
       } else {
           API.getStudentDetail()
@@ -65,7 +82,7 @@ function App() {
                         setAppList(list);
                         setDirty(false);
                     })
-                    .catch((err) => console.log(err));
+                .catch((err) => console.log(err));
               })
               .catch((err) => console.log(err));
       }
@@ -103,6 +120,7 @@ function App() {
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
         <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchData2}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>
     </BrowserRouter>
     </>

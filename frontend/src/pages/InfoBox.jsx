@@ -44,7 +44,8 @@ function InfoBox(props){
                         </Row>
                         <Row style={{paddingTop: "30px"}}>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
+                                {/* <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2"> */}
+                                <Card  onClick={() => navigate('/browseApp')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
                                 <Card.Body>
                                     <Card.Title>Browse all Applications</Card.Title>
                                     <Card.Text>

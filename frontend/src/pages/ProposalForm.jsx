@@ -33,11 +33,8 @@ const ProposalForm = (props) => {
     const addProposal = (proposal) => {
       API.addProposal(proposal)
       .then(response => {
-        console.log('proposal added')
-        console.log(response);
       })
         .catch(e => {
-          console.log("error!!!");
           console.log(e);
         })
     }

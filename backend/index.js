@@ -97,7 +97,7 @@ app.get('/api/teacher/ApplicationsList',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            const applicationList = await applicationTable.getByTeacherId(req.user.id);
+            const applicationList = await applicationTable.getByTeacherId2(req.user.id);
             res.json(applicationList);
         }
         catch (err) {
@@ -126,7 +126,7 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_nationality: applicationDetail.nationality,
                 student_email: applicationDetail.email,
                 student_carrer: applicationDetail.title_degree,
-                student_ey: applicationDetail.enrollment_year
+                student_ey: applicationDetail.enrollment_year,
             };
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
            // console.log(applicationStatus);
@@ -163,6 +163,8 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
                 return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
             }
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
+            
+            console.log(applicationStatus);
             if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }
@@ -170,7 +172,8 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
                 return res.status(400).json({ error: `This application has already been ${ applicationStatus.status ? 'accepted' : 'rejected'}` });
             }
 
-            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, Boolean(req.body.status));
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid,Boolean(req.body.status));
+            console.log(applicationResult)
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });

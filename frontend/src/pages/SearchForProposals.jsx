@@ -100,7 +100,6 @@ function SearchForProposals(props) {
     };
 
     const handleApplyFilter = () => {
-        console.log(filters)
         API.getFilteredProposals(filters)
             .then((data) => {
                 setProposals(data);
@@ -116,7 +115,6 @@ function SearchForProposals(props) {
     const handleRemoveFilter = (filter) => {
         const { [filter]: removedFilter, ...restFilters } = filters;
         setFilters(restFilters);
-        console.log(restFilters)
         API.getFilteredProposals(restFilters)
             .then((data) => {
                 setProposals(data);

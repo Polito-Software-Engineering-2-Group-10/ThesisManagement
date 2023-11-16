@@ -71,6 +71,27 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectAny(query, id);
         return result.map((r) => { return { ...Application.fromRow(r), proposal_id: r.proposal_id, thesis_title: r.thesis_title } });
     }
+    async getByTeacherId2(teacher_id) {
+        const query = `SELECT application.*, 
+        thesis_proposal.id AS proposal_id, 
+        thesis_proposal.title AS thesis_title, 
+        student.id as student_id,
+        student.name as student_name, 
+        student.surname as student_surname, 
+        student.gender as student_gender, 
+        student.nationality as student_nationality,
+        student.email as student_email,
+        student.cod_degree as student_degree,
+        student.enrollment_year as student_ey
+        FROM application, thesis_proposal, student WHERE 
+                                proposal_id IN (select id FROM thesis_proposal WHERE teacher_id = $1)
+                                AND thesis_proposal.id = application.proposal_id AND application.student_id=student.id 
+                                ORDER BY application.apply_date, status DESC, application.id;`;
+        const id = getNum(teacher_id);
+        const result = await this.db.executeQueryExpectAny(query, id);
+        //return result.map((r) => { return { ...Application.fromRow(r), proposal_id: r.proposal_id, thesis_title: r.thesis_title } });
+        return result;
+    }
     async addApplication(student_id, proposal_id) {
         const query = `INSERT INTO application (student_id, proposal_id, apply_date) VALUES ($1, $2, NOW()) RETURNING *`;
         const sid = getNum(student_id);

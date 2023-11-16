@@ -33,14 +33,9 @@ function App() {
 
   const fetchData2 = async () =>{
     const result = await API.getApplicationsListTeacher();
-    console.log(result);
     setAppList(result);
   }
-  /*useEffect(() => {
-    fetchData2();
-  }, []);*/
-
-
+  
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -65,7 +60,6 @@ function App() {
                 setUserDetail(teacher);
                 fetchData();
                 fetchData2();
-                console.log(appList);
                 // fetching information about the applications
                 /*API.getApplicationsList()
                     .then((list) => {
@@ -126,7 +120,7 @@ function App() {
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>   
         <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
-        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchData2}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>
     </BrowserRouter>
     </>

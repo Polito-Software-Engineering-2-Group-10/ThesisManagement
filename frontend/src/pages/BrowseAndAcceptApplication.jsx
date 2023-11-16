@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
 import dayjs from 'dayjs'
 import API from '../API';
@@ -8,11 +8,24 @@ function BrowseAndAcceptApplication(props) {
 
     // to select a row in the table
     const [selectedApplication, setSelectedApplication] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleApplicationClick = (application) => {
+        setErrorMessage('');
         setSelectedApplication(application);
     }
     
+    const handleAcceptRejectButtonClick = (id, status) => {
+        API.acceptDeclineApplication(id, status).then((res) => {
+            props.updateAppList().then(() => {
+                setSelectedApplication(null);
+            }).catch((err) => {
+                setErrorMessage(`${JSON.stringify(err)}`); 
+            })
+        }).catch((err) => {
+            setErrorMessage(`${JSON.stringify(err)}`); 
+        });
+    }
     
     return (
         <>
@@ -22,9 +35,10 @@ function BrowseAndAcceptApplication(props) {
                 <Table>
                     <thead>
                         <tr>
-                            <th>Student Number</th>
+                            <th>Student</th>
                             <th>Thesis title</th>
                             <th>Application Date</th>
+                            <th>Application Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,9 +46,10 @@ function BrowseAndAcceptApplication(props) {
                             <tr key={result.id} onClick={() => handleApplicationClick(result)}
                                 className={selectedApplication && selectedApplication.id === result.id ? 'table-primary' : ''}
                             >
-                                <td>{result.student_id}</td>
+                                <td>{`${result.student_surname} ${result.student_name}`}</td>
                                 <td>{result.thesis_title}</td>
                                 <td>{dayjs(result.apply_date).format('DD/MM/YYYY')}</td>
+                                <td>{result.status !== null ? (result.status ? "Accepted" : "Rejected") : "Waiting"}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -45,27 +60,34 @@ function BrowseAndAcceptApplication(props) {
             </div>
             {
                 selectedApplication ? 
-            <div id="right-box">
-                <h1>{selectedApplication.thesis_title}</h1>
-                <p>Student Number: {selectedApplication.student_id}</p>
-                <p>Name: {selectedApplication.name}</p>
-                <p>Surname: {selectedApplication.surname}</p>
-                <p>Application Date: {dayjs(selectedApplication.apply_date).format('DD/MM/YYYY')}</p>
-                <p>Gender: {selectedApplication.gender}</p>
-                <p>Nationality: {selectedApplication.nationality}</p>
-                <p>Career: {selectedApplication.cod_degree}</p>
-                <p>Enrollment Year: {dayjs(selectedApplication.apply_date).format('DD/MM/YYYY')}</p>
-                <a href="#">Download CV</a>
-                
+            <Container>
+                <Row><h3>{selectedApplication.thesis_title}</h3></Row>
+                <Row><Col>Name: </Col><Col>{selectedApplication.student_name}</Col></Row>
+                <Row><Col>Surname: </Col><Col>{selectedApplication.student_surname}</Col></Row>
+                <Row><Col>Application Date: </Col><Col>{dayjs(selectedApplication.apply_date).format('DD/MM/YYYY')}</Col></Row>
+                <Row><Col>Gender: </Col><Col>{selectedApplication.student_gender}</Col></Row>
+                <Row><Col>Nationality: </Col><Col>{selectedApplication.student_nationality}</Col></Row>
+                <Row><Col>Career: </Col><Col>{selectedApplication.student_degree}</Col></Row>
+                <Row><Col>Enrollment Year: </Col><Col>{dayjs(selectedApplication.student_ey).format('DD/MM/YYYY')}</Col></Row>   
                 {
-                    selectedApplication.status == null ?
-                <div>
-                    <Button variant="success" onClick={() => API.acceptDeclineApplication(selectedApplication.id, true).then(()=>{setSelectedApplication(null)}).catch((err)=>console.log(err))} >Accept</Button>
-                    <Button variant="danger"  onClick={() => API.acceptDeclineApplication(selectedApplication.id, false).then(()=>{setSelectedApplication(null)}).catch((err)=>console.log(err))}>Decline</Button>
-                </div>
+                    errorMessage !== '' ? <Alert variant='danger' dismissible onClick={()=>setErrorMessage('')}>{errorMessage}</Alert> : null
+                }             
+                {
+                    selectedApplication.status === null ?
+                    
+                <Row style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: '20px',
+                    marginBottom: '50px'
+                }} md={'auto'}>
+                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true)} >Accept</Button>
+                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false)}>Decline</Button>
+                </Row>
                     : ""
                 }
-            </div>
+            </Container>
             : ""}
         </>
     );

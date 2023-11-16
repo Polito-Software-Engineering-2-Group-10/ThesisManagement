@@ -94,7 +94,7 @@ app.get('/api/student/details', isLoggedInAsStudent, async (req, res) => {
 //GET /api/teacher/ApplicationsList
 //get the list of applications by teacher id
 app.get('/api/teacher/ApplicationsList',
-   // isLoggedInAsTeacher,
+    isLoggedInAsTeacher,
     async (req, res) => {
         try {
             const applicationList = await applicationTable.getByTeacherId2(req.user.id);
@@ -126,7 +126,7 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_nationality: applicationDetail.nationality,
                 student_email: applicationDetail.email,
                 student_carrer: applicationDetail.title_degree,
-                student_ey: applicationDetail.enrollment_year
+                student_ey: applicationDetail.enrollment_year,
             };
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
            // console.log(applicationStatus);
@@ -151,14 +151,11 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
     ],
     async (req, res) => {
         try {
-            console.log(req.body);
             const errors = validationResult(req);
-            console.log("asudhasdhahdu");
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
             }
             const applicationDetail = await applicationTable.getTeacherAppDetailById(req.params.applicationid);
-            console.log(applicationDetail);
             if (!applicationDetail) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }

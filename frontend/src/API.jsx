@@ -107,6 +107,19 @@ async function logIn(credentials) {
     }
   }
 
+  async function getApplicationsListTeacher() {
+    const response = await fetch(URL+'/teacher/ApplicationsList', {
+      credentials: 'include'
+    });
+    const appList = await response.json();
+    if (response.ok) {
+      return appList;
+    } else {
+      throw appList;
+    }
+  }
+
+
   function addApplication(application) {
     return new Promise((resolve, reject) => {
       fetch(URL+`/student/applyProposal`, {
@@ -188,7 +201,20 @@ async function getFilteredProposals(filters) {
   });
     const data = await response.json();
     return data;
-    
+}
+
+async function acceptDeclineApplication(applicationId, status) {
+  
+  const response = await fetch(`${URL}/teacher/applicationDetail/${applicationId}`,{
+    method: 'PATCH',  
+    credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({status:status}),
+  });
+  const data = await response.json();
+  return data;   
 }
 
 const API = {
@@ -206,7 +232,9 @@ getProposals,
   getAllKeywords,
   getAllGroups,
   getApplicationsList,
-  addProposal
+  addProposal,
+  getApplicationsListTeacher,
+  acceptDeclineApplication,
 };
 
 export default API;

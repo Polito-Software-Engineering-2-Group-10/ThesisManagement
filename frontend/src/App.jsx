@@ -31,6 +31,16 @@ function App() {
     fetchData();
   }, []);
 
+  const fetchData2 = async () =>{
+    const result = await API.getApplicationsListTeacher();
+    console.log(result);
+    setAppList(result);
+  }
+  /*useEffect(() => {
+    fetchData2();
+  }, []);*/
+
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -54,8 +64,20 @@ function App() {
             .then((teacher) => {
                 setUserDetail(teacher);
                 fetchData();
+                fetchData2();
+                console.log(appList);
+                // fetching information about the applications
+                /*API.getApplicationsList()
+                    .then((list) => {
+                        console.log(list);
+                        setAppList(list);
+                        setDirty(false);
+                    })
+
+                .catch((err) => console.log(err));*/
+
                 setDirty(false);
-            })
+               })
             .catch((err) => console.log(err));
       } else {
           API.getStudentDetail()
@@ -66,7 +88,7 @@ function App() {
                         setAppList(list);
                         setDirty(false);
                     })
-                    .catch((err) => console.log(err));
+                .catch((err) => console.log(err));
               })
               .catch((err) => console.log(err));
       }

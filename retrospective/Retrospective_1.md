@@ -14,7 +14,7 @@ sections:
 
 - Number of stories committed vs. done: 7 vs 7
 - Total points committed vs. done: 18 vs 18
-- Nr of hours planned vs. spent (as a team): 109.5 vs 112
+- Nr of hours planned vs. spent (as a team): 116h vs 110h30m
 
 ### Additional Notes
 The stories we have done are:
@@ -39,9 +39,9 @@ The stories we have done are:
 
 | Story                               | # Tasks       | Points     | Hours est. | Hours actual |
 |-------------------------------------|---------------|------------|------------|--------------|
-| _#0_                                |       20      |            |    60h     |     70h40m   |
+| _#0_                                |       20      |            |    76h     |     70h40m   |
 |  #1                                 |       4       |     3      |    12h     |     12h20m   |
-|  #2                                 |       2       |     5      |    8h      |     8h50h    |
+|  #2                                 |       2       |     5      |    8h      |     8h50m    |
 |  #3                                 |       2       |     2      |    6h      |     5h       |   
 |  #4                                 |       2       |     2      |    3h      |     3h       |     
 |  #5                                 |       1       |     2      |    1h      |     1h       |

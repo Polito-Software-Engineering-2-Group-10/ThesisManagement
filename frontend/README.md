@@ -21,7 +21,8 @@ ThesisManagement
     └── src
         ├── pages
            └── ApplyToProposal.jsx  
-           └── BrowseApplicaionDecision.jsx  
+           └── BrowseAndAcceptApplication.jsx
+           └── BrowseApplicationDecision.jsx    
            └── BrowseProposal.jsx
            └── InfoBox.jsx 
            └── LoginPage.jsx 
@@ -36,7 +37,8 @@ ThesisManagement
         └── main.jsx
 ```
 1. _ApplyToProposal.jsx_: page for applying to a proposal.
-2. _BrowseApplicationDecision.jsx_: page for browsing students' applications decisions.
+2. _BrowseAndAcceptApplication.jsx_: page for professor accepting or rejecting students' applications.
+3. _BrowseApplicationDecision.jsx_: page for browsing students' applications decisions.
 3. _BrowseProposal.jsx_: page for browsing active proposals.
 4. _InfoBox.jsx_: page for displaying all kinds of service information.
 5. _LoginPage.jsx_: page for login function.
@@ -116,3 +118,16 @@ _Professors_ can click on the button `Browse your Proposals` in the main page to
 
 When they click on a proposal, they can click on the `Modify` button and access a page to modify the proposal information.
 ![Browse_app_Prof_withclick](images/Browse_app_Prof_withclick.png)
+
+#### 5. Process Application page.
+When _Students_ send a new aaplication to a _Professor_.
+![New_Apply_Prof](images/New_Apply_Student.png)
+
+_Professors_ can process the applications from students by clicking on the button `Accept` or `Reject` in the page.
+![New_Apply_Prof](images/New_Apply_Prof.png)
+
+After processing, _Professors_ can see the application's status in the same page.
+![New_ApplyResult_Prof](images/New_ApplyResult_Prof.png)
+
+_Students_ can view the newest result in the `Browse Decision` page.
+![New_ApplyResult_Student](images/New_ApplyResult_Student.png)

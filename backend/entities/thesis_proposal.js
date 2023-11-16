@@ -43,11 +43,13 @@ class ThesisProposalTable {
             include_expired = true;
         }
         if (include_expired) {
-            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
             const result = await this.db.executeQueryExpectAny(query);
             return result;
         } else {
-            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id and expiration > NOW()`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id and expiration > NOW()
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
             const result = await this.db.executeQueryExpectAny(query);
             return result;
         }
@@ -205,7 +207,6 @@ class ThesisProposalTable {
         return result.map(row => row.group);
     }
     async getFilteredProposals(filterObject) {
-        console.log(filterObject)
         let query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname FROM thesis_proposal, teacher WHERE thesis_proposal.teacher_id = teacher.id`;
         let params = [];
         let i = 1;
@@ -258,7 +259,7 @@ WHERE NOT EXISTS (
             params.push(groups);
             i++;
         }
-        console.log(query);
+        query += ' ORDER BY thesis_proposal.level, thesis_proposal.expiration ASC, thesis_proposal.type ASC'
         const result = await this.db.executeQueryExpectAny(query, ...params);
         return result;
     }

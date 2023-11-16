@@ -47,7 +47,7 @@ ThesisManagement
 10. _API.jsx_: page for connecting to backend.
 11. _APP.jsx_: page for routing all pages.
 
-## How to start using
+## How to use
 1. Open a terminal in `frontend` folder.
 2. Run `npm install` to install all the dependencies
 3. Run `npm run dev` to start loading pages.

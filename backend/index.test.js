@@ -193,7 +193,7 @@ describe('GET /api/teacher/ApplicationsList', () => {
                 req.user = { id: 1, role: 'teacher' };
                 next();
             });
-            jest.spyOn(applicationTable, 'getByTeacherId').mockImplementationOnce(() => applications);
+            jest.spyOn(applicationTable, 'getByTeacherId2').mockImplementationOnce(() => applications);
             const response = await request(app).get('/api/teacher/applicationsList');
             expect(response.status).toBe(200);
             expect(response.body).toEqual(applications);
@@ -205,7 +205,7 @@ describe('GET /api/teacher/ApplicationsList', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(applicationTable, 'getByTeacherId').mockImplementationOnce(() => {
+        jest.spyOn(applicationTable, 'getByTeacherId2').mockImplementationOnce(() => {
             throw new Error('Database error')
         });
         const response = await request(app).get('/api/teacher/applicationsList');
@@ -273,12 +273,17 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             id: 1,
             status: undefined,
         }
+        const application2 = {
+            id: 1,
+            status: null,
+        }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
         jest.spyOn(applicationTable, 'updateApplicationStatusById').mockResolvedValueOnce(true);
         const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(200);
@@ -345,12 +350,17 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             id: 1,
             status: undefined,
         }
+        const application2 = {
+            id: 1,
+            status: null,
+        }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
         jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => {
             throw new Error('Database error');
         })
@@ -438,7 +448,7 @@ describe('POST /api/teacher/insertProposal', () => {
             description: 'Description1',
             required_knowledge: ['knowledge1', 'knowledge2'],
             notes: 'Notes1',
-            expiration: new Date('2023/01/01'),
+            expiration: '2023-12-31',
             level: 1,
             programmes: ['program1', 'program2'],
         }
@@ -461,7 +471,7 @@ describe('POST /api/teacher/insertProposal', () => {
             type: 'Type1',
             groups: ['group1', 'group2'],
             description: 'Description1',
-            expiration: new Date("2023/01/01"),
+            expiration: '2023-12-31',
             level: 'INVALID LEVEL!!!!!!!!!!!!',
             programmes: ['program1', 'program2'],
         }
@@ -486,7 +496,7 @@ describe('POST /api/teacher/insertProposal', () => {
             description: 'Description1',
             required_knowledge: ['knowledge1', 'knowledge2'],
             notes: 'Notes1',
-            expiration: new Date('2023/01/01'),
+            expiration: '2023-12-31',
             level: 1,
             programmes: ['program1', 'program2'],
         }

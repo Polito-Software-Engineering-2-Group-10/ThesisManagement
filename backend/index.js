@@ -129,7 +129,6 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_ey: applicationDetail.enrollment_year,
             };
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
-           // console.log(applicationStatus);
             const applicationResult = {status: applicationStatus.status}
             res.json({detail:cleanApplication, status:applicationResult});
         } catch (err) {
@@ -164,7 +163,6 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             }
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
             
-            console.log(applicationStatus);
             if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }
@@ -173,7 +171,6 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             }
 
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid,Boolean(req.body.status));
-            console.log(applicationResult)
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });

@@ -82,6 +82,7 @@ The stories we have done are:
 
 
 - What lessons did you learn (both positive and negative) in this sprint?
+
   We learnt that communication between peers can make a significant difference in the success or the failure of accomplishing a goal.
   We learnt how to help each other when someone gets trouble in coding or can not finish their tasks on time due to personal issues.
   

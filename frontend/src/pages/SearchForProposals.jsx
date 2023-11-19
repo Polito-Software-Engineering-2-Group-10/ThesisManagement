@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {Link, useNavigate}   from 'react-router-dom';
 import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col} from 'react-bootstrap';
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
 
 function SearchForProposals(props) {
-
     const navigate = useNavigate();
 
     const [proposals, setProposals] = useState([]);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Table, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
 import dayjs from 'dayjs'
@@ -62,13 +62,13 @@ function BrowseAndAcceptApplication(props) {
                 selectedApplication ? 
             <Container>
                 <Row><h3>{selectedApplication.thesis_title}</h3></Row>
-                <Row><Col>Name: </Col><Col>{selectedApplication.student_name}</Col></Row>
-                <Row><Col>Surname: </Col><Col>{selectedApplication.student_surname}</Col></Row>
-                <Row><Col>Application Date: </Col><Col>{dayjs(selectedApplication.apply_date).format('DD/MM/YYYY')}</Col></Row>
-                <Row><Col>Gender: </Col><Col>{selectedApplication.student_gender}</Col></Row>
-                <Row><Col>Nationality: </Col><Col>{selectedApplication.student_nationality}</Col></Row>
-                <Row><Col>Career: </Col><Col>{selectedApplication.student_degree}</Col></Row>
-                <Row><Col>Enrollment Year: </Col><Col>{dayjs(selectedApplication.student_ey).format('DD/MM/YYYY')}</Col></Row>   
+                <Row><Col><b>Name:</b> </Col><Col>{selectedApplication.student_name}</Col></Row>
+                <Row><Col><b>Surname:</b> </Col><Col>{selectedApplication.student_surname}</Col></Row>
+                <Row><Col><b>Application Date:</b> </Col><Col>{dayjs(selectedApplication.apply_date).format('DD/MM/YYYY')}</Col></Row>
+                <Row><Col><b>Gender:</b> </Col><Col>{selectedApplication.student_gender}</Col></Row>
+                <Row><Col><b>Nationality:</b> </Col><Col>{selectedApplication.student_nationality}</Col></Row>
+                <Row><Col><b>Career:</b> </Col><Col>{selectedApplication.student_degree}</Col></Row>
+                <Row><Col><b>Enrollment Year:</b> </Col><Col>{dayjs(selectedApplication.student_ey).format('DD/MM/YYYY')}</Col></Row>   
                 {
                     errorMessage !== '' ? <Alert variant='danger' dismissible onClick={()=>setErrorMessage('')}>{errorMessage}</Alert> : null
                 }             

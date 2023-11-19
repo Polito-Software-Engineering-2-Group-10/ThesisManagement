@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from "react";
-import API from "../API";
-import { Button,Container, Col, Row,Table } from "react-bootstrap";
+import { useState } from "react";
+import { Button,Container, Table } from "react-bootstrap";
 import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
@@ -35,7 +34,7 @@ function BrowseProposal (props){
         >
           <td>{result.thesis_title}</td>
           <td>{dayjs(result.thesis_expiration).format('DD/MM/YYYY')}</td>
-          <td>{result.thesis_level==1? "Bachelor":"Master"}</td>
+          <td>{result.thesis_level==1 ? "Bachelor" : "Master"}</td>
           <td>{result.thesis_type}</td>
         </tr>
       ))}

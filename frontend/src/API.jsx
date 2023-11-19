@@ -144,12 +144,6 @@ async function logIn(credentials) {
     });
 }
 
-/*async function getAllProposals() {
-    const response = await fetch(`${URL}/ProposalsList`);
-    const data = await response.json();
-    return data;
-}*/
-
 async function getAllTeachers() {
     const response = await fetch(`${URL}/teacher/list`);
     const data = await response.json();

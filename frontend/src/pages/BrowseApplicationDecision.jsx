@@ -1,4 +1,4 @@
-import {Container, Button, Card, Col, Row, Table} from "react-bootstrap"
+import {Container, Button, Col, Row, Table} from "react-bootstrap"
 import dayjs from 'dayjs'
 import { Navigation } from "./Navigation";
 import { useNavigate } from "react-router-dom";
@@ -42,7 +42,7 @@ function BrowseAppDecision(props){
                     <Container style={{marginTop: "30px"}}>
                         <Row>
                             <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="success" onClick={() => navigate('/search')}>New Apply</Button></Col>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="danger" onClick={() => navigate('/')}>Back</Button></Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="danger"  onClick={() => navigate('/')}>Back</Button></Col>
                         </Row>
                     </Container>                    
                 </>

@@ -3,13 +3,12 @@ import API from '../API.jsx';
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs'
 import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function ApplyToProposal(props) {
     const [ errorMessage, setErrorMessage ] = useState('');
     const navigate = useNavigate();
     const {propId} = useParams();
-
     const [proposals, setProposals] = useState(null);
 
     useEffect(() => {

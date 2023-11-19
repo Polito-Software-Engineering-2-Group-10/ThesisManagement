@@ -1,36 +1,29 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row,Alert } from "react-bootstrap";
-import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import API from "../API";
+
 function LoginPage(props){
     const [email, setEmail] = useState('ferrero.renato@polito.it');
     const [password, setPassword] = useState('2');
     const [errorMessage, setErrorMessage] = useState('') ;
     const navigate = useNavigate();
-    
-
 
     const handleSubmit = (event) => {
         event.preventDefault();
         setErrorMessage('');
         const credentials = { email, password };
-  
         
         let valid = true;
         if(email === '' || password === '')
             valid = false;
         
-        if(valid)
-        {
-          
+        if(valid){
           doLogIn(credentials);
-        } else {
-          
-          if(email==='')
-          setErrorMessage('The userame field cannot be empty')
-          if(password==='')
-          setErrorMessage('The password field cannot be empty')
+        }
+        else {
+          if(email==='')    setErrorMessage('The username field cannot be empty');
+          if(password==='') setErrorMessage('The password field cannot be empty');
         }
         
     };
@@ -43,8 +36,7 @@ function LoginPage(props){
             
           })
           .catch(err => {
-           
-            setErrorMessage('Incorrect email or passord');
+            setErrorMessage('Incorrect email or password');
           })
       }
 

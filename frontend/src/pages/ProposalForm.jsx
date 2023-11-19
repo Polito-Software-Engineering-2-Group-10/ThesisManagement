@@ -1,4 +1,3 @@
-
 import {useState, useEffect} from 'react';
 import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -57,23 +56,22 @@ const ProposalForm = (props) => {
       const co_supervisor_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
 
       const proposal = {
-        "title": title.trim(),
-        "supervisor": supervisor,
-        "co_supervisor": co_supervisor_array,
-        "type": type,
-        "expiration": expiration,
-        "level": level,
-        "groups": groups_array,
-        "keywords": keywords_array,
-        "description": description.trim(),
+        "title":            title.trim(),
+        "supervisor":       supervisor,
+        "co_supervisor":    co_supervisor_array,
+        "type":             type,
+        "expiration":       expiration,
+        "level":            level,
+        "groups":           groups_array,
+        "keywords":         keywords_array,
+        "description":      description.trim(),
         "required_knowledge": required_knowledge_array,
-        "notes": notes.trim(),
+        "notes":            notes.trim(),
         "programmes": programmes_array,
         "teacher_id": "1",
       };
 
       addProposal(proposal);
-
       navigate(nextpage);
     }
 
@@ -251,11 +249,9 @@ const ProposalForm = (props) => {
                   </Row>
               </Form.Group>
 
-                
-
               <div className="d-flex justify-content-center">
                 <Button className="m-2" variant="success" type="submit">Insert</Button>&nbsp;  
-                <Link className="btn btn-danger m-2"  to={nextpage}>Go Back </Link>   
+                <Link className="btn btn-danger m-2"  to={nextpage}>Go Back</Link>
               </div>
  
             </Form>

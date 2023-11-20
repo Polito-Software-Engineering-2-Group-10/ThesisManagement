@@ -1,6 +1,7 @@
-const URL ='http://localhost:3001/api';
-import dayjs from 'dayjs';
+// FIXME: this should change when deploying on docker or locally
+const URL = 'http://server:3001/api';
 
+import dayjs from 'dayjs';
 
 async function addProposal(proposal) {
   let response = await fetch(URL + '/teacher/insertProposal', {

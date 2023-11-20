@@ -21,6 +21,7 @@ format_entry = \
 """
         '{0}:{1}' => array(
             'email' => '{0}',
+            'role' => '{2}',
         ),
 """
 
@@ -30,8 +31,10 @@ async def create_authsources(conn: asyncpg.Connection):
     merged = teachers + students
     with open('/var/www/simplesamlphp/config/authsources.php', 'w') as f:
         f.write(prelude)
-        for u in merged:
-            f.write(format_entry.format(u['email'], u['id']))
+        for u in teachers:
+            f.write(format_entry.format(u['email'], u['id'], 'teacher'))
+        for u in students:
+            f.write(format_entry.format(u['email'], u['id'], 'student'))
         f.write(postlude)
 
 argparser = argparse.ArgumentParser()

@@ -53,5 +53,20 @@ services:
       - 3001
     ports:
       - 3001:3001
+  frontend:
+    image: node:21.1
+    environment:
+      - DOCKER_SETUP=true
+    working_dir: /usr/src/app
+    volumes:
+      - ./frontend:/usr/src/app
+    depends_on:
+      - server
+    command: >
+      sh -c "npm install && npm run docker"
+    expose:
+      - 5173
+    ports:
+      - 5173:5173
 volumes:
   saml_config:

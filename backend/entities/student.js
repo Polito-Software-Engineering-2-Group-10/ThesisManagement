@@ -1,5 +1,6 @@
 'use strict';
 import { psqlDriver } from '../dbdriver.js';
+import { getNum } from './utils.js';
 
 class Student {
     constructor(id, surname, name, gender, nationality, email, cod_degree, enrollment_year) {
@@ -31,13 +32,53 @@ class StudentTable {
     }
     async getByAuthInfo(email, id) {
         const query = `SELECT * FROM student WHERE email = $1 AND id = $2`;
-        const result = await this.db.executeQueryExpectAny(query, email, Number.parseInt(id));
+        const result = await this.db.executeQueryExpectAny(query, email, getNum(id));
         return result.map(Student.fromRow);
     }
     async getById(id) {
         const query = `SELECT * FROM student WHERE id = $1`;
-        const result = await this.db.executeQueryExpectOne(query, Number.parseInt(id), `Student with id ${id} not found`);
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Student with id ${id} not found`);
         return Student.fromRow(result);
+    }
+    async getDetailsById(id) {
+        const query = `SELECT s.*, d.title_degree FROM student as s, degree as d WHERE s.id = $1 AND s.cod_degree = d.cod_degree`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Student with id ${id} not found`);
+        return result;
+    }
+    async getByEmail(email) {
+        const query = `SELECT * FROM student WHERE email = $1`;
+        const result = await this.db.executeQueryExpectAny(query, email);
+        return result.map(Student.fromRow);
+    }
+    async getByNameSurname(name, surname) {
+        const query = `SELECT * FROM student WHERE name = $1 AND surname = $2`;
+        const result = await this.db.executeQueryExpectAny(query, name, surname);
+        return result.map(Student.fromRow);
+    }
+    async getByDegree(cod_degree) {
+        const query = `SELECT * FROM student WHERE cod_degree = $1`;
+        const result = await this.db.executeQueryExpectAny(query, cod_degree);
+        return result.map(Student.fromRow);
+    }
+    async getBachelorStudents() {
+        const query = `SELECT * FROM student WHERE cod_degree LIKE 'L-%'`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Student.fromRow);
+    }
+    async getMasterStudents() {
+        const query = `SELECT * FROM student WHERE cod_degree LIKE 'LM-%'`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Student.fromRow);
+    }
+    async getAllStudents() {
+        const query = `SELECT * FROM student`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Student.fromRow);
+    }
+    async getEnrolledFromYear(year) {
+        const query = `SELECT * FROM student WHERE enrollment_year = $1`;
+        const result = await this.db.executeQueryExpectAny(query, year);
+        return result.map(Student.fromRow);
     }
 }
 

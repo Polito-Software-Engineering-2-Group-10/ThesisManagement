@@ -1,4 +1,4 @@
-import { Strategy as SamlStrategy } from 'passport-saml';
+import { Strategy as SamlStrategy } from '@node-saml/passport-saml';
 import { Strategy as LocalStrategy } from 'passport-local'
 import { studentTable, teacherTable } from '../dbentities.js'
 

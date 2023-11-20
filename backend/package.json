@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --coverage",
     "dev": "nodemon index.js"
   },
   "repository": {
@@ -19,16 +19,19 @@
   },
   "homepage": "https://github.com/Polito-Software-Engineering-2-Group-10/ThesisManagement#readme",
   "dependencies": {
+    "@node-saml/passport-saml": "^4.0.4",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "datejs": "^1.0.0-rc3",
+    "dayjs": "^1.11.10",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "passport-saml": "^1.3.3",
     "pg": "^8.11.3"
   },
   "devDependencies": {

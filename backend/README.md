@@ -19,3 +19,359 @@ Structure:
 
 - .env (this file contains the environment variables that will be used to configure the backend, modify this if needed with the correct values for ports/urls/credentials)
 - .dockerenv (this file contains the environment variables that will be used to configure the backend when running in docker, modify this if needed with the correct values for ports/urls/credentials)
+
+## How to use
+Simply run `npm install` to install all the dependencies and then `npm run dev` to start the backend.
+
+By default it will listen on port 3001 and accept connections from localhost:5173 (the frontend), these can be changed in the `.env` file under the keys `PORT`, `FRONTEND_URL` and `FRONTEND_PORT` respectively.
+
+The database `thesismanagement` will be attempted to be connected to using the credentials user: `thesismanager` and password: `thesismanager`, at the address `localhost:5432`, these can be changed in the `.env` file under the keys `DATABASE_HOST` and `DATABASE_PORT` respectively.
+
+## APIs
+The backend exposes the following APIs:
+
+- POST `/api/login`
+    - This API accepts a JSON object with the following structure:
+    ```json
+    {
+        "email": "mario.rossi@studenti.polito.it",
+        "password": 1
+    }
+    ```
+    - The password is the ID of the user, this endpoint accepts both students and teachers
+    This endpoint returns a user object like so:
+    ```json
+    {
+        "id": 1,
+        "email": "mario.rossi@studenti.polito.it",
+        "name": "Mario",
+        "surname": "Rossi",
+        "role": "student"
+    }
+    ```
+    - The role field indicates if the user is a student or a teacher. Only valid values are `student` and `teacher` 
+
+- DELETE `/api/logout`
+    - This API accepts no parameters, it will simply log out the user
+- GET `/api/session`
+    - This API accepts no parameters, it will return the current logged-in user
+- GET `/api/student/details`
+    - This API requires authentication as a student, it will return the details about the logged in student in a form such as
+    ```json
+    {
+        "id": 1,
+        "surname": "Rossi",
+        "name": "Mario",
+        "gender": "M",
+        "nationality": "Italian",
+        "email": "mario.rossi@studenti.polito.it",
+        "cod_degree": "L-08",
+        "enrollment_year": "2022-09-09T22:00:00.000Z",
+        "title_degree": "Computer Engineering"
+    }
+    ```
+- GET `/api/teacher/details`
+    - This API requires authentication as a teacher, it will return the details about the logged in teacher in a form such as
+    ```json
+    {
+        "surname": "FASANA",
+        "name": "SARA",
+        "email": "fasana.sara@polito.it",
+        "group_name": "Group 1 - DAD",
+        "department_name": "Dipartimento Interateneo di Scienze, progetto e politiche del Territorio",
+        "department_short_name": "DIST"
+    }
+    ```
+- GET `/api/teacher/ApplicationsList`
+    - This API accepts no parameters, it will return an array of applications for the current teacher.
+
+        An example response:
+    ```json
+    [
+        {
+            "id": 5,
+            "student_id": 4,
+            "proposal_id": 706,
+            "apply_date": "2023-11-10T23:00:00.000Z",
+            "status": false,
+            "thesis_title": "La chiesa di Santo Stefano al Monte presso Candia Canavese. Dal rilievo con sistemi LIDAR alla manutenzione programmata.",
+        }
+    ]
+    ```
+- GET `/api/teacher/applicationDetail/<applicationid>`
+    - This API accepts a parameter being an application id and will return the details of the application with that id.
+
+        An example response:
+    ```json
+    {
+        "thesis_title": "La chiesa di Santo Stefano al Monte presso Candia Canavese. Dal rilievo con sistemi LIDAR alla manutenzione programmata.",
+        "student_id": 4,
+        "student_name": "Maria",
+        "student_surname": "Ferrari",
+        "application_date": "2023-11-10T23:00:00.000Z",
+        "student_gender": "F",
+        "student_nationality": "Italian",
+        "student_email": "maria.ferrari@studenti.polito.it",
+        "student_carrer": "Master Degree in Management Engineering",
+        "student_ey": "2021-09-30T22:00:00.000Z"
+    }
+    ```
+
+- GET `/api/student/ApplicationsList`
+    - This API accepts no parameters, it will return an array of applications for the current student.
+    
+        An example response:
+        ```json
+        [
+            {
+                "id": 5,
+                "student_id": 4,
+                "proposal_id": 706,
+                "apply_date": "2023-11-10T23:00:00.000Z",
+                "status": false,
+                "thesis_title": "La chiesa di Santo Stefano al Monte presso Candia Canavese. Dal rilievo con sistemi LIDAR alla manutenzione programmata.",
+                "teacher_name": "SARA",
+                "teacher_surname": "FASANA",
+                "teacher_email": "fasana.sara@polito.it"
+            },
+            {
+                "id": 6,
+                "student_id": 4,
+                "proposal_id": 532,
+                "apply_date": "2023-11-10T23:00:00.000Z",
+                "status": false,
+                "thesis_title": "Microprocessor-based Self Test for on-line testing of airplane electronic system",
+                "teacher_name": "LUCA",
+                "teacher_surname": "STERPONE",
+                "teacher_email": "sterpone.luca@polito.it"
+            },
+            {
+                "id": 7,
+                "student_id": 4,
+                "proposal_id": 1264,
+                "apply_date": "2023-11-10T23:00:00.000Z",
+                "status": false,
+                "thesis_title": "Quanto sono veloci i computer quantistici?",
+                "teacher_name": "DAVIDE",
+                "teacher_surname": "GIROLAMI",
+                "teacher_email": "girolami.davide@polito.it"
+            }
+        ]
+        ```
+- POST `/api/teacher/insertProposal`
+    - This API accepts a JSON object with the following structure:
+    ```json
+    {
+        "title": "<thesis title>",
+        "supervisor": "<supervisor email>",
+        "co_supervisor": ["<co-supervisor 1 email>", "<co-supervisor 2 email>"], // array of co-supervisors emails, can be empty
+        "keywords": ["<keyword 1>", "<keyword 2>"], // array of keywords, cannot be empty
+        "type": "<thesis type>", // type of thesis
+        "description": "<thesis description>",
+        "required_knowledge": ["<required knowledge 1>", "<required knowledge 2>"], // array of required knowledge, can be empty
+        "notes": "<notes>", // notes, can be empty
+        "expiration": "<expiration date>", // expiration date
+        "level": "<thesis level>", // thesis level, can be 1 or 2
+        "programmes": ["<programme 1>", "<programme 2>"], // array of programmes, cannot be empty
+    }
+    ```
+    - This API will insert a new proposal in the database and return the entire proposal with the id given to it by the database.
+        
+    Example request:
+    ```json
+    {
+        "title": "test title",
+        "supervisor": "fasana.sara@polito.it",
+        "co_supervisor": [],
+        "keywords": ["python", "coding"],
+        "type": "Tesi di laurea",
+        "groups": ["Aa - Glasses","Ceramics And Composites"],
+        "description": "test description",
+        "required_knowledge": ["python"],
+        "notes": "Avere pycharm è consigliato",
+        "expiration": "2024-11-02",
+        "level": 2,
+        "programmes": ["LM-17 - Master Degree in Physics"]
+    }
+    ```
+        
+    Example response:
+    
+    ```json
+    {
+        "id": 1500,
+        "title": "test title",
+        "teacher_id": 20,
+        "supervisor": "fasana.sara@polito.it",
+        "co_supervisor": [],
+        "keywords": [
+            "python",
+            "coding"
+        ],
+        "type": "Tesi di laurea",
+        "groups": [
+            "Aa - Glasses",
+            "Ceramics And Composites"
+        ],
+        "description": "test description",
+        "required_knowledge": [
+            "python"
+        ],
+        "notes": "Avere pycharm è consigliato",
+        "expiration": "2024-11-01T23:00:00.000Z",
+        "level": 2,
+        "programmes": [
+            "LM-17 - Master Degree in Physics"
+        ],
+        "archived": false
+    }
+    ```
+- GET `/api/ProposalsList`
+    - This API will return all the thesis proposals inserted in the database, it expects no parameters. It returns a list of thesis proposals in the form:
+    ```json
+      {
+        "id": <id>,
+        "title": "<title of the thesis>",
+        "teacher_id": <id of the teacher>,
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": [
+           "<email of the co-supervisor>" 
+        ],
+        "keywords": [
+            "<keyword>",
+        ],
+        "type": "<type of the thesis>",
+        "groups": [
+            "<group>"
+        ],
+        "description": "<explanation of the thesis>",
+        "required_knowledge": [
+            "<requirement>"
+        ],
+        "notes": "<notes>",
+        "expiration": "<timestamp of expiration>",
+        "level": <level>,
+        "programmes": [
+            "<programme>"
+        ],
+        "teacher_name": "<teacher name>",
+        "teacher_surname": "<teacher surname>"
+    },
+    ```
+- GET `/api/ProposalsList/filter`
+    - This API will return all the thesis proposals that match the given filters, it expects a json object of type:
+    ```json
+    {
+        "title": "<title>",
+        "professor": <professor id as integer>,
+        "date": "<date>",
+        "type": ["<type 1>", "<type 2>"],
+        "keywords": ["<keyword 1>", "<keyword 2>"],
+        "level": <1 or 2 (1 for Bachelor and 2 for Masters)>,
+        "groups": ["<group 1>", "<group 2>"],
+    }
+    ```
+    All the fields are **optional**, if a field is not specified it will not be used as a filter.
+    The returned object is a list with objects of the same shape as the ones returned by `/api/ProposalsList` (the above).
+- GET `/api/teacher/list`
+    - This API will return all the teachers in the database in the form:
+    ```json
+    {
+        "name": "DANIEL",
+        "surname": "MILANESE",
+        "id": 1
+    },
+    {
+        "name": "BARBARA",
+        "surname": "ONIDA",
+        "id": 2
+    },
+    ...
+    ```
+- GET `/api/thesis/types`
+    - This API will return all the unique thesis types in the database, as a list of strings.
+    ```json
+    [
+        "SIMULATIVA E SPERIMENTALE",
+        "RICERCA APPLICATA",
+        "DI RICERCA, PROGETTAZIONE"
+        ...
+    ]
+    ```
+- GET `/api/thesis/keywords`
+    - This API will return all the unique thesis keywords in the database, as a list of strings.
+    ```json
+    [
+        "CARATTERIZZAZIONE MAGNETICA",
+        "RILIEVO GEOSTRUTTURALE",
+        "tesi vuole esaminare e confrontare alcune",
+        "MUSCLE POWER",
+        "IMMAGINI DIGITALI",
+        "STRUTTURE TRABECOLARI",
+        "SIMULAZIONI"
+        ...
+    ]
+    ```
+- GET `/api/thesis/groups`
+    - This API will return all the unique thesis groups in the database, as a list of strings.
+    ```json
+    [
+        "Microwaves And Optoelectronics Group",
+        "Centro Interdipartimentale Cars",
+        "Aa - Materiali Ceramici",
+        "16-Astra: Additive Manufacturing For Systems And Structures In Aerospace",
+        "L-15 group 1"
+        ...
+    ]
+    ```
+- POST `/api/student/applyProposal`
+    - This API will accept a JSON object with the following structure:
+    ```json
+    {
+        "student_id": <student id>,
+        "proposal_id": <proposal id>,
+        "apply_date": <YYYY-MM-DD>
+    }
+    ```
+    - It adds in the database the application of the student to the proposal.
+    - It returns the application object:
+    ```json
+    {
+        "id": <id>,
+        "student_id": <student id>,
+        "proposal_id": <proposal id>,
+        "apply_date": <YYYY-MM-DD>,
+        "status": <boolean>
+    }
+    ```
+- GET `/api/teacher/ProposalsList`:
+    - This API will return a list of all active proposals in the following format:
+    ```json
+      {
+        "id": <id>,
+        "title": "<title of the thesis>",
+        "teacher_id": <id of the teacher>,
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": [
+           "<email of the co-supervisor>" 
+        ],
+        "keywords": [
+            "<keyword>",
+        ],
+        "type": "<type of the thesis>",
+        "groups": [
+            "<group>"
+        ],
+        "description": "<explanation of the thesis>",
+        "required_knowledge": [
+            "<requirement>"
+        ],
+        "notes": "<notes>",
+        "expiration": "<timestamp of expiration>",
+        "level": <level>,
+        "programmes": [
+            "<programme>"
+        ],
+        "archived": <boolean>
+    },
+    ```

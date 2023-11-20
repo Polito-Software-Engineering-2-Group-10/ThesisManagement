@@ -19,6 +19,7 @@
 | EXPIRATION         | DATE    | NO          |          | Date of expiration of this thesis proposal                                                                                          |
 | LEVEL              | INTEGER | NO          |          | Level of this thesis, e.g. 1 for bachelor, 2 for masters and 3 for doctorate                                                                                                                |
 | PROGRAMMES         | TEXT[]  | YES         |          | CdS/Programmes linked to this thesis                                                                                                |
+| ARCHIVED           | BOOLEAN | NO          |          | Flag of the thesis is archived or not                                                                                               |
 
 ### TEACHER table
 | FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                        |

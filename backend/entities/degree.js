@@ -23,6 +23,31 @@ class DegreeTable {
         degreeTable.db = await psqlDriver.openDatabase('thesismanagement');
         return degreeTable;
     }
+    async getAll() {
+        const query = `SELECT * FROM degree`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Degree.fromRow);
+    }
+    async getByCode(cod_degree) {
+        const query = `SELECT * FROM degree WHERE cod_degree = $1`;
+        const result = await this.db.executeQueryExpectOne(query, cod_degree, `Degree with cod_degree ${cod_degree} not found`);
+        return Degree.fromRow(result);
+    }
+    async getByTitle(title_degree) {
+        const query = `SELECT * FROM degree WHERE title_degree = $1`;
+        const result = await this.db.executeQueryExpectAny(query, title_degree);
+        return result.map(Degree.fromRow);
+    }
+    async getBachelorDegrees() {
+        const query = `SELECT * FROM degree WHERE cod_degree LIKE 'L-%'`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Degree.fromRow);
+    }
+    async getMasterDegrees() {
+        const query = `SELECT * FROM degree WHERE cod_degree LIKE 'LM-%'`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(Degree.fromRow);
+    }
 
 }
 

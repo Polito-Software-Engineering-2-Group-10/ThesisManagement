@@ -186,6 +186,11 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectOne(query, proposal.title, getNum(proposal.teacher_id), proposal.supervisor, proposal.co_supervisor, proposal.keywords, proposal.type, proposal.groups, proposal.description, proposal.required_knowledge, proposal.notes, proposal.expiration, proposal.level, proposal.programmes, `Failed to add ThesisProposal`);
         return ThesisProposal.fromRow(result);
     }
+    async archiveExpiredProposal() {
+        const query = `UPDATE thesis_proposal SET archived = true WHERE archived = false AND expiration < NOW()`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return ThesisProposal.fromRow(result);
+    }
     async archiveThesisProposal(id) {
         const query = `UPDATE thesis_proposal SET archived = true WHERE id = $1 RETURNING *`;
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);

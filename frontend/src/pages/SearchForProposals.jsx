@@ -1,8 +1,91 @@
 import {useEffect, useState} from 'react';
 import {Link, useNavigate}   from 'react-router-dom';
-import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col} from 'react-bootstrap';
+import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col } from 'react-bootstrap';
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
+import './pagination.css';
+
+import ReactPaginate from 'react-paginate';
+
+function Proposals( { currentProposals, getProfessorsInformation, professors }) {
+    return (
+    <Table striped bordered hover responsive className="items thesis-proposal-tbl" >                            
+        <thead>
+            <tr>
+                <th className="center-text">Title</th>
+                <th className="center-text">Professor</th>
+                <th className="center-text">Expiration Date</th>
+                <th className="center-text">Type</th>
+                <th className="center-text">Level</th>
+            </tr>
+        </thead>
+        <tbody>
+        {currentProposals && currentProposals.map((proposal, index) => (
+        <tr key={index} className="thesis-proposal">
+            <td>
+                <Link
+                    to={`/applyToProp/${proposal.id}`}
+                    className="text-primary"
+                >
+                    {proposal.title}
+                </Link>
+            </td>
+            <td>{getProfessorsInformation(professors, proposal)}</td>
+            <td>{proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}</td>
+            <td>{proposal.type}</td>
+            <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>
+        </tr>
+        ))}
+        </tbody>
+    </Table>)
+}
+
+function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformation, professors }) {
+    const [currentItems, setCurrentItems] = useState(null);
+    const [pageCount, setPageCount] = useState(0);
+    const [itemOffset, setItemOffset] = useState(0);
+
+    useEffect(() => {
+        const endOffset = itemOffset + itemsPerPage;
+        console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+        const newItems = proposalList.slice(itemOffset, endOffset);
+        console.log(newItems);
+        setCurrentItems(newItems);
+        setPageCount(Math.ceil(proposalList.length / itemsPerPage));
+    }, [itemOffset, itemsPerPage, proposalList.length])
+
+    const handlePageClick = (event) => {
+        const newOffset = event.selected * itemsPerPage % proposalList.length;
+        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
+        setItemOffset(newOffset);
+    }
+    return (
+        <>
+            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} />
+
+            <ReactPaginate 
+                nextLabel='next >'
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={4}
+                marginPagesDisplayed={1}
+                pageCount={pageCount}
+                previousLabel='< previous'
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                breakLabel="..."
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                containerClassName="pagination"
+                activeClassName="active"
+                renderOnZeroPageCount={null}
+            />
+        </>
+    )
+}
 
 function SearchForProposals(props) {
     const navigate = useNavigate();
@@ -144,53 +227,50 @@ function SearchForProposals(props) {
                                     <span>Filter by: </span>
                                     <Button
                                         variant={activeFilter === 'title' ? 'info' : 'outline-info'}
-                                        className="mr-2"
                                         onClick={() => handleFilterClick('title')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Title
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
-                                        className="mr-2"
                                         onClick={() => handleFilterClick('professor')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Professor
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
-                                        className="mr-2"
                                         onClick={() => handleFilterClick('expirationDate')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Expiration Date
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'type' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('type')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Type
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'level' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('level')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Level
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('keywords')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Keywords
                                     </Button>
                                     <Button
                                         variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
                                         onClick={() => handleFilterClick('groups')}
-                                        style={{ marginLeft: '10px', marginRight: '10px' }}
+                                        className="search-filter-btn"
                                     >
                                         Groups
                                     </Button>
@@ -371,35 +451,11 @@ function SearchForProposals(props) {
                                 )}
                             </Card.Body>
                         </Card>
-                        <Table striped bordered hover responsive>
-                            <thead>
-                            <tr>
-                                <th style={{ textAlign: 'center' }}>Title</th>
-                                <th style={{ textAlign: 'center' }}>Professor</th>
-                                <th style={{ textAlign: 'center' }}>Expiration Date</th>
-                                <th style={{ textAlign: 'center' }}>Type</th>
-                                <th style={{ textAlign: 'center' }}>Level</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {proposals && (proposals.map((proposal, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        <Link
-                                            to={`/applyToProp/${proposal.id}`}
-                                            className="text-primary"
-                                        >
-                                            {proposal.title}
-                                        </Link>
-                                    </td>
-                                    <td>{getProfessorsInformation(professors, proposal)}</td>
-                                    <td>{proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}</td>
-                                    <td>{proposal.type}</td>
-                                    <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>
-                                </tr>
-                            )))}
-                            </tbody>
-                        </Table>
+                        {/* this items per page count is a sister variable with the 10% height in pagination.css in the .thesis-proposal class filter
+                            if you change one you have to change the other 
+                            I'm using fixed height rows because that way it avoids having the navigation bar at the bottom of the page shift around because of the table constant resizing    
+                        */}
+                       <PaginatedProposals itemsPerPage={10} proposalList={proposals} getProfessorsInformation={getProfessorsInformation} professors={professors}/>
                     </div>
                 )
             : ''}

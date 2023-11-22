@@ -1,0 +1,23 @@
+.pagination {
+    display: flex;
+    width: 100%;
+}
+.page-item {
+    flex: 1;
+    text-align: center;
+    list-style: none;
+}
+.thesis-proposal-tbl {
+    height: 100vh;
+}
+.center-text {
+    text-align: center;
+}
+.thesis-proposal {
+    height: 10%; /* this is 10% because there are 10 items per page, if you change this, change also items per page in SearchForProposals.jsx PaginatedProposals itemsPerPage prop */
+    vertical-align: middle;
+}
+.search-filter-btn {
+    margin-right: 10px;
+    margin-left: 10px;
+}

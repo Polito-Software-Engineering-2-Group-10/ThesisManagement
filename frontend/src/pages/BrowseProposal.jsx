@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from "react";
-import { Button,Container, Table } from "react-bootstrap";
+import { Button,Container, Table, Row, Col } from "react-bootstrap";
 import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
@@ -13,11 +13,23 @@ function BrowseProposal (props){
   const handleProposalClick = (proposal) => {
     setSelectedProposal(proposal);
   }
+
+  const isActive = (proposal) => {
+    let expdate = dayjs(proposal.expiration);
+    if (!proposal.archived && expdate.isAfter(dayjs())) {
+        return true;
+    }
+    return false;
+  }
+
   return (
     <>
     <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
     <Container>
       {/*<h3>Teacher ID: </h3>*/}
+    <Row>
+        <h3 className='center-text'>Active proposals</h3>
+    </Row>
     <Table hover>
     <thead>
       <tr>
@@ -28,22 +40,59 @@ function BrowseProposal (props){
       </tr>
     </thead>
     <tbody>
-    {props.proposalList.map((result, index) => (
+    {/* For story 7, professor should see only *active* proposals */}
+    {props.proposalList.filter(isActive).map((result, index) => (
         <tr key={result.id} onClick={() => handleProposalClick(result)}
         className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
         >
-          <td>{result.thesis_title}</td>
-          <td>{dayjs(result.thesis_expiration).format('DD/MM/YYYY')}</td>
-          <td>{result.thesis_level==1 ? "Bachelor" : "Master"}</td>
-          <td>{result.thesis_type}</td>
+          <td>{result.title}</td>
+          <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
+          <td>{result.level==1 ? "Bachelor" : "Master"}</td>
+          <td>{result.type}</td>
         </tr>
       ))}
     </tbody>
   </Table>
-  <div style={{marginRight: 1000+'em'}}>
-  <Button className='my-2'  variant='success' disabled={!selectedProposal}>Modify</Button>
-  </div>
-  <Button className='my-2'  variant='warning' onClick={()=>navigate('/')}>Back</Button>
+  <Row>
+        <h3 className='center-text'>Archived proposals</h3>
+    </Row>
+    <Table hover>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Expiration</th>
+        <th>Level</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+    {/* For story 7, professor should see only *active* proposals */}
+    {props.proposalList.filter((p) => !isActive(p)).map((result, index) => (
+        <tr key={result.id} onClick={() => handleProposalClick(result)}
+        className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
+        >
+          <td>{result.title}</td>
+          <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
+          <td>{result.level==1 ? "Bachelor" : "Master"}</td>
+          <td>{result.type}</td>
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+  <Row>
+        <Col style={{
+            display: 'flex',
+            justifyContent: 'flex-end'
+        }}>
+            <Button className='my-2'  variant='success' disabled={!selectedProposal}>Modify</Button>
+        </Col>
+        <Col style={{
+            display: 'flex',
+            justifyContent: 'flex-start'
+        }}>
+            <Button className='my-2'  variant='warning' onClick={()=>navigate('/')}>Back</Button>
+        </Col>
+  </Row>
   </Container>
   </>
   )

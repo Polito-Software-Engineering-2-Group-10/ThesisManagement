@@ -1,5 +1,5 @@
 // FIXME: this should change when deploying on docker or locally
-const URL = 'http://server:3001/api';
+const URL = 'http://localhost:3001/api';
 
 import dayjs from 'dayjs';
 
@@ -190,7 +190,7 @@ async function getFilteredProposals(filters) {
     return data;
 }
 
-  async function getProposals() {
+  async function getTeacherProposals() {
     const response = await fetch(`${URL}/teacher/ProposalsList`,{
       credentials: 'include'
   });
@@ -216,7 +216,7 @@ const API = {
   logIn,
   logOut,
   getUserInfo,
-getProposals,
+  getTeacherProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,

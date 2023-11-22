@@ -25,8 +25,10 @@ function App() {
 
   const [proposalList, setProposalList] = useState([]);
   const fetchData = async () =>{
-    const result = await API.getProposals();
-    setProposalList(result);
+    if (user !== null && user.role === 'teacher') {
+        const result = await API.getTeacherProposals();
+        setProposalList(result);
+    }
   }
   useEffect(() => {
     if (proposalsDirty) {
@@ -35,7 +37,7 @@ function App() {
     }
   }, [proposalsDirty]);
 
-  const fetchData2 = async () =>{
+  const fetchTeacherAppsList = async () =>{
     const result = await API.getApplicationsListTeacher();
     setAppList(result);
   }
@@ -63,17 +65,7 @@ function App() {
             .then((teacher) => {
                 setUserDetail(teacher);
                 fetchData();
-                fetchData2();
-                // fetching information about the applications
-                /*API.getApplicationsList()
-                    .then((list) => {
-                        console.log(list);
-                        setAppList(list);
-                        setDirty(false);
-                    })
-
-                .catch((err) => console.log(err));*/
-
+                fetchTeacherAppsList();
                 setDirty(false);
                })
             .catch((err) => console.log(err));
@@ -124,7 +116,7 @@ function App() {
         <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
         <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
         <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
-        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchData2}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchTeacherAppsList}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
       </Routes>
     </BrowserRouter>
     </>

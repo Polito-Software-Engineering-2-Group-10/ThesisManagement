@@ -238,12 +238,7 @@ app.get('/api/teacher/ProposalsList',
             // AND COMMENT THIS OUT INSTEAD
             //const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
-            const proposalSummary = proposalList.map(
-                p => {
-                    return { id:p.id,thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
-                }
-            );
-            res.json(proposalSummary);
+            res.json(proposalList);
         }
         catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });

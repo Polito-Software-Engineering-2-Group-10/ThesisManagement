@@ -31,8 +31,7 @@ const app = express();
 app.set('port', config.app.port);
 app.use(morgan('dev'));
 const corsOptions = {
-    // FIXME: this shouldn't be localhost, but the frontend host
-    origin: `http://localhost:${config.app.frontend_port}`,
+    origin: [`http://${config.app.frontend_host}:${config.app.frontend_port}`, `http://localhost:${config.app.frontend_port}`],
     credentials: true
 };
 app.use(cors(corsOptions));

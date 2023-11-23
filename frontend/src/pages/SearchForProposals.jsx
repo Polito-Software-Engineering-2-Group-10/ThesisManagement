@@ -47,16 +47,13 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
 
     useEffect(() => {
         const endOffset = itemOffset + itemsPerPage;
-        console.log(`Loading items from ${itemOffset} to ${endOffset}`);
         const newItems = proposalList.slice(itemOffset, endOffset);
-        console.log(newItems);
         setCurrentItems(newItems);
         setPageCount(Math.ceil(proposalList.length / itemsPerPage));
     }, [itemOffset, itemsPerPage, proposalList.length])
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % proposalList.length;
-        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
         setItemOffset(newOffset);
     }
     return (

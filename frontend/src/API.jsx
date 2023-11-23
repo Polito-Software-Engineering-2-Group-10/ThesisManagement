@@ -208,8 +208,23 @@ async function acceptDeclineApplication(applicationId, status) {
       body: JSON.stringify({status:status}),
   });
   const data = await response.json();
+  console.log(response.status);
+  if (response.status==200)
+  {
+    console.log("Succeded");
+    console.log("thesis status: ",status);
+
+    //if status==200 call the api with the to send email with the right parameter (recipient_email, subject,message)
+    //with the right message like "thesis proposal accepted"
+  }
+  //else
+  //call the api also with the same parameter but with the correct message
   return data;   
 }
+
+// TODO: Modify API Call to server to accept/decline application in a way to call api to send mail
+
+
 
 const API = {
   logIn,

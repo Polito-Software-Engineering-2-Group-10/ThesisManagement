@@ -416,6 +416,24 @@ app.get('/api/thesis/groups', async (req, res) => {
     }
 });
 
+
+/*SEND MAIL APIS*/
+app.get("/send_email", (req, res) => {
+    sendEmail()
+      .then((response) => res.send(response.message))
+      .catch((error) => res.status(500).send(error.message));
+  });
+
+app.post("/send_email", (req, res) => {
+//console.log("Somebody just hit me");
+sendEmail(req.body)
+    .then((response) => res.send(response.message))
+    .catch((error) => res.status(500).send(error.message));
+});
+
+
+
+
 /*END API*/
 
 

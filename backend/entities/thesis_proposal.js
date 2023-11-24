@@ -43,9 +43,12 @@ class ThesisProposalTable {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
         }
+
+        
         if (include_expired) {
             const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
+            
             const result = await this.db.executeQueryExpectAny(query);
             return result;
         } else {
@@ -54,6 +57,25 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query);
             return result;
         }
+    }
+
+    /*async getAll(offset) {
+        virtualClock.setOffset(offset);
+        let current_date_string = virtualClock.getSqlDate();
+        const archived = await this.db.executeQueryExpectAny(
+            `SELECT * FROM thesis_proposal WHERE (archived = true) OR (expiration < $1)`,
+            current_date_string
+        )
+        
+        const active = await this.db.executeQueryExpectAny(
+            `SELECT * FROM thesis_proposal WHERE (archived = false) AND (expiration > $1)`
+            , current_date_string
+        )
+        return {
+            archived: archived.map(ThesisProposal.fromRow),
+            active: active.map(ThesisProposal.fromRow)
+        }*/
+
     }
 
     async getById(id, include_expired) {

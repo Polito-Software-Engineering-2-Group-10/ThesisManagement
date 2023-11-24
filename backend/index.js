@@ -245,6 +245,35 @@ app.get('/api/teacher/ProposalsList',
     }
 );
 
+//Archive Proposal
+//PATCH /api/teacher/applicationDetail/<proposalid>
+//should be used when the teacher clicks on the Archive button
+app.patch('/api/teacher/ProposalsList/:proposalid',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
+            if (!propopsalDetail) {
+                return res.status(400).json({ error: 'The proposal does not exist!' });
+            }
+            if (propopsalDetail.archived!==false) {
+                return res.status(400).json({ error: 'The proposal has been archived!' });
+            }
+            const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
+            res.json(proposalResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+
+
+);
+/*End Archive Proposal*/
+
 /*Insert a new thesis proposal*/
 app.post('/api/teacher/insertProposal',
     isLoggedInAsTeacher,

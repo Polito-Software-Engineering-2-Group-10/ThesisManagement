@@ -1,6 +1,7 @@
 'use strict';
 import { psqlDriver } from '../dbdriver.js';
 import { getNum } from './utils.js';
+import virtualClock from '../VirtualClock.js'
 
 class ThesisProposal {
     constructor(id, title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes, archived) {
@@ -73,14 +74,19 @@ class ThesisProposalTable {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
         }
-        if (include_expired) {
-            const query = `SELECT * FROM thesis_proposal WHERE teacher_id = $1`;
-            const result = await this.db.executeQueryExpectAny(query, getNum(teacher_id));
-            return result.map(ThesisProposal.fromRow);
-        } else {
-            const query = `SELECT * FROM thesis_proposal WHERE teacher_id = $1 AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, getNum(teacher_id));
-            return result.map(ThesisProposal.fromRow);
+        let current_date_string = virtualClock.getSqlDate();
+        const archived = await this.db.executeQueryExpectAny(
+            `SELECT * FROM thesis_proposal WHERE teacher_id = $1 AND (archived = true OR expiration < $2)`,
+            getNum(teacher_id), current_date_string
+        )
+        
+        const active = await this.db.executeQueryExpectAny(
+            `SELECT * FROM thesis_proposal WHERE teacher_id = $1 AND archived = false AND expiration > $2`
+            , getNum(teacher_id), current_date_string
+        )
+        return {
+            archived: archived.map(ThesisProposal.fromRow),
+            active: active.map(ThesisProposal.fromRow)
         }
     }
     async getByKeyword(keyword, include_expired) {

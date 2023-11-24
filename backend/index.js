@@ -25,7 +25,7 @@ const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
 passportconfig(passport, config, currentStrategy);
-
+import sendEmail from './emailSender.js';
 const app = express();
 
 app.set('port', config.app.port);
@@ -418,17 +418,19 @@ app.get('/api/thesis/groups', async (req, res) => {
 
 
 /*SEND MAIL APIS*/
-app.get("/send_email", (req, res) => {
-    sendEmail()
-      .then((response) => res.send(response.message))
-      .catch((error) => res.status(500).send(error.message));
-  });
 
-app.post("/send_email", (req, res) => {
-//console.log("Somebody just hit me");
+app.post("/api/send_email", async(req, res) => {
+try{
+    
 sendEmail(req.body)
     .then((response) => res.send(response.message))
     .catch((error) => res.status(500).send(error.message));
+}
+catch(err)
+{
+    
+    res.status(503).json({ error: `Database error during sending notification ${err}` });
+}
 });
 
 

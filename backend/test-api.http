@@ -73,7 +73,7 @@ Content-Type: application/json
 {
     "id": 1
 }
-
+###
 #[
  # {
  #   "id": 1,
@@ -87,3 +87,13 @@ Content-Type: application/json
  #   "teacher_email": "claps.pierluigi@polito.it"
 #  }
 #]
+   
+POST http://localhost:3001/api/send_email HTTP/1.1
+Content-Type: application/json
+
+{
+    "recipient_mail": "s319950@studenti.polito.it",
+    "subject": "Info Tesi",
+    "message": "Thesis Approved"
+
+}

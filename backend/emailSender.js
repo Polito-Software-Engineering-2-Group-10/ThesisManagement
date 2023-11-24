@@ -1,11 +1,12 @@
 //const nodemailer = require('nodemailer');
 import nodemailer from 'nodemailer';
-nodemailer=nodemailer;
+
 
 var myemail = "politonotification@gmail.com";
 var mypassword = "vbql afhy mvyj afho";
 
 function sendEmail(parameters/*{recipient_email, subject,message }*/) {
+  console.log(parameters)
   return new Promise((resolve, reject) => {
     var transporter = nodemailer.createTransport({
       service: "gmail",
@@ -17,10 +18,11 @@ function sendEmail(parameters/*{recipient_email, subject,message }*/) {
 
     const mail_configs = {
       from: myemail,
-      to: "salvo.cav96@gmail.com", //parameters.recipient_email
-      subject: "prova", //parameters.subject
-      text: "try", //parameters.message
+      to: parameters.recipient_mail, //parameters.recipient_mail
+      subject: parameters.subject, //parameters.subject
+      text: parameters.message, //parameters.message
     };
+    console.log(mail_configs);
     transporter.sendMail(mail_configs, function (error, info) {
       if (error) {
         console.log(error);

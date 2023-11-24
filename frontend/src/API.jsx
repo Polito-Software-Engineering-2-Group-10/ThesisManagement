@@ -197,40 +197,52 @@ async function getFilteredProposals(filters) {
     return data;
 }
 
-async function acceptDeclineApplication(applicationId, status) {
-  
-  const response = await fetch(`${URL}/teacher/applicationDetail/${applicationId}`,{
+async function acceptDeclineApplication(mailInfo) {
+  console.log(mailInfo.status);
+  const response = await fetch(`${URL}/teacher/applicationDetail/${mailInfo.id}`,{
     method: 'PATCH',  
     credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({status:status}),
+      body: JSON.stringify({status:mailInfo.status}),
   });
   const data = await response.json();
+  //return data;   
+
   console.log(response.status);
   if (response.status==200)
   {
-    console.log("Succeded");
-    console.log("thesis status: ",status);
-
-    //if status==200 call the api with the to send email with the right parameter (recipient_email, subject,message)
-    //with the right message like "thesis proposal accepted"
+   
+    const response2 = await fetch(`${URL}/send_email`,{
+      method: 'POST',  
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          {
+            recipient_mail: "s319950@studenti.polito.it",
+            subject: "try" ,
+            //subject: `Result on your application about ${mailInfo.thesis_title}` ,
+            //message: `Hello ${mailInfo.student_gender=='M' ? 'Mr.':'Mrs.'} ${mailInfo.student_name}, your thesis application for the ${mailInfo.thesis_title} proposal has been ${mailInfo.status ? 'Accepted': 'Rejected'}. Best Regards, Polito Staff.`
+            message:"try"
+            //message: mailInfo.status? "The application ":"Thesis Declined"
+          }
+          ),
+    });
+    
+    };
+    
+    return data;  
   }
-  //else
-  //call the api also with the same parameter but with the correct message
-  return data;   
-}
-
-// TODO: Modify API Call to server to accept/decline application in a way to call api to send mail
-
+ 
 
 
 const API = {
   logIn,
   logOut,
   getUserInfo,
-getProposals,
+  getProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,

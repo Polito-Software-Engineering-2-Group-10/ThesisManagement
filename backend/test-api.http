@@ -94,6 +94,7 @@ Content-Type: application/json
 {
     "recipient_mail": "s319950@studenti.polito.it",
     "subject": "Info Tesi",
-    "message": "Thesis Approved"
+    "message": "Thesis Approved",
+    "status":true
 
 }

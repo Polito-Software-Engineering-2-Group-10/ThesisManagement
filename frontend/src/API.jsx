@@ -224,7 +224,7 @@ async function acceptDeclineApplication(mailInfo) {
             recipient_mail: "s319950@studenti.polito.it",
             //subject: "try" ,
             subject: `Result on your application about ${mailInfo.thesis_title}` ,
-            message: `Hello ${mailInfo.student_gender=='M' ? 'Mr.':'Mrs.'} ${mailInfo.student_name},\nyour thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been ${mailInfo.status ? 'Accepted': 'Rejected'}.\nBest Regards, Polito Staff.`
+            message: `Hello ${mailInfo.student_gender=='M' ? 'Mr.':'Mrs.'} ${mailInfo.student_name} ${mailInfo.student_surname},\nyour thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been ${mailInfo.status ? 'Accepted': 'Rejected'}.\nBest Regards, Polito Staff.`
             //message:"try"
             //message: mailInfo.status? "The application ":"Thesis Declined"
           }

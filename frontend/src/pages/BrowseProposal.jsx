@@ -14,14 +14,6 @@ function BrowseProposal (props){
     setSelectedProposal(proposal);
   }
 
-  const isActive = (proposal) => {
-    let expdate = dayjs(proposal.expiration);
-    if (!proposal.archived && expdate.isAfter(dayjs())) {
-        return true;
-    }
-    return false;
-  }
-
   return (
     <>
     <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
@@ -41,7 +33,7 @@ function BrowseProposal (props){
     </thead>
     <tbody>
     {/* For story 7, professor should see only *active* proposals */}
-    {props.proposalList.filter(isActive).map((result, index) => (
+    {props.proposalList && props.proposalList.active.map((result, index) => (
         <tr key={result.id} onClick={() => handleProposalClick(result)}
         className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
         >
@@ -67,7 +59,7 @@ function BrowseProposal (props){
     </thead>
     <tbody>
     {/* For story 7, professor should see only *active* proposals */}
-    {props.proposalList.filter((p) => !isActive(p)).map((result, index) => (
+    {props.proposalList && props.proposalList.archived.map((result, index) => (
         <tr key={result.id} onClick={() => handleProposalClick(result)}
         className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
         >

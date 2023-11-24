@@ -1,6 +1,6 @@
 function samlroutes(app, config, passport) {
     /// THESE ARE STILL WIP
-    app.get('/login',
+    app.post('/api/login',
         passport.authenticate(config.passport.strategy,
             {
                 successRedirect: '/',
@@ -19,9 +19,9 @@ function samlroutes(app, config, passport) {
         }
     );
 
-    app.get('/logout/callback', passport.logoutSamlCallback);
+    app.get('/api/logout/callback', passport.logoutSamlCallback);
 
-    app.get('/logout', passport.logoutSaml);
+    app.delete('/api/logout', passport.logoutSaml);
 
 };
 

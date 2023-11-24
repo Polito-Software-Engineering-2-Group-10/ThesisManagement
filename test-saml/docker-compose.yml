@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  db:
+    build:
+      context: ../database
+      dockerfile: ./Dockerfile
+    expose:
+      - 5432
+    ports:
+      - 5433:5432
+    healthcheck:
+      test: ["CMD", "psql", "-U", "thesismanager", "-d", "thesismanagement", "-c", "SELECT * FROM student, teacher LIMIT 1"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+  authsources:
+    build:
+      context: ../saml
+      dockerfile: ./Dockerfile
+    volumes:
+      - saml_config:/var/www/simplesamlphp/config:rw
+    depends_on:
+      db:
+        condition: service_healthy
+  saml:
+    image: kenchan0130/simplesamlphp
+    depends_on:
+      - authsources
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: thesismanagement-saml
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://localhost:3001/api/login/callback
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://localhost:3001/api/logout/callback
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    volumes:
+      - saml_config:/var/www/simplesamlphp/config:ro
+volumes:
+  saml_config:

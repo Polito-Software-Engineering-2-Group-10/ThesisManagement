@@ -76,8 +76,6 @@ class ThesisProposalTable {
             active: active.map(ThesisProposal.fromRow)
         }*/
 
-    }
-
     async getById(id, include_expired) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;

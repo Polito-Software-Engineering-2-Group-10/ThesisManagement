@@ -19,7 +19,7 @@ export default {
             passport: {
                 strategy: 'saml',
                 saml: {
-                    path: process.env.SAML_PATH || '/login/callback',
+                    path: process.env.SAML_PATH || '/api/login/callback',
                     logoutUrl: process.env.SAML_LOGOUT_URL || 'https://openidp.feide.no/simplesaml/saml2/idp/SingleLogoutService.php',
                     entryPoint: process.env.SAML_ENTRY_POINT || 'https://openidp.feide.no/simplesaml/saml2/idp/SSOService.php',
                     issuer: process.env.SAML_ISSUER || 'passport-saml',

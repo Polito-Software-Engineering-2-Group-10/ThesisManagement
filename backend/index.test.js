@@ -398,16 +398,16 @@ describe('GET /api/teacher/ProposalsList', () => {
         ];
         const proposalsSummary = [
             {
-                thesis_title: 'Title1',
-                thesis_expiration: '2023/01/01',
-                thesis_level: 1,
-                thesis_type: 'Type1'
+                title: 'Title1',
+                expiration: '2023/01/01',
+                level: 1,
+                type: 'Type1'
             },
             {
-                thesis_title: 'Title2',
-                thesis_expiration: '2023/01/01',
-                thesis_level: 2,
-                thesis_type: 'Type2'
+                title: 'Title2',
+                expiration: '2023/01/01',
+                level: 2,
+                type: 'Type2'
             },
         ];
         registerMockMiddleware(app, 0, (req, res, next) => {

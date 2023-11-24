@@ -411,6 +411,25 @@ app.get('/api/thesis/groups', async (req, res) => {
     }
 });
 
+app.delete('/api/teacher/deleteProposal', 
+isLoggedInAsTeacher,
+[
+    check('proposalId').isInt()
+],
+ async(req,res)=> {
+
+    try{
+        console.log(req.body.proposalId)
+        const deletedPropoal= await thesisProposalTable.deletebyId(req.body.proposalId)
+        res.json(deletedPropoal);
+    }
+    catch(err)
+    {
+        res.status(503).json({ error: `Database error during deleting the thesis proposal ${err}` });
+
+    }
+});
+
 /*END API*/
 
 

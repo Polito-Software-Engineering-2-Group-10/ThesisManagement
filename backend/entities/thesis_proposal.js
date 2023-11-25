@@ -59,27 +59,15 @@ class ThesisProposalTable {
         }
     }*/
 
-    async getAll(offset) {
-        virtualClock.setOffset(offset);
+    async getAll() {
         let current_date_string = virtualClock.getSqlDate();
-        /*const archived = await this.db.executeQueryExpectAny(
-            `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
-            AND (tp.archived = true OR tp.expiration < $1)
-            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
-            //`SELECT * FROM thesis_proposal WHERE (archived = true) OR (expiration < $1)`,
-            current_date_string
-        )*/
-        
         const active = await this.db.executeQueryExpectAny(
             `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
-            AND (tp.archived = false) AND (tp.expiration > $1)
+            AND tp.archived = false AND tp.expiration > $1
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
             current_date_string
         )
-        return {
-            //archived: archived.map(ThesisProposal.fromRow),
-            active: active.map(ThesisProposal.fromRow)
-        }
+        return active.map(ThesisProposal.fromRow);
     }
 
     async getById(id, include_expired) {

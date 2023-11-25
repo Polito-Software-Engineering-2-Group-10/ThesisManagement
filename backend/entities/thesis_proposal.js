@@ -60,7 +60,7 @@ class ThesisProposalTable {
     }*/
 
     async getAll() {
-        let current_date_string = virtualClock.getSqlDate();
+        const current_date_string = virtualClock.getSqlDate();
         const active = await this.db.executeQueryExpectAny(
             `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
             AND tp.archived = false AND tp.expiration > $1
@@ -79,8 +79,9 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
             return ThesisProposal.fromRow(result);
         } else {
-            const query = `SELECT * FROM thesis_proposal WHERE id = $1 AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT * FROM thesis_proposal WHERE id = $1 AND expiration > $2`;
+            const result = await this.db.executeQueryExpectOne(query, getNum(id), current_date_string, `ThesisProposal with id ${id} not found`);
             return ThesisProposal.fromRow(result);
         }
     }
@@ -88,7 +89,7 @@ class ThesisProposalTable {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
         }
-        let current_date_string = virtualClock.getSqlDate();
+        const current_date_string = virtualClock.getSqlDate();
         const archived = await this.db.executeQueryExpectAny(
             `SELECT * FROM thesis_proposal WHERE teacher_id = $1 AND (archived = true OR expiration < $2)`,
             getNum(teacher_id), current_date_string
@@ -112,8 +113,9 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query, `%${keyword}%`);
             return result.map(ThesisProposal.fromRow);
         } else {
-            const query = `SELECT thesis_proposal.* FROM thesis_proposal, unnest(keywords) ks WHERE lower(ks) LIKE lower($1) AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, `%${keyword}%`);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT thesis_proposal.* FROM thesis_proposal, unnest(keywords) ks WHERE lower(ks) LIKE lower($1) AND expiration > $2`;
+            const result = await this.db.executeQueryExpectAny(query, `%${keyword}%`, current_date_string);
             return result.map(ThesisProposal.fromRow);
         }
     }
@@ -126,8 +128,9 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query, `%${description}%`);
             return result.map(ThesisProposal.fromRow);
         } else {
-            const query = `SELECT thesis_proposal.* FROM thesis_proposal WHERE lower(description) LIKE lower($1) AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, `%${description}%`);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT thesis_proposal.* FROM thesis_proposal WHERE lower(description) LIKE lower($1) AND expiration > $2`;
+            const result = await this.db.executeQueryExpectAny(query, `%${description}%`, current_date_string);
             return result.map(ThesisProposal.fromRow);
         }
     }
@@ -144,8 +147,9 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query, ltype);
             return result.map(ThesisProposal.fromRow);
         } else {
-            const query = `SELECT * FROM thesis_proposal WHERE lower(type) = $1 AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, ltype);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT * FROM thesis_proposal WHERE lower(type) = $1 AND expiration > $2`;
+            const result = await this.db.executeQueryExpectAny(query, ltype, current_date_string);
             return result.map(ThesisProposal.fromRow);
         }
     }
@@ -158,8 +162,9 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query, group);
             return result.map(ThesisProposal.fromRow);
         } else {
-            const query = `SELECT * FROM thesis_proposal WHERE $1 = ANY(groups) AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, group);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT * FROM thesis_proposal WHERE $1 = ANY(groups) AND expiration > $2`;
+            const result = await this.db.executeQueryExpectAny(query, group, current_date_string);
             return result.map(ThesisProposal.fromRow);
         }
     }
@@ -172,14 +177,16 @@ class ThesisProposalTable {
             const result = await this.db.executeQueryExpectAny(query, programme);
             return result.map(ThesisProposal.fromRow);
         } else {
-            const query = `SELECT * FROM thesis_proposal WHERE $1 = ANY(programmes) AND expiration > NOW()`;
-            const result = await this.db.executeQueryExpectAny(query, programme);
+            const current_date_string = virtualClock.getSqlDate();
+            const query = `SELECT * FROM thesis_proposal WHERE $1 = ANY(programmes) AND expiration > $2`;
+            const result = await this.db.executeQueryExpectAny(query, programme, current_date_string);
             return result.map(ThesisProposal.fromRow);
         }
     }
     async getNotExpired() {
-        const query = `SELECT * FROM thesis_proposal WHERE expiration > NOW()`;
-        const result = await this.db.executeQueryExpectAny(query);
+        const current_date_string = virtualClock.getSqlDate();
+        const query = `SELECT * FROM thesis_proposal WHERE expiration > $1`;
+        const result = await this.db.executeQueryExpectAny(query, current_date_string);
         return result.map(ThesisProposal.fromRow);
     }
     async getNotExpiredFromDate(date) {
@@ -188,15 +195,17 @@ class ThesisProposalTable {
         return result.map(ThesisProposal.fromRow);
     }
     async getActiveProposals() {
-        const query = `SELECT * FROM thesis_proposal WHERE archived = false AND expiration > NOW()`;
-        const result = await this.db.executeQueryExpectAny(query);
+        const current_date_string = virtualClock.getSqlDate();
+        const query = `SELECT * FROM thesis_proposal WHERE archived = false AND expiration > $1`;
+        const result = await this.db.executeQueryExpectAny(query, current_date_string);
         return result.map(ThesisProposal.fromRow);
     }
     async getActiveProposalsStudent() {
+        const current_date_string = virtualClock.getSqlDate();
         const query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname
         FROM thesis_proposal,teacher WHERE thesis_proposal.teacher_id=teacher.id and archived = false 
-        and thesis_proposal.expiration > NOW()`;
-        const result = await this.db.executeQueryExpectAny(query);
+        and thesis_proposal.expiration > $1`;
+        const result = await this.db.executeQueryExpectAny(query, current_date_string);
         //return result.map(ThesisProposal.fromRow);
         return result;
     }
@@ -207,8 +216,9 @@ class ThesisProposalTable {
         return ThesisProposal.fromRow(result);
     }
     async archiveExpiredProposal() {
-        const query = `UPDATE thesis_proposal SET archived = true WHERE archived = false AND expiration < NOW()`;
-        const result = await this.db.executeQueryExpectAny(query);
+        const current_date_string = virtualClock.getSqlDate();
+        const query = `UPDATE thesis_proposal SET archived = true WHERE archived = false AND expiration < $1`;
+        const result = await this.db.executeQueryExpectAny(query, current_date_string);
         return ThesisProposal.fromRow(result);
     }
     async archiveThesisProposal(id) {
@@ -284,8 +294,9 @@ WHERE NOT EXISTS (
             params.push(groups);
             i++;
         }
+        query += ` AND archived = false AND expiration > ${i}`
         query += ' ORDER BY thesis_proposal.level, thesis_proposal.expiration ASC, thesis_proposal.type ASC'
-        const result = await this.db.executeQueryExpectAny(query, ...params);
+        const result = await this.db.executeQueryExpectAny(query, ...params, virtualClock.getSqlDate());
         return result;
     }
 }

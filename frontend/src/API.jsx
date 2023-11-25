@@ -21,6 +21,20 @@ async function setVirtualClock(date) {
       }
 }
 
+async function resetVirtualClock() {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'DELETE',
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+      } else {
+        const errDetail = await response.json();
+        throw errDetail;
+      }
+}
+
 async function addProposal(proposal) {
   let response = await fetch(URL + '/teacher/insertProposal', {
     credentials: 'include',
@@ -248,7 +262,8 @@ const API = {
   addProposal,
   getApplicationsListTeacher,
   acceptDeclineApplication,
-  setVirtualClock
+  setVirtualClock,
+  resetVirtualClock
 };
 
 export default API;

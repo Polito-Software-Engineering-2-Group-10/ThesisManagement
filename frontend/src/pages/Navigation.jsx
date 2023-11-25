@@ -1,14 +1,18 @@
 import {Navbar, Nav,Container,Button, Form} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
-import AppContext from '../../AppContext';
+import AppContext from '../AppContext';
 import API from '../API'
 
 function Navigation(props) {
     const { setProposalsDirty } = useContext(AppContext);
-    const handleVirtualClockClick = () => {
+    const handleVirtualClockClick = (set) => {
         const date = document.getElementById('virtual-clock').value;
-        API.setVirtualClock(date);
+        if (set) {
+            API.setVirtualClock(date);
+        } else {
+            API.resetVirtualClock();
+        }
         setProposalsDirty(true);
     };
     return (
@@ -22,7 +26,8 @@ function Navigation(props) {
                 </Nav.Item>
                 <Nav.Item>
                     <Form.Control type="date" id="virtual-clock"></Form.Control>
-                    <Button onClick={() => handleVirtualClockClick()}>Set virtual clock</Button>
+                    <Button onClick={() => handleVirtualClockClick(true)}>Set virtual clock</Button>
+                    <Button onClick={() => handleVirtualClockClick(false)}>Reset</Button>
                 </Nav.Item>
               </Nav> : ""
           }

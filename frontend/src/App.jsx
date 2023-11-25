@@ -10,7 +10,7 @@ import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
 import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
-import AppContext from '../AppContext.jsx';
+import AppContext from './AppContext.jsx';
 
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
@@ -107,6 +107,7 @@ function App() {
   }
 
   const contextObject = {
+    proposalsDirty: proposalsDirty,
     setProposalsDirty: setProposalsDirty,
   };
 

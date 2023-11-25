@@ -4,7 +4,6 @@ import { Button,Container, Table } from "react-bootstrap";
 import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
-
 function BrowseProposal (props){
   const navigate = useNavigate();
   
@@ -16,6 +15,7 @@ function BrowseProposal (props){
   return (
     <>
     <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
+    
     <Container>
       {/*<h3>Teacher ID: </h3>*/}
     <Table hover>

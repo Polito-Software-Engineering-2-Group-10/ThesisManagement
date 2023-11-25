@@ -3,7 +3,9 @@ import { Table, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
 import dayjs from 'dayjs'
 import API from '../API';
-import useNotification from '../hooks/useNotifcation.js';
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 function BrowseAndAcceptApplication(props) {
 
     // to select a row in the table
@@ -33,6 +35,7 @@ function BrowseAndAcceptApplication(props) {
     
     return (
         <>
+            <ToastContainer/>
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user} />
             <div id="left-box">
              { props.appList ?

@@ -352,10 +352,10 @@ app.post('/api/student/applyProposal',
     }
 );
 
-app.get('/api/ProposalsList',
+app.get('/api/ProposalsList', 
     async (req, res) => {
         try {
-            const proposalList = await thesisProposalTable.getAll();
+            const proposalList = await thesisProposalTable.getAll(req.body.offset);
             res.json(proposalList);
         }
         catch (err) {

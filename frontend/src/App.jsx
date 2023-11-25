@@ -10,12 +10,12 @@ import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
 import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
-
+import useNotification from './hooks/useNotifcation.js';
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 
 function App() {
-
+  const notify =useNotification();
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
@@ -109,8 +109,14 @@ function App() {
 
   function addApplication(application, success_callback, error_callback){
     API.addApplication(application)
-      .then(() => { setDirty(true); success_callback(); })
-      .catch((err) => error_callback(err));
+      .then(() => { 
+        setDirty(true); 
+        success_callback(); 
+      })
+      .catch(
+        (err) => 
+        error_callback()
+        );
   }
 
   return (

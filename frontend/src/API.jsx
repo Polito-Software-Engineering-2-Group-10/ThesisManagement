@@ -94,7 +94,7 @@ async function logIn(credentials) {
       throw propList;
     }
   }
-
+  
   async function getApplicationsList() {
     const response = await fetch(URL+'/student/ApplicationsList', {
       credentials: 'include'

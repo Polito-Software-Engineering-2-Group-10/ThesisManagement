@@ -38,16 +38,26 @@ class ThesisProposalTable {
         return thesisProposalTable;
     }
 
-    async getAll(include_expired) {
+    async getAll(include_expired,Cds) {
         if (typeof include_expired === 'undefined') {
             include_expired = true;
         }
-        if (include_expired) {
+        if (typeof Cds === 'undefined') {
+            role = false;
+        }
+        if (include_expired && !Cds) {
             const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
             const result = await this.db.executeQueryExpectAny(query);
             return result;
-        } else {
+        }
+        else if (include_expired && Cds) {  //todo: modify the query
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
+            const result = await this.db.executeQueryExpectAny(query);
+            return result;
+        }
+        else {
             const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id and expiration > NOW()
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
             const result = await this.db.executeQueryExpectAny(query);

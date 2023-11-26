@@ -14,4 +14,4 @@
 - [ ] Fix the fact that a professor can belong to more than one group
 - [x] Separate list of proposals (archived / active)
 - [x] Remove button "browse proposals" from professor's page
-- [ ]  (Salvo will do it)Add popup for every action that needs feedback (e.g. applying to a proposal, adding a proposal, etc.) 
+- [x] Add popup for every action that needs feedback (e.g. applying to a proposal, adding a proposal, etc.) 

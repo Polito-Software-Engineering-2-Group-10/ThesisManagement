@@ -1,14 +1,12 @@
 //const nodemailer = require('nodemailer');
 import nodemailer from 'nodemailer';
 
-
-var myemail = "politonotification@gmail.com";
-var mypassword = "vbql afhy mvyj afho";
+const myemail = "politonotification@gmail.com";
+const mypassword = "vbql afhy mvyj afho";
 
 function sendEmail(parameters/*{recipient_email, subject,message }*/) {
-  console.log(parameters)
   return new Promise((resolve, reject) => {
-    var transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: myemail,
@@ -26,14 +24,12 @@ function sendEmail(parameters/*{recipient_email, subject,message }*/) {
     transporter.sendMail(mail_configs, function (error, info) {
       if (error) {
         console.log(error);
-        return reject({ message: `An error has occured` });
+        return reject({ message: `An error has occurred` });
       }
-      return resolve({ message: "Email sent succesfuly" });
+      return resolve({ message: "Email sent successfully" });
     });
   });
 }
-
-
 
 /*  with GET
 function sendEmail() {
@@ -60,10 +56,10 @@ function sendEmail() {
         }
         return resolve({ message: "Email sent succesfuly" });
       });
-    });
-  }*/
+   });
+ }*/
 
-  export default sendEmail;
+export default sendEmail;
 
 
 

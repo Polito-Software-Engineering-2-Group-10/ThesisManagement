@@ -198,7 +198,6 @@ async function getFilteredProposals(filters) {
 }
 
 async function acceptDeclineApplication(mailInfo) {
-  console.log(mailInfo.status);
   const response = await fetch(`${URL}/teacher/applicationDetail/${mailInfo.id}`,{
     method: 'PATCH',  
     credentials: 'include',
@@ -207,34 +206,25 @@ async function acceptDeclineApplication(mailInfo) {
       },
       body: JSON.stringify({status:mailInfo.status}),
   });
-  const data = await response.json();
-  //return data;   
 
-  console.log(response.status);
-  if (response.status==200)
+  const data = await response.json();
+  if(response.status==200)
   {
-   
-    const response2 = await fetch(`${URL}/send_email`,{
+    await fetch(`${URL}/send_email`,{
       method: 'POST',  
       credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-          {
-            recipient_mail: "s319950@studenti.polito.it", 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+            recipient_mail: "s313372@studenti.polito.it",
             subject: `Result on your application about ${mailInfo.thesis_title}` ,
             message: `Hello ${mailInfo.student_gender=='M' ? 'Mr.':'Mrs.'} ${mailInfo.student_name} ${mailInfo.student_surname},\nyour thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been ${mailInfo.status ? 'Accepted': 'Rejected'}.\nBest Regards, Polito Staff.`
-          }
-          ),
+      }),
     });
-    
-    };
-    
-    return data;  
   }
- 
-
+  return data;
+}
 
 const API = {
   logIn,

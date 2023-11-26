@@ -417,7 +417,10 @@ isLoggedInAsTeacher,
     check('proposalId').isInt()
 ],
  async(req,res)=> {
-
+    const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
     try{
         console.log(req.body.proposalId)
         const deletedPropoal= await thesisProposalTable.deletebyId(req.body.proposalId)

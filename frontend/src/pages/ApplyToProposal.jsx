@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import dayjs from 'dayjs'
 import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import useNotification from '../hooks/useNotifcation.js';
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 function ApplyToProposal(props) {
     const [ errorMessage, setErrorMessage ] = useState('');
     const navigate = useNavigate();
@@ -26,14 +28,19 @@ function ApplyToProposal(props) {
         }
         setErrorMessage('');
         props.addApplication(application, () => {
-            navigate('/');
+           
+            notify.success("Application submitted correctly");
+            setTimeout(()=>{ navigate('/') }, 3400);
+            //navigate('/');
         }, (err) => {
-            setErrorMessage("You can't apply to the same proposal twice");
+            notify.error("You can't apply to the same proposal twice");
+            //setErrorMessage("You can't apply to the same proposal twice");
         });
     }
 
     return (
         <>
+        <ToastContainer/>
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
         {
             (proposals && propId) ? (

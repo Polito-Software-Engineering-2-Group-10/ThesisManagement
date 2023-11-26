@@ -19,8 +19,10 @@ import {
     thesisProposalTable,
     applicationTable
 } from './dbentities.js';
+import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
 import { check, validationResult } from "express-validator"; // validation middleware
+import dayjs from 'dayjs';
 const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
@@ -245,6 +247,35 @@ app.get('/api/teacher/ProposalsList',
     }
 );
 
+//Archive Proposal
+//PATCH /api/teacher/applicationDetail/<proposalid>
+//should be used when the teacher clicks on the Archive button
+app.patch('/api/teacher/ProposalsList/:proposalid',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
+            if (!propopsalDetail) {
+                return res.status(400).json({ error: 'The proposal does not exist!' });
+            }
+            if (propopsalDetail.archived!==false) {
+                return res.status(400).json({ error: 'The proposal has been archived!' });
+            }
+            const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
+            res.json(proposalResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+
+
+);
+/*End Archive Proposal*/
+
 /*Insert a new thesis proposal*/
 app.post('/api/teacher/insertProposal',
     isLoggedInAsTeacher,
@@ -321,7 +352,7 @@ app.post('/api/student/applyProposal',
     }
 );
 
-app.get('/api/ProposalsList',
+app.get('/api/ProposalsList', 
     async (req, res) => {
         try {
             const proposalList = await thesisProposalTable.getAll();
@@ -410,6 +441,24 @@ app.get('/api/thesis/groups', async (req, res) => {
         res.status(503).json({ error: `Database error during retrieving thesis groups ${err}` });
     }
 });
+
+app.post('/api/virtualclock', [
+    check('date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    };
+    let now = dayjs();
+    let new_date = dayjs(req.body.date);
+    virtualClock.setOffset(new_date.unix() - now.unix());
+    res.json({ date: new_date });
+})
+
+app.delete('/api/virtualclock', (req, res) => {
+    virtualClock.resetOffset();
+    res.json({ date: dayjs() });
+})
 
 /*END API*/
 

@@ -3,6 +3,38 @@ const URL = `http://${import.meta.env.VITE_SERVER_HOST}:${import.meta.env.VITE_S
 
 import dayjs from 'dayjs';
 
+async function setVirtualClock(date) {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({date: date})
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+      } else {
+        const errDetail = await response.json();
+        throw errDetail;
+      }
+}
+
+async function resetVirtualClock() {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'DELETE',
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+      } else {
+        const errDetail = await response.json();
+        throw errDetail;
+      }
+}
+
 async function addProposal(proposal) {
   let response = await fetch(URL + '/teacher/insertProposal', {
     credentials: 'include',
@@ -230,6 +262,8 @@ const API = {
   addProposal,
   getApplicationsListTeacher,
   acceptDeclineApplication,
+  setVirtualClock,
+  resetVirtualClock
 };
 
 export default API;

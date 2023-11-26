@@ -13,6 +13,28 @@ function BrowseProposal (props){
   const handleProposalClick = (proposal) => {
     setSelectedProposal(proposal);
   }
+    
+  const handleCopyClick = (proposal) => {
+    // navigate to insert proposal page with the proposal as a parameter
+    navigate('/insert', {state: {proposal: proposal}});
+  }
+    
+  // utility to generate a table row from a proposal
+  const generateTable = (result) => {
+        return (
+         <tr key={result.id} onClick={() => handleProposalClick(result)}
+        className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
+        >
+          <td>{result.title}</td>
+          <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
+          <td>{result.level==1 ? "Bachelor" : "Master"}</td>
+          <td>{result.type}</td>
+          <td><Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button></td>
+        </tr>
+    )
+  }
+
+
 
   return (
     <>
@@ -29,20 +51,14 @@ function BrowseProposal (props){
         <th>Expiration</th>
         <th>Level</th>
         <th>Type</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
     {/* For story 7, professor should see only *active* proposals */}
-    {props.proposalList && props.proposalList.active.map((result, index) => (
-        <tr key={result.id} onClick={() => handleProposalClick(result)}
-        className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
-        >
-          <td>{result.title}</td>
-          <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
-          <td>{result.level==1 ? "Bachelor" : "Master"}</td>
-          <td>{result.type}</td>
-        </tr>
-      ))}
+    {props.proposalList && props.proposalList.active.map((result, index) => 
+        generateTable(result)
+    )}
     </tbody>
   </Table>
   <Row>
@@ -55,20 +71,12 @@ function BrowseProposal (props){
         <th>Expiration</th>
         <th>Level</th>
         <th>Type</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
     {/* For story 7, professor should see only *active* proposals */}
-    {props.proposalList && props.proposalList.archived.map((result, index) => (
-        <tr key={result.id} onClick={() => handleProposalClick(result)}
-        className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
-        >
-          <td>{result.title}</td>
-          <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
-          <td>{result.level==1 ? "Bachelor" : "Master"}</td>
-          <td>{result.type}</td>
-        </tr>
-      ))}
+    {props.proposalList && props.proposalList.archived.map((result, index) => generateTable(result))}
     </tbody>
   </Table>
   <Row>

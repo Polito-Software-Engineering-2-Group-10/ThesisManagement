@@ -7,25 +7,27 @@ import API from '../API';
 
 
 const ProposalForm = (props) => {
-  const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
-  const [title, setTitle] = useState(props.page ? props.page.title : '');
-  const [supervisor, setSupervisor] = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
-  const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
-  const [type, setType] = useState(props.page ? props.page.type : '');
-  const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '');
-  const [level, setLevel] = useState();
-  const [groups, setGroups] = useState(props.page ? props.page.groups : []);
-  const [keywords, setKeywords] = useState(props.page ? props.page.keywords : []);
-  const [description, setDescription] = useState(props.page ? props.page.description : '');
-  const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : []);
-  const [notes, setNotes] = useState(props.page ? props.page.notes : '');
-  const [programmes, setPrograms] = useState(props.page ? props.page.programmes : []);
-  
+
+    const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
+    const [title, setTitle] = useState(props.page ? props.page.title : '');
+    const [supervisor, setSupervisor] = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
+    const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
+    const [type, setType] = useState(props.page ? props.page.type : '');
+    const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '');
+    const [level, setLevel] = useState();
+    const [groups, setGroups] = useState(props.page ? props.page.groups : []);
+    const [keywords, setKeywords] = useState(props.page ? props.page.keywords : []);
+    const [description, setDescription] = useState(props.page ? props.page.description : '');
+    const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : []);
+    const [notes, setNotes] = useState(props.page ? props.page.notes : '');
+    const [programmes, setPrograms] = useState(props.page ? props.page.programmes : []);
+    
 
     // useNavigate hook to change page
     const navigate = useNavigate();
     const location = useLocation();
     
+       
     
     const nextpage = location.state?.nextpage || '/';
 
@@ -45,6 +47,26 @@ const ProposalForm = (props) => {
         }
 
     }, [loggedIn])
+    
+
+    // if the page is called with a proposal as a parameter, fill the form with the proposal data
+    useEffect(()=>{
+        if (location.state?.proposal){
+            const proposal = location.state.proposal;
+            setTitle(proposal.title);
+            setSupervisor(proposal.supervisor);
+            setCoSupervisor(proposal.co_supervisor);
+            setType(proposal.type);
+            setExpirationDate(proposal.expiration.split('T')[0]);
+            setLevel(proposal.level);
+            setGroups(proposal.groups);
+            setKeywords(proposal.keywords);
+            setDescription(proposal.description);
+            setRequiredKnowledge(proposal.required_knowledge);
+            setNotes(proposal.notes);
+            setPrograms(proposal.programmes);    
+        }
+    },[])
 
     const handleSubmit = (event) => {
       event.preventDefault();

@@ -1,11 +1,17 @@
 import {Navbar, Nav,Container,Button, Form} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
 
+import "../styles/Navigation.css";
+
 function Navigation(props) {
     const { setProposalsDirty } = useContext(AppContext);
+    
+    // necessary to use navigate() inside a function
+    const navigate = useNavigate();
+
     const handleVirtualClockClick = (set) => {
         const date = document.getElementById('virtual-clock').value;
         if (set) {
@@ -18,7 +24,7 @@ function Navigation(props) {
     return (
       <Navbar expand="lg" bg='primary' data-bs-theme="dark">
         <Container>
-          <Navbar.Brand href="/">Thesis Management</Navbar.Brand>
+          <Navbar.Brand onClick={()=>{navigate("/");}} className="brand">Thesis Management</Navbar.Brand>
           { props.loggedIn ? 
               <Nav className="justify-content-center">
                 <Nav.Item>

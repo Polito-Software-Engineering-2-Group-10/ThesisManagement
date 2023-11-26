@@ -1,14 +1,8 @@
 import {Navbar, Nav,Container,Button} from 'react-bootstrap';
 import { Link, useMatch } from 'react-router-dom';
-import useNotification from '../hooks/useNotifcation';
-import { ToastContainer} from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
 
 function Navigation(props) {
-  const notify=useNotification();
     return (
-      <>
-      <ToastContainer/>
       <Navbar expand="lg" bg="primary" data-bs-theme="dark">
         
         <Container>
@@ -40,18 +34,9 @@ function Navigation(props) {
                 </Link>
               )}
             </Nav>
-            <Button
-              className="mx-2"
-              variant="light"
-              onClick={() =>notify.success("Hey!")}
-              
-            >
-              <i className="bi bi-box-arrow-left"></i> Notify
-            </Button>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      </>
     );
     
 }

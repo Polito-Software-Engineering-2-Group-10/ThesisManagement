@@ -3,7 +3,9 @@ import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from "./Navigation";
 import API from '../API';
-
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
 const ProposalForm = (props) => {
@@ -25,7 +27,7 @@ const ProposalForm = (props) => {
     // useNavigate hook to change page
     const navigate = useNavigate();
     const location = useLocation();
-    
+    const notify=useNotification();
     
     const nextpage = location.state?.nextpage || '/';
 
@@ -72,12 +74,15 @@ const ProposalForm = (props) => {
       };
 
       addProposal(proposal);
-      navigate(nextpage);
+      notify.success('Successfully submitted your proposal!');
+      setTimeout(()=>{ navigate(nextpage) }, 3400);
+      //navigate(nextpage);
     }
 
 
     return (
         <>
+            <ToastContainer/>
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">

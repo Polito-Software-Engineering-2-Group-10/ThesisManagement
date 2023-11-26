@@ -31,7 +31,6 @@ function ApplyToProposal(props) {
            
             notify.success("Application submitted correctly");
             setTimeout(()=>{ navigate('/') }, 3400);
-            //navigate('/');
         }, (err) => {
             notify.error("You can't apply to the same proposal twice");
             //setErrorMessage("You can't apply to the same proposal twice");

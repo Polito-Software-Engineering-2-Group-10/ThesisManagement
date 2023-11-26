@@ -419,9 +419,11 @@ app.get('/api/thesis/groups', async (req, res) => {
 
 /*SEND MAIL APIS*/
 
-app.post("/api/send_email", async(req, res) => {
+app.post("/api/send_email", 
+isLoggedInAsTeacher,
+async(req, res) => {
 try{
-    
+
 sendEmail(req.body)
     .then((response) => res.send(response.message))
     .catch((error) => res.status(500).send(error.message));

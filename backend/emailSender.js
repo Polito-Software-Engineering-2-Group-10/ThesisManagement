@@ -22,7 +22,7 @@ function sendEmail(parameters/*{recipient_email, subject,message }*/) {
       subject: parameters.subject, //parameters.subject
       text: parameters.message, //parameters.message
     };
-    console.log(mail_configs);
+    
     transporter.sendMail(mail_configs, function (error, info) {
       if (error) {
         console.log(error);

@@ -11,6 +11,8 @@ import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
 import useNotification from './hooks/useNotifcation.js';
+import AppContext from './AppContext.jsx';
+
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 
@@ -23,10 +25,12 @@ function App() {
   const [proposalsDirty, setProposalsDirty] = useState(true);
   const [appList, setAppList] = useState(undefined);
 
-  const [proposalList, setProposalList] = useState([]);
+  const [proposalList, setProposalList] = useState(null);
   const fetchData = async () =>{
-    const result = await API.getProposals();
-    setProposalList(result);
+    if (user !== null && user.role === 'teacher') {
+        const result = await API.getTeacherProposals();
+        setProposalList(result);
+    }
   }
   useEffect(() => {
     if (proposalsDirty) {
@@ -35,7 +39,7 @@ function App() {
     }
   }, [proposalsDirty]);
 
-  const fetchData2 = async () =>{
+  const fetchTeacherAppsList = async () =>{
     const result = await API.getApplicationsListTeacher();
     setAppList(result);
   }
@@ -63,17 +67,7 @@ function App() {
             .then((teacher) => {
                 setUserDetail(teacher);
                 fetchData();
-                fetchData2();
-                // fetching information about the applications
-                /*API.getApplicationsList()
-                    .then((list) => {
-                        console.log(list);
-                        setAppList(list);
-                        setDirty(false);
-                    })
-
-                .catch((err) => console.log(err));*/
-
+                fetchTeacherAppsList();
                 setDirty(false);
                })
             .catch((err) => console.log(err));
@@ -119,19 +113,27 @@ function App() {
         );
   }
 
+  const contextObject = {
+    proposalsDirty: proposalsDirty,
+    setProposalsDirty: setProposalsDirty,
+  };
+
+
   return (
     <>
     <BrowserRouter>
-      <Routes>
-        <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail}/>}></Route>
-        <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
-        <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
-        <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-        <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
-        <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
-        <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchData2}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
-      </Routes>
+      <AppContext.Provider value={contextObject}>
+        <Routes>
+            <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail}/>}></Route>
+            <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
+            <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+            <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+            <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
+            <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
+            <Route path='/proposal' element={loggedIn ? <BrowseProposal proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+            <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchTeacherAppsList}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+        </Routes>
+      </AppContext.Provider>
     </BrowserRouter>
     </>
   )

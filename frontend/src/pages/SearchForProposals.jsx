@@ -1,9 +1,10 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useContext} from 'react';
 import {Link, useNavigate}   from 'react-router-dom';
 import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col } from 'react-bootstrap';
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
 import './pagination.css';
+import AppContext from '../AppContext.jsx';
 
 import ReactPaginate from 'react-paginate';
 
@@ -47,16 +48,13 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
 
     useEffect(() => {
         const endOffset = itemOffset + itemsPerPage;
-        console.log(`Loading items from ${itemOffset} to ${endOffset}`);
         const newItems = proposalList.slice(itemOffset, endOffset);
-        console.log(newItems);
         setCurrentItems(newItems);
         setPageCount(Math.ceil(proposalList.length / itemsPerPage));
     }, [itemOffset, itemsPerPage, proposalList.length])
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % proposalList.length;
-        console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`);
         setItemOffset(newOffset);
     }
     return (
@@ -90,6 +88,8 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
 function SearchForProposals(props) {
     const navigate = useNavigate();
 
+    const { proposalsDirty } = useContext(AppContext);
+
     const [proposals, setProposals] = useState([]);
     const [professors, setProfessors] = useState([]);
     const [types, setTypes] = useState(['']);
@@ -98,12 +98,15 @@ function SearchForProposals(props) {
     const [filters, setFilters] = useState({});
     const [activeFilter, setActiveFilter] = useState(null);
 
-    useEffect( () => {
+    useEffect(() => {
         API.getAllProposals()
             .then((data) => {
                 setProposals(data);
             })
             .catch((err) => console.log(err));
+    }, [proposalsDirty])
+
+    useEffect( () => {
         API.getAllTeachers()
             .then((data) => {
                 setProfessors(data);

@@ -1,6 +1,39 @@
-const URL ='http://localhost:3001/api';
+// FIXME: this should change when deploying on docker or locally
+const URL = `http://localhost:3001/api`;
+
 import dayjs from 'dayjs';
 
+async function setVirtualClock(date) {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({date: date})
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+      } else {
+        const errDetail = await response.json();
+        throw errDetail;
+      }
+}
+
+async function resetVirtualClock() {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'DELETE',
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+      } else {
+        const errDetail = await response.json();
+        throw errDetail;
+      }
+}
 
 async function addProposal(proposal) {
   let response = await fetch(URL + '/teacher/insertProposal', {
@@ -189,7 +222,7 @@ async function getFilteredProposals(filters) {
     return data;
 }
 
-  async function getProposals() {
+  async function getTeacherProposals() {
     const response = await fetch(`${URL}/teacher/ProposalsList`,{
       credentials: 'include'
   });
@@ -215,7 +248,7 @@ const API = {
   logIn,
   logOut,
   getUserInfo,
-getProposals,
+  getTeacherProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,
@@ -229,6 +262,8 @@ getProposals,
   addProposal,
   getApplicationsListTeacher,
   acceptDeclineApplication,
+  setVirtualClock,
+  resetVirtualClock
 };
 
 export default API;

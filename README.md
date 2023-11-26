@@ -1,5 +1,7 @@
 # Thesis Management
 
+You can find the images on [Docker Hub](https://hub.docker.com/r/atari2/thesismanagement).
+
 To start the application do the following steps:
 
 1. Copy from the [GitHub repository](https://github.com/Polito-Software-Engineering-2-Group-10/ThesisManagement/blob/docker/docker-compose.yml) the file `docker-compose.yml` or from below.

@@ -3,8 +3,8 @@ function samlroutes(app, config, passport) {
     app.post('/api/login',
         passport.authenticate(config.passport.strategy,
             {
-                successRedirect: '/',
-                failureRedirect: '/login'
+                successRedirect: 'http://localhost:5173',
+                failureRedirect: 'http://localhost:5173/login'
             })
     );
 
@@ -12,7 +12,7 @@ function samlroutes(app, config, passport) {
         passport.authenticate(config.passport.strategy,
             {
                 failureRedirect: '/',
-                failureFlash: true
+                failureFlash: true,
             }),
         function (req, res) {
             res.redirect('/');
@@ -22,6 +22,13 @@ function samlroutes(app, config, passport) {
     app.get('/api/logout/callback', passport.logoutSamlCallback);
 
     app.delete('/api/logout', passport.logoutSaml);
+
+    app.get('/api/session', function (req, res) {
+        if (req.isAuthenticated())
+            res.status(200).json(req.user);
+        else
+            res.status(401).json({ error: 'Unauthenticated user!' });
+    });
 
 };
 

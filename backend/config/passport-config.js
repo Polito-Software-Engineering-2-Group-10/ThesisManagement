@@ -2,32 +2,52 @@ import { Strategy as SamlStrategy } from '@node-saml/passport-saml';
 import { Strategy as LocalStrategy } from 'passport-local'
 import { studentTable, teacherTable } from '../dbentities.js'
 
+async function getUserFromDb(email, password) {
+    const students = await studentTable.getByAuthInfo(email, password);
+    const teachers = await teacherTable.getByAuthInfo(email, password);
+    if (students.length > 0) {
+        const student = students[0];
+        return {
+            id: student.id,
+            email: student.email,
+            name: student.name,
+            surname: student.surname,
+            role: 'student'
+        };
+    } else if (teachers.length > 0) {
+        const teacher = teachers[0];
+        return {
+            id: teacher.id,
+            email: teacher.email,
+            name: teacher.name,
+            surname: teacher.surname,
+            role: 'teacher'
+        };
+    } else {
+        throw new Error('Incorrect username or password');
+    }
+}
+
 function samlstrategy(passport, config) {
 
     const samlStrategy = new SamlStrategy(
         config.passport.saml,
         function (user, done) {
-            return done(null,
-                {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    username: user.surname,
-                    saml: {
-                        nameID: user.nameID,
-                        nameIDFormat: user.nameIDFormat
-                    }
-                }
-            );
-        });
+            getUserFromDb(user.email, user.id).then((u) => done(null, { ...u, saml: { nameID: user.nameID, nameIDFormat: user.nameIDFormat } })).catch((err) => done(err));
+        }
+    );
 
-    passport.serializeUser(function (user, done) {
-        done(null, user);
+    passport.serializeUser((user, done) => {
+        console.log(`serializeUser: ${user.id}:${user.role}`);
+        done(null, `${user.id}~${user.role}~${user.saml.nameID}~${user.saml.nameIDFormat}`);
     });
+    
 
-    passport.deserializeUser(function (user, done) {
-        done(null, user);
-    });
+    passport.deserializeUser((idrole, done) => {
+        console.log(`deserializeUser: ${idrole}`);
+        const [id, role, nameID, nameIDFormat] = idrole.split('~');
+        getUserFromDbByIdRole(id, role).then((user) => done(null, {...user, saml: { nameID: nameID, nameIDFormat: nameIDFormat }})).catch((err) => done(err));
+    })
 
     passport.logoutSaml = function (req, res) {
         req.user.nameID = req.user.saml.nameID;
@@ -70,32 +90,6 @@ async function getUserFromDbByIdRole(id, role) {
         };
     } else {
         throw new Error('Unknown role');
-    }
-}
-
-async function getUserFromDb(email, password) {
-    const students = await studentTable.getByAuthInfo(email, password);
-    const teachers = await teacherTable.getByAuthInfo(email, password);
-    if (students.length > 0) {
-        const student = students[0];
-        return {
-            id: student.id,
-            email: student.email,
-            name: student.name,
-            surname: student.surname,
-            role: 'student'
-        };
-    } else if (teachers.length > 0) {
-        const teacher = teachers[0];
-        return {
-            id: teacher.id,
-            email: teacher.email,
-            name: teacher.name,
-            surname: teacher.surname,
-            role: 'teacher'
-        };
-    } else {
-        throw new Error('Incorrect username or password');
     }
 }
 

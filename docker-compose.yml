@@ -25,8 +25,8 @@ services:
       - authsources
     environment:
       SIMPLESAMLPHP_SP_ENTITY_ID: thesismanagement-saml
-      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://server:3001/login/callback
-      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://server:3001/logout/callback
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://server:3001/api/login/callback
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://server:3001/api/logout/callback
     expose:
       - 8080
     ports:

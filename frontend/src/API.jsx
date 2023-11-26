@@ -1,5 +1,5 @@
 // FIXME: this should change when deploying on docker or locally
-const URL = `http://${import.meta.env.VITE_SERVER_HOST}:${import.meta.env.VITE_SERVER_PORT}/api`;
+const URL = `http://localhost:3001/api`;
 
 import dayjs from 'dayjs';
 

@@ -43,7 +43,7 @@ class ThesisProposalTable {
             include_expired = true;
         }
         if (typeof Cds === 'undefined') {
-            role = false;
+            Cds = false;
         }
         if (include_expired && !Cds) {
             const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id

@@ -363,6 +363,17 @@ app.get('/api/ProposalsList',
         }
     }
 )
+app.get('/api/student/ProposalsList', 
+    async (req, res) => {
+        try {
+            const proposalList = await thesisProposalTable.getAll(req.body.cod_degree);
+            res.json(proposalList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+)
 
 /*Search Proposal*/
 //GET /api/ProposalList

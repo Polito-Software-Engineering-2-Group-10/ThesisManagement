@@ -127,6 +127,18 @@ async function logIn(credentials) {
       throw propList;
     }
   }
+
+  async function getAllProposalsForStudent() {
+    const response = await fetch(URL+'/student/ProposalsList', {
+      credentials: 'include'
+    });
+    const propList = await response.json();
+    if (response.ok) {
+      return propList;
+    } else {
+      throw propList;
+    }
+  }
   
   async function getApplicationsList() {
     const response = await fetch(URL+'/student/ApplicationsList', {
@@ -263,7 +275,8 @@ const API = {
   getApplicationsListTeacher,
   acceptDeclineApplication,
   setVirtualClock,
-  resetVirtualClock
+  resetVirtualClock,
+  getAllProposalsForStudent
 };
 
 export default API;

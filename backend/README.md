@@ -345,33 +345,90 @@ The backend exposes the following APIs:
     }
     ```
 - GET `/api/teacher/ProposalsList`:
-    - This API will return a list of all active proposals in the following format:
+    - This API will return a list of all active and archived proposals in the following format:
     ```json
       {
-        "id": <id>,
-        "title": "<title of the thesis>",
-        "teacher_id": <id of the teacher>,
-        "supervisor": "<email of the supervisor>",
-        "co_supervisor": [
-           "<email of the co-supervisor>" 
+        "active": [
+            {
+                "id": <id>,
+                "title": "<title of the thesis>",
+                "teacher_id": <id of the teacher>,
+                "supervisor": "<email of the supervisor>",
+                "co_supervisor": [
+                "<email of the co-supervisor>" 
+                ],
+                "keywords": [
+                    "<keyword>",
+                ],
+                "type": "<type of the thesis>",
+                "groups": [
+                    "<group>"
+                ],
+                "description": "<explanation of the thesis>",
+                "required_knowledge": [
+                    "<requirement>"
+                ],
+                "notes": "<notes>",
+                "expiration": "<timestamp of expiration>",
+                "level": <level>,
+                "programmes": [
+                    "<programme>"
+                ],
+                "archived": <boolean>
+            },
+            ...
         ],
-        "keywords": [
-            "<keyword>",
-        ],
-        "type": "<type of the thesis>",
-        "groups": [
-            "<group>"
-        ],
-        "description": "<explanation of the thesis>",
-        "required_knowledge": [
-            "<requirement>"
-        ],
-        "notes": "<notes>",
-        "expiration": "<timestamp of expiration>",
-        "level": <level>,
-        "programmes": [
-            "<programme>"
-        ],
-        "archived": <boolean>
-    },
+        "archived": [
+            {
+                "id": <id>,
+                "title": "<title of the thesis>",
+                "teacher_id": <id of the teacher>,
+                "supervisor": "<email of the supervisor>",
+                "co_supervisor": [
+                "<email of the co-supervisor>" 
+                ],
+                "keywords": [
+                    "<keyword>",
+                ],
+                "type": "<type of the thesis>",
+                "groups": [
+                    "<group>"
+                ],
+                "description": "<explanation of the thesis>",
+                "required_knowledge": [
+                    "<requirement>"
+                ],
+                "notes": "<notes>",
+                "expiration": "<timestamp of expiration>",
+                "level": <level>,
+                "programmes": [
+                    "<programme>"
+                ],
+                "archived": <boolean>
+            },
+            ...
+        ]
+      }
+    ```
+- POST `/api/virtualclock`
+    - This API will accept a JSON object with the following structure:
+    ```json
+    {
+        "date": <YYYY-MM-DD>
+    }
+    ```
+    - It will set the date of the virtual clock to the given date.
+    - It returns the date of the virtual clock:
+    ```json
+    {
+        "date": <YYYY-MM-DD>
+    }
+    ```
+- DELETE `/api/virtualclock`
+    - This API will reset the date of the virtual clock to the current date.
+    - It returns the date of the virtual clock:
+    ```json
+    {
+        "date": <YYYY-MM-DD>
+    }
     ```

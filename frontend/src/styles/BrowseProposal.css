@@ -1,0 +1,19 @@
+@import "colors.css";
+
+.btn {
+    margin: 0.1em;
+}
+
+.btn-edit {
+    background-color: var(--yellow);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit:hover {
+    background-color: rgb(239, 193, 26);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.proposal-table {
+    margin-top: 2em;
+}

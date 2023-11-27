@@ -433,6 +433,7 @@ isLoggedInAsTeacher,
 });
 
 app.put('/api/teacher/updateProposal/:thesisid',
+    isLoggedInAsTeacher,
     [
         check('title').isString().isLength({ min: 1 }),
         check('co_supervisor').isArray().optional(),

@@ -68,17 +68,27 @@ class ThesisProposalTable {
 
     async getAll(cod_degree) {
         if (typeof cod_degree === 'undefined') {
-            include_expired = false;
+            cod_degree = false;
         }
         const current_date_string = virtualClock.getSqlDate();
 
         if(cod_degree)
         {
         const active = await this.db.executeQueryExpectAny(
-            `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
-            AND tp.archived = false AND tp.expiration > $1
-            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
-            current_date_string
+            `SELECT 
+            tp.*, t.name as teacher_name, t.surname as teacher_surname
+            FROM thesis_proposal as tp, teacher as t 
+            WHERE 
+            tp.teacher_id = t.id AND 
+            tp.archived = false AND 
+            AND tp.expiration > $1 AND
+            EXISTS (
+                      SELECT 1 FROM unnest(groups) AS code_degree
+                      WHERE code_degree LIKE '% $2 %
+                    )
+         
+                ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
+            current_date_string,cod_degree
         )
         return active.map(ThesisProposal.fromRow);
         }

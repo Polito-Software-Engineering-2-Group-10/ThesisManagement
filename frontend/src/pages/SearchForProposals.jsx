@@ -99,25 +99,39 @@ function SearchForProposals(props) {
     const [filters, setFilters] = useState({});
     const [activeFilter, setActiveFilter] = useState(null);
     const [studInfo,setStudInfo]=useState(null);
+    useEffect(()=>{
+        API.getStudentDetail()
+        .then((data)=>{
+            setStudInfo(data)
+            console.log(studInfo);
+        })
+        .catch((err)=>
+        console.log(err));
+
+
+    },[])
+
     useEffect(() => {
         
-        if(props.user && props.user.role==="student")
+        if(props.user && studInfo && props.user.role==="student")
         {  
-            API.getStudentDetail()
-            .then((data)=>{
-                setStudInfo(data)
-                console.log(studInfo);
-            })
-            .catch((err)=>
-            console.log(err));
+           
+
+            API.getAllProposalsForStudent(studInfo.cod_degree)
+                .then((data2) => {
+                    setProposals(data2);
+                })
+                .catch((err) => console.log(err))
             
         }
+        else{
         API.getAllProposals()
             .then((data) => {
                 setProposals(data);
             })
             .catch((err) => console.log(err));
-    }, [proposalsDirty])
+        }
+    }, [proposalsDirty,studInfo])
 
     useEffect( () => {
         API.getAllTeachers()

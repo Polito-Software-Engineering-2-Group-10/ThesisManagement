@@ -128,9 +128,11 @@ async function logIn(credentials) {
     }
   }
 
-  async function getAllProposalsForStudent() {
+  async function getAllProposalsForStudent(cod_degree) {
     const response = await fetch(URL+'/student/ProposalsList', {
-      credentials: 'include'
+      method: 'POST',
+      credentials: 'include',
+      body: JSON.stringify(cod_degree)
     });
     const propList = await response.json();
     if (response.ok) {

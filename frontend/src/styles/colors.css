@@ -1,5 +1,9 @@
 :root {
     --light-yellow: #ffe5a8;
     --yellow: #fec44f;
-    --warning: var(-yellow);
+    --warning: var(--yellow);
+    --darkred: #d2334d;
+    --red:#ea4e69;   
+    --danger: var(--red);
+    --danger-hover: var(--darkred);
 }

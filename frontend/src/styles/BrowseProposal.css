@@ -14,6 +14,18 @@
     border-color: rgba(0, 0, 0, 0.1);
 }
 
+.btn-delete{
+    background-color: var(--danger);
+    border-color: rgba(0, 0, 0, 0.1);
+
+}
+
+.btn-delete:hover{
+    background-color: var(--danger-hover);
+    border-color: rgba(0, 0, 0, 0.1);
+
+}
+
 .proposal-table {
     margin-top: 2em;
 }

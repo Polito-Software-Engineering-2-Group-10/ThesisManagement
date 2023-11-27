@@ -5,7 +5,7 @@ import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
-
+import API from '../API';
 function BrowseProposal (props){
    
     // utility to generate a table row from a proposal
@@ -17,7 +17,7 @@ function BrowseProposal (props){
             setActiveProposals(props.proposalList.active);
             setArchivedProposals(props.proposalList.archived);
         }
-        console.log(activeProposals);
+        
     }, [props.proposalList]);
 
     return (
@@ -55,6 +55,18 @@ function ProposalTable(props){
         setSelectedProposal(proposal);
     }   
 
+    const handleCopyClick = (proposal) => {
+        // navigate to insert proposal page with the proposal as a parameter
+        navigate('/insert', {state: {proposal: proposal}});
+    }
+
+    const handleDeleteClick = (proposal) => {
+        // navigate to insert proposal page with the proposal as a parameter
+        API.deleteProposal(proposal.id).then(()=>{setProposalList(proposalList.filter((res) => res.id != proposal.id))})
+        .catch((err)=>{console.log(err)});
+    }
+
+
     // generates the row for a proposal
     const generateRow = (result) => {
         return (
@@ -70,16 +82,14 @@ function ProposalTable(props){
                 
                 <Button className="btn-edit" onClick={()=>{}}><i className="bi bi-pencil-square"></i></Button>
                 <Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button>
+                <Button className="btn-delete" onClick={()=>handleDeleteClick(result)}><i className="bi bi-trash"></i></Button>
             </span>
           </td>
         </tr>
         )
     }
 
-    const handleCopyClick = (proposal) => {
-        // navigate to insert proposal page with the proposal as a parameter
-        navigate('/insert', {state: {proposal: proposal}});
-    }
+    
   
     return (
         <Container className="proposal-table">

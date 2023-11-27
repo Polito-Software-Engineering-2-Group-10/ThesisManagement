@@ -1,0 +1,5 @@
+:root {
+    --light-yellow: #ffe5a8;
+    --yellow: #fec44f;
+    --warning: var(-yellow);
+}

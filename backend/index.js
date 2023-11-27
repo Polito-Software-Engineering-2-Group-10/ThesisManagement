@@ -254,10 +254,10 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            const errors = validationResult(req);
+            /*const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
-            }
+            }*/
             const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
             if (!propopsalDetail) {
                 return res.status(400).json({ error: 'The proposal does not exist!' });

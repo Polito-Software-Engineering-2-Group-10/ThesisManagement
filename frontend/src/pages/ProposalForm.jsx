@@ -54,7 +54,7 @@ const ProposalForm = (props) => {
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
-      //const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
       const proposal = {

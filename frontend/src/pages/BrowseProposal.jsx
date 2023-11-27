@@ -84,7 +84,13 @@ function BrowseProposal (props){
             display: 'flex',
             justifyContent: 'flex-end'
         }}>
-            <Button className='my-2'  variant='success' disabled={!selectedProposal}>Modify</Button>
+            <Button className='my-2'  variant='success' onClick={() => {
+                                                if (selectedProposal) {
+                                                  // console.log(selectedProposal)
+                                                  const selectedProposalId = selectedProposal.id;
+                                                  navigate(`/updateProposal/${selectedProposalId}`);
+                                                }
+                                                }}>Modify</Button>
         </Col>
         <Col style={{
             display: 'flex',

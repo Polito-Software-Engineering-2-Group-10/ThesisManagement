@@ -212,6 +212,35 @@ async function acceptDeclineApplication(applicationId, status) {
   return data;   
 }
 
+async function updateProposal(id, proposal) {
+  const currentproposal = {
+    // id: proposal.id,
+    title: proposal.title,
+    co_supervisor: proposal.co_supervisor,
+    keywords: proposal.keywords,
+    type: proposal.type,
+    groups: proposal.groups,
+    description: proposal.description,
+    required_knowledge: proposal.required_knowledge,
+    notes: proposal.notes,
+    expiration: proposal.expiration,
+    level: proposal.level,
+    programmes: proposal.programmes
+}
+  const response = await fetch(`${URL}/teacher/updateProposal/${id}`, {
+    credentials: 'include',
+    method: 'PUT',
+    
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(currentproposal)
+  });
+  
+  const data = await response.json();
+  return data;
+}
+
 const API = {
   logIn,
   logOut,
@@ -230,6 +259,7 @@ const API = {
   addProposal,
   getApplicationsListTeacher,
   acceptDeclineApplication,
+  updateProposal,
 };
 
 export default API;

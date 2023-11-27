@@ -261,6 +261,22 @@ async function acceptDeclineApplication(applicationId, status) {
   return data;   
 }
 
+
+async function deleteProposal(proposalId) {
+  console.log(proposalId);
+  const response = await fetch(`${URL}/teacher/deleteProposal`,{
+    method: 'DELETE',  
+    credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({proposalId:proposalId}),
+  });
+  const data = await response.json();
+  return data;   
+}
+
+
 const API = {
   logIn,
   logOut,
@@ -281,7 +297,8 @@ const API = {
   acceptDeclineApplication,
   setVirtualClock,
   resetVirtualClock,
-  getAllProposalsForStudent
+  getAllProposalsForStudent,
+  deleteProposal
 };
 
 export default API;

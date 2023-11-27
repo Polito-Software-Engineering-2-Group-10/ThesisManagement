@@ -132,6 +132,6 @@ CREATE TABLE IF NOT EXISTS public.application
     CONSTRAINT application_proposal_id_fkey FOREIGN KEY (proposal_id)
         REFERENCES public.thesis_proposal(id)
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
 );
 ALTER TABLE IF EXISTS public.application OWNER TO thesismanager;

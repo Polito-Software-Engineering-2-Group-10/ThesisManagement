@@ -299,6 +299,14 @@ WHERE NOT EXISTS (
         const result = await this.db.executeQueryExpectAny(query, ...params, virtualClock.getSqlDate());
         return result;
     }
+
+    async deleteById(id) {
+        const query = `DELETE FROM thesis_proposal WHERE id = $1`;
+        const result = await this.db.executeQueryExpectMany(query, getNum(id), `ThesisProposal with id ${id} not found`);
+        return ThesisProposal.fromRow(result);
+    }
 }
+
+
 
 export { ThesisProposal, ThesisProposalTable };

@@ -442,6 +442,24 @@ app.get('/api/thesis/groups', async (req, res) => {
     }
 });
 
+app.delete('/api/teacher/deleteProposal', 
+isLoggedInAsTeacher,
+[
+    check('proposalId').isInt()
+],
+ async(req,res)=> {
+    try{
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const deletedProposal= await thesisProposalTable.deleteById(req.body.proposalId)
+        res.json(deletedProposal);
+    }
+    catch(err){
+        res.status(503).json({ error: `Database error during the deletion of the thesis proposal: ${err}` });
+    }
+});
 app.post('/api/virtualclock', [
     check('date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
 ], async (req, res) => {

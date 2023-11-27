@@ -74,6 +74,15 @@ Content-Type: application/json
     "id": 1
 }
 
+###
+DELETE http://localhost:3001/api/teacher/deleteProposal
+Content-Type: application/json
+
+{
+    "proposalId": 4
+}
+
+
 #[
  # {
  #   "id": 1,

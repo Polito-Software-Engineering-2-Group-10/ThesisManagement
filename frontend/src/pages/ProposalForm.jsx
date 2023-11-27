@@ -3,29 +3,29 @@ import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from "./Navigation";
 import API from '../API';
+import dayjs from 'dayjs';
 
 
 
 const ProposalForm = (props) => {
-  const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
-  const [title, setTitle] = useState(props.page ? props.page.title : '');
-  const [supervisor, setSupervisor] = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
-  const [co_supervisor, setCoSupervisor] = useState(props.page ? props.page.co_supervisor : []);
-  const [type, setType] = useState(props.page ? props.page.type : '');
-  const [expiration, setExpirationDate] = useState(props.page ? props.page.expiration : '');
-  const [level, setLevel] = useState();
-  const [groups, setGroups] = useState(props.page ? props.page.groups : []);
-  const [keywords, setKeywords] = useState(props.page ? props.page.keywords : []);
-  const [description, setDescription] = useState(props.page ? props.page.description : '');
-  const [required_knowledge, setRequiredKnowledge] = useState(props.page ? props.page.required_knowledge : []);
-  const [notes, setNotes] = useState(props.page ? props.page.notes : '');
-  const [programmes, setPrograms] = useState(props.page ? props.page.programmes : []);
-  
 
     // useNavigate hook to change page
     const navigate = useNavigate();
     const location = useLocation();
-    
+
+    const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
+    const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
+    const [supervisor, setSupervisor]       = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
+    const [co_supervisor, setCoSupervisor]  = useState(location.state?.proposal ? location.state.proposal.co_supervisor.join(",") : '');
+    const [type, setType]                   = useState(location.state?.proposal ? location.state.proposal.type : '');
+    const [expiration, setExpirationDate]   = useState(location.state?.proposal ? dayjs(location.state.proposal.expiration).format("YYYY-MM-DD") : '');
+    const [level, setLevel]                 = useState(location.state?.proposal ? location.state.proposal.level : null);
+    const [groups, setGroups]               = useState(location.state?.proposal ? location.state.proposal.groups.join(",") : '');
+    const [keywords, setKeywords]           = useState(location.state?.proposal ? location.state.proposal.keywords.join(",") : "");
+    const [description, setDescription]     = useState(location.state?.proposal ? location.state.proposal.description : '');
+    const [required_knowledge, setRequiredKnowledge] = useState(location.state?.proposal ? location.state.proposal.required_knowledge.join(",") : '');
+    const [notes, setNotes]                          = useState(location.state?.proposal ? location.state.proposal.notes : '');
+    const [programmes, setPrograms]                  = useState(location.state?.proposal ? location.state.proposal.programmes.join(",") : '');
     
     const nextpage = location.state?.nextpage || '/';
 
@@ -45,15 +45,16 @@ const ProposalForm = (props) => {
         }
 
     }, [loggedIn])
+    
 
     const handleSubmit = (event) => {
       event.preventDefault();
 
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const programmes_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const co_supervisor_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
+      const groups_array = groups.split(/[,;]/).map((k) => k.trim());
+      const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
       const proposal = {
         "title":            title.trim(),

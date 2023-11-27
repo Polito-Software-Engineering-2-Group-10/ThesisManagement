@@ -132,7 +132,10 @@ async function logIn(credentials) {
     const response = await fetch(URL+'/student/ProposalsList', {
       method: 'POST',
       credentials: 'include',
-      body: JSON.stringify(cod_degree)
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({cod_degree:cod_degree}),
     });
     const propList = await response.json();
     if (response.ok) {

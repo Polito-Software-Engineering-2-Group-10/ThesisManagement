@@ -81,10 +81,10 @@ class ThesisProposalTable {
             WHERE 
             tp.teacher_id = t.id AND 
             tp.archived = false AND 
-            AND tp.expiration > $1 AND
+            tp.expiration > $1 AND
             EXISTS (
                       SELECT 1 FROM unnest(groups) AS code_degree
-                      WHERE code_degree LIKE '% $2 %
+                      WHERE code_degree LIKE '%' || $2 || '%'
                     )
          
                 ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,

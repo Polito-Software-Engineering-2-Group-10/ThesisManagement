@@ -53,9 +53,9 @@ const ProposalForm = (props) => {
 
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const programmes_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
-      const co_supervisor_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
+      //const groups_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
+      const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
       const proposal = {
         "title":            title.trim(),
@@ -64,7 +64,7 @@ const ProposalForm = (props) => {
         "type":             type,
         "expiration":       expiration,
         "level":            level,
-        "groups":           groups_array,
+        "groups":           props.teacherDetail.group_name,
         "keywords":         keywords_array,
         "description":      description.trim(),
         "required_knowledge": required_knowledge_array,
@@ -173,10 +173,10 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-start align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Groups</Form.Label>
+                          <Form.Label>Group</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={groups} onChange={event => setGroups(event.target.value)} />
+                          <Form.Control type="text" required={false} value={props.teacherDetail.group_name} disabled/>
                         </Col>
                       </Row>
                     </Form.Group>

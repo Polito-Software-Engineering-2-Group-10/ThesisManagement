@@ -305,6 +305,12 @@ WHERE NOT EXISTS (
         const result = await this.db.executeQueryExpectMany(query, getNum(id), `ThesisProposal with id ${id} not found`);
         return ThesisProposal.fromRow(result);
     }
+    async updateThesisProposal(proposal,id) {
+        const query = `UPDATE thesis_proposal SET title=$2 ,co_supervisor=$3, keywords=$4, type=$5, groups=$6, description=$7, required_knowledge=$8, notes=$9, expiration=$10, level=$11, programmes=$12 WHERE id=$1 RETURNING *`;
+        const result = await this.db.executeQueryExpectOne(query, id, proposal.title, proposal.co_supervisor, proposal.keywords, proposal.type, proposal.groups, proposal.description, proposal.required_knowledge, proposal.notes, proposal.expiration, proposal.level, proposal.programmes, `Failed to update ThesisProposal`);
+        return ThesisProposal.fromRow(result);
+    }
+
 }
 
 

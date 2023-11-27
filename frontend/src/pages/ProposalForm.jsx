@@ -49,8 +49,8 @@ const ProposalForm = (props) => {
         }
 
     }, [loggedIn])
-    
 
+    
     const handleSubmit = (event) => {
       event.preventDefault();
 

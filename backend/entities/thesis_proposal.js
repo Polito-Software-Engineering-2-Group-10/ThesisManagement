@@ -66,8 +66,14 @@ class ThesisProposalTable {
         }
     }*/
 
-    async getAll() {
+    async getAll(cod_degree) {
+        if (typeof cod_degree === 'undefined') {
+            include_expired = false;
+        }
         const current_date_string = virtualClock.getSqlDate();
+
+        if(cod_degree)
+        {
         const active = await this.db.executeQueryExpectAny(
             `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
             AND tp.archived = false AND tp.expiration > $1
@@ -75,6 +81,17 @@ class ThesisProposalTable {
             current_date_string
         )
         return active.map(ThesisProposal.fromRow);
+        }
+        else
+        {
+        const active2 = await this.db.executeQueryExpectAny(
+            `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
+            AND tp.archived = false AND tp.expiration > $1
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
+            current_date_string
+        )
+        return active2.map(ThesisProposal.fromRow);
+        }
     }
 
     async getById(id, include_expired) {

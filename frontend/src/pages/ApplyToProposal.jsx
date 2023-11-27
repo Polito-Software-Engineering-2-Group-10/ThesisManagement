@@ -14,6 +14,7 @@ function ApplyToProposal(props) {
     const [proposals, setProposals] = useState(null);
     const notify=useNotification();
     useEffect(() => {
+
         API.getAllProposals()
         .then((p) => {
             setProposals(p);

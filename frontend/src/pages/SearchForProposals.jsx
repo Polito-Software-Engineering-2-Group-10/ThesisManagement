@@ -86,6 +86,7 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
 }
 
 function SearchForProposals(props) {
+    //console.log(props.user);
     const navigate = useNavigate();
 
     const { proposalsDirty } = useContext(AppContext);
@@ -97,8 +98,20 @@ function SearchForProposals(props) {
     const [groups, setGroups] = useState([]);
     const [filters, setFilters] = useState({});
     const [activeFilter, setActiveFilter] = useState(null);
-
+    const [studInfo,setStudInfo]=useState(null);
     useEffect(() => {
+        
+        if(props.user && props.user.role==="student")
+        {  
+            API.getStudentDetail()
+            .then((data)=>{
+                setStudInfo(data)
+                console.log(studInfo);
+            })
+            .catch((err)=>
+            console.log(err));
+            
+        }
         API.getAllProposals()
             .then((data) => {
                 setProposals(data);

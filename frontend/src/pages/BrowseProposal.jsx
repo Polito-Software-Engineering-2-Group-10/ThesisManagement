@@ -25,8 +25,8 @@ function BrowseProposal (props){
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
         <Container>
-            <ProposalTable title="Active proposals" proposalList={activeProposals} />
-            <ProposalTable title="Archived proposals" proposalList={archivedProposals} />
+            <ProposalTable title="Active proposals" proposalList={activeProposals}      setProposalDirty={props.setProposalDirty} />
+            <ProposalTable title="Archived proposals" proposalList={archivedProposals}  setProposalDirty={props.setProposalDirty} />
         </Container>
     </>
   )
@@ -62,7 +62,10 @@ function ProposalTable(props){
 
     const handleDeleteClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
-        API.deleteProposal(proposal.id).then(()=>{setProposalList(proposalList.filter((res) => res.id != proposal.id))})
+        API.deleteProposal(proposal.id).then(()=>{
+            // setProposalList(proposalList.filter((res) => res.id != proposal.id))
+            props.setProposalDirty(true);
+        })
         .catch((err)=>{console.log(err)});
     }
 

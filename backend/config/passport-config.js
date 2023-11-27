@@ -38,13 +38,11 @@ function samlstrategy(passport, config) {
     );
 
     passport.serializeUser((user, done) => {
-        console.log(`serializeUser: ${user.id}:${user.role}`);
         done(null, `${user.id}~${user.role}~${user.saml.nameID}~${user.saml.nameIDFormat}`);
     });
     
 
     passport.deserializeUser((idrole, done) => {
-        console.log(`deserializeUser: ${idrole}`);
         const [id, role, nameID, nameIDFormat] = idrole.split('~');
         getUserFromDbByIdRole(id, role).then((user) => done(null, {...user, saml: { nameID: nameID, nameIDFormat: nameIDFormat }})).catch((err) => done(err));
     })
@@ -61,8 +59,11 @@ function samlstrategy(passport, config) {
     }
 
     passport.logoutSamlCallback = function (req, res) {
-        req.logout();
-        res.redirect('/');
+        req.logout(function (err) {
+            if (!err) {
+                res.redirect('http://localhost:5173');
+            }
+        });
     }
 
     passport.use(samlStrategy);

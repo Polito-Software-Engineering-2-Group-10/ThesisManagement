@@ -1,6 +1,6 @@
 function samlroutes(app, config, passport) {
-    /// THESE ARE STILL WIP
-    app.post('/api/login',
+
+    app.get('/api/login',
         passport.authenticate(config.passport.strategy,
             {
                 successRedirect: 'http://localhost:5173',
@@ -15,13 +15,13 @@ function samlroutes(app, config, passport) {
                 failureFlash: true,
             }),
         function (req, res) {
-            res.redirect('/');
+            res.redirect('http://localhost:5173');
         }
     );
 
     app.get('/api/logout/callback', passport.logoutSamlCallback);
 
-    app.delete('/api/logout', passport.logoutSaml);
+    app.get('/api/logout', passport.logoutSaml);
 
     app.get('/api/session', function (req, res) {
         if (req.isAuthenticated())

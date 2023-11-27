@@ -10,7 +10,7 @@ import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
 import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
-import AppContext from '../AppContext.jsx';
+import AppContext from './AppContext.jsx';
 
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
@@ -88,7 +88,11 @@ function App() {
 
 
   const doLogOut = async () => {
-    await API.logOut();
+    if (typeof user.saml !== 'undefined') {
+        await API.logOutWithSaml();
+    } else {
+        await API.logOut();
+    }
     setLoggedIn(false);
     setUser(null);
     setUserDetail(null);

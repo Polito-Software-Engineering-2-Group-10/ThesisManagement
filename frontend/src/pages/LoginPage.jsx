@@ -50,7 +50,7 @@ function LoginPage(props){
                 <Col xs={6}>
                     <h1>Welcome to thesis Management</h1>
                     <h2>Log in to be able to use the services dedicated to you</h2>
-                    <Form onSubmit={handleSubmit}>
+                    {/* <Form onSubmit={handleSubmit}>
                         {errorMessage ? <Alert variant='danger' dismissible onClick={()=>setErrorMessage('')}>{errorMessage}</Alert> : ''}
                         <Form.Group controlId='email'>
                             <Form.Label>Email</Form.Label>
@@ -62,7 +62,8 @@ function LoginPage(props){
                         </Form.Group>
                         <Button className='my-2' variant='info' type='submit'>Login</Button>
                         <Button className='my-2 mx-2' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
-                    </Form>
+                    </Form> */}
+                    <Button className='my-2 mx-2' variant='info' onClick={() => API.logInWithSaml() }>Login with SAML</Button>
                 </Col>
                 <Col xs={3}></Col>
             </Row>

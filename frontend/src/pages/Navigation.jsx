@@ -1,7 +1,7 @@
 import {Navbar, Nav,Container,Button, Form} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
-import AppContext from '../../AppContext';
+import AppContext from '../AppContext';
 import API from '../API'
 
 function Navigation(props) {

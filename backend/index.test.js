@@ -716,3 +716,75 @@ describe('GET /api/thesis/groups', () => {
         expect(response.body).toEqual({ error: 'Database error during retrieving thesis groups Error: Database error' });
     });
 });
+
+describe("PUT /api/teacher/updateProposal/:thesisid", () => {
+    test('Should successfully update the a thesis proposal given its ID', async () => {
+        const proposalID = 1;
+        const proposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: ['Cosupervisor1', 'Cosupervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: '2022-02-02',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+        jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(proposalUpdated);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(proposalID);
+    });
+
+    test('Should throw an error with 422 status code when a validation error occurs', async () => {
+        const proposalID = 1;
+        const InvalidProposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: ['Cosupervisor1', 'Cosupervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 1234567890,
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: 'INVALID DATE!!!!!!',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(InvalidProposalUpdated);
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        const proposalID = 1;
+        const proposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: ['Cosupervisor1', 'Cosupervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: '2022-02-02',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+        jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        })
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(proposalUpdated);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: 'Database error during the update of the proposal: Error: Database error' });
+    });
+})

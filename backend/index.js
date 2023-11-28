@@ -27,7 +27,7 @@ const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
 passportconfig(passport, config, currentStrategy);
-
+import sendEmail from './emailSender.js';
 const app = express();
 
 app.set('port', config.app.port);
@@ -524,6 +524,20 @@ app.put('/api/teacher/updateProposal/:thesisid',
 
     }
 );
+
+/*SEND MAIL APIS*/
+app.post("/api/send_email", 
+    isLoggedInAsTeacher,
+    async(req, res) => {
+    try{
+        sendEmail(req.body)
+        .then((response) => res.send(response.message))
+        .catch((error) => res.status(500).send(error.message));
+    }
+    catch(err){
+        res.status(503).json({ error: `Database error during sending notification ${err}` });
+    }
+});
 
 /*END API*/
 

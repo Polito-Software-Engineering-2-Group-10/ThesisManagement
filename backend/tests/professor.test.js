@@ -1,7 +1,8 @@
 import request from 'supertest';
-import { server, psqlDriver, app, isLoggedInAsTeacher } from '../index.js';
+import { server, psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
 import { thesisProposalTable, applicationTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
+import { response } from 'express';
 
 afterAll(async () => {
     await psqlDriver.closeAll();
@@ -604,4 +605,37 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: `Database error during retrieving application List Error: Database error` });
     });
+});
+
+//send notification
+describe('POST /api/send_email', () => {
+    const params = {
+        recipient_email: 'pippo',
+        subject: 'pluto',
+        message: 'paperino'
+    }
+    
+    //correct email sending
+
+    //internal server error 500
+
+
+    //database error 503
+
+    
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        const response = await sendEmail(params);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
+        // jest.spyOn(sendEmail(params)).mockImplementationOnce(() => { throw new Error('Database error')});
+        // const response = await request(app).post('/api/send_email');
+        // expect(response.status).toBe(503);
+        // expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
+    })
 });

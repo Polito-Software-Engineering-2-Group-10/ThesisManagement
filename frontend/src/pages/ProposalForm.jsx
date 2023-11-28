@@ -64,8 +64,6 @@ const ProposalForm = (props) => {
       //chiamata API
       API.retrieveCoSupervisorsGroups(co_supervisor_array)
       .then((groups) => {
-        console.log("Gruppi: "+ groups);
-
         const proposal = {
           "title":            title.trim(),
           "supervisor":       supervisor,
@@ -73,7 +71,7 @@ const ProposalForm = (props) => {
           "type":             type,
           "expiration":       expiration,
           "level":            level,
-          "groups":           [...groups_array, props.teacherDetail.group_name],
+          "groups":           [...groups_array, props.teacherDetail.group_name,groups[0]],
           "keywords":         keywords_array,
           "description":      description.trim(),
           "required_knowledge": required_knowledge_array,
@@ -81,7 +79,6 @@ const ProposalForm = (props) => {
           "programmes": programmes_array,
           "teacher_id": "1",
         };
-  
         addProposal(proposal);
         notify.success('Successfully submitted your proposal!');
         setTimeout(()=>{ navigate(nextpage) }, 3400);

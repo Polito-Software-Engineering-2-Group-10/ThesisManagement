@@ -430,18 +430,14 @@ app.get('/api/teacher/list', async (req, res) => {
 })
 
 app.post('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res) => {
-    console.log("body della request" + req.body);
-
     try {
         let groups = [];
         let g = '';
         for (const c of req.body.cosup_mails) {
             g = await teacherTable.getGroupByMail(c);
-            groups = [...groups, g];
+            groups = [...groups, g[0].name];
         }
-        console.log("gruppi recuperati dalla query: " + groups);
         res.json(groups);
-
     } catch (err) {
         res.status(503).json({ error: `Database error during retrieving cosupervisor groups ${err}` })
     }

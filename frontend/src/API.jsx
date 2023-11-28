@@ -277,11 +277,6 @@ async function deleteProposal(proposalId) {
 }
 
 async function retrieveCoSupervisorsGroups(co_supervisor_array) {
-  console.log(co_supervisor_array);
-
-
-  console.log(JSON.stringify({ cosup_mails: co_supervisor_array }));
-
   const response = await fetch(`${URL}/teacher/retrieveCosupGroup`,{
     method: 'POST',  
     credentials: 'include',

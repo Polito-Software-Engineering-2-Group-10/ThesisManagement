@@ -15,8 +15,20 @@ function BrowseAndAcceptApplication(props) {
         setSelectedApplication(application);
     }
     
-    const handleAcceptRejectButtonClick = (id, status) => {
-        API.acceptDeclineApplication(id, status).then((res) => {
+    const handleAcceptRejectButtonClick = (id, status,teacher_name,teacher_surname,thesis_title,student_name,student_surname,student_gender) => {
+        const mailInfo=
+        {
+            id: id,
+            status:status,
+            teacher_name:teacher_name,
+            teacher_surname:teacher_surname,
+            thesis_title:thesis_title,
+            student_name:student_name,
+            student_surname:student_surname,
+            student_gender:student_gender
+
+        }
+        API.acceptDeclineApplication(mailInfo).then((res) => {
             props.updateAppList().then(() => {
                 setSelectedApplication(null);
             }).catch((err) => {
@@ -26,6 +38,8 @@ function BrowseAndAcceptApplication(props) {
             setErrorMessage(`${JSON.stringify(err)}`); 
         });
     }
+
+    
     
     return (
         <>
@@ -82,8 +96,8 @@ function BrowseAndAcceptApplication(props) {
                     gap: '20px',
                     marginBottom: '50px'
                 }} md={'auto'}>
-                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true)} >Accept</Button>
-                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false)}>Decline</Button>
+                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender)} >Accept</Button>
+                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender)}>Decline</Button>
                 </Row>
                     : ""
                 }

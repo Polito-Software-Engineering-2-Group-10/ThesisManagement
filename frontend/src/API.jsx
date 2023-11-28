@@ -230,18 +230,33 @@ async function getFilteredProposals(filters) {
     return data;
 }
 
-async function acceptDeclineApplication(applicationId, status) {
-  
-  const response = await fetch(`${URL}/teacher/applicationDetail/${applicationId}`,{
+async function acceptDeclineApplication(mailInfo) {
+  const response = await fetch(`${URL}/teacher/applicationDetail/${mailInfo.id}`,{
     method: 'PATCH',  
     credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({status:status}),
+      body: JSON.stringify({status:mailInfo.status}),
   });
+
   const data = await response.json();
-  return data;   
+  if(response.status==200)
+  {
+    await fetch(`${URL}/send_email`,{
+      method: 'POST',  
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+            recipient_mail: "s313372@studenti.polito.it",
+            subject: `Result on your application about ${mailInfo.thesis_title}` ,
+            message: `Hello ${mailInfo.student_gender=='M' ? 'Mr.':'Mrs.'} ${mailInfo.student_name} ${mailInfo.student_surname},\nyour thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been ${mailInfo.status ? 'Accepted': 'Rejected'}.\nBest Regards, Polito Staff.`
+      }),
+    });
+  }
+  return data;
 }
 
 
@@ -265,6 +280,7 @@ const API = {
   logOut,
   getUserInfo,
   getTeacherProposals,
+  //getProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,

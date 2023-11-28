@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
 import API from '../API';
 function BrowseProposal (props){
-   
+  // console.log(props.user);
     // utility to generate a table row from a proposal
     const [activeProposals, setActiveProposals] = useState(null);
     const [archivedProposals, setArchivedProposals] = useState(null);
@@ -25,8 +25,8 @@ function BrowseProposal (props){
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
         <Container>
-            <ProposalTable title="Active proposals" proposalList={activeProposals}      setProposalDirty={props.setProposalDirty} />
-            <ProposalTable title="Archived proposals" proposalList={archivedProposals}  setProposalDirty={props.setProposalDirty} />
+            <ProposalTable title="Active proposals" proposalList={activeProposals} user={props.user}      setProposalDirty={props.setProposalDirty} />
+            <ProposalTable title="Archived proposals" proposalList={archivedProposals} user={props.user}  setProposalDirty={props.setProposalDirty} />
         </Container>
     </>
   )
@@ -34,6 +34,7 @@ function BrowseProposal (props){
 
 
 function ProposalTable(props){
+    
     const navigate = useNavigate();
     
     // title of the table
@@ -61,8 +62,15 @@ function ProposalTable(props){
     }
 
     const handleDeleteClick = (proposal) => {
+        console.log(proposal.title);
+        const mailInfo=
+        {
+            teacher_name:props.user.name,
+            teacher_surname:props.user.surname,
+            thesis_title:proposal.title
+        }
         // navigate to insert proposal page with the proposal as a parameter
-        API.deleteProposal(proposal.id).then(()=>{
+        API.deleteProposal(proposal.id,mailInfo).then(()=>{
             // setProposalList(proposalList.filter((res) => res.id != proposal.id))
             props.setProposalDirty(true);
         })

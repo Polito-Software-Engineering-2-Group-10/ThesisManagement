@@ -260,7 +260,7 @@ async function acceptDeclineApplication(mailInfo) {
 }
 
 
-async function deleteProposal(proposalId) {
+async function deleteProposal(proposalId,mailInfo) {
   console.log(proposalId);
   const response = await fetch(`${URL}/teacher/deleteProposal`,{
     method: 'DELETE',  
@@ -271,6 +271,21 @@ async function deleteProposal(proposalId) {
       body: JSON.stringify({proposalId:proposalId}),
   });
   const data = await response.json();
+  if(response.status==200)
+  {
+    await fetch(`${URL}/send_email`,{
+      method: 'POST',  
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+            recipient_mail: "salvo.cav96@gmail.com",
+            subject: `Info about on your application about ${mailInfo.thesis_title}` ,
+            message: `Hello dear student,\n Unfortunately your thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been cancelled because the thesis proposal was deleted.\nBest Regards, Polito Staff.`
+      }),
+    });
+  }
   return data;   
 }
 

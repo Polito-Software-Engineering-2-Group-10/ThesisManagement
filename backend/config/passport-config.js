@@ -28,48 +28,6 @@ async function getUserFromDb(email, password) {
     }
 }
 
-function samlstrategy(passport, config) {
-
-    const samlStrategy = new SamlStrategy(
-        config.passport.saml,
-        function (user, done) {
-            getUserFromDb(user.email, user.id).then((u) => done(null, { ...u, saml: { nameID: user.nameID, nameIDFormat: user.nameIDFormat } })).catch((err) => done(err));
-        }
-    );
-
-    passport.serializeUser((user, done) => {
-        done(null, `${user.id}~${user.role}~${user.saml.nameID}~${user.saml.nameIDFormat}`);
-    });
-    
-
-    passport.deserializeUser((idrole, done) => {
-        const [id, role, nameID, nameIDFormat] = idrole.split('~');
-        getUserFromDbByIdRole(id, role).then((user) => done(null, {...user, saml: { nameID: nameID, nameIDFormat: nameIDFormat }})).catch((err) => done(err));
-    })
-
-    passport.logoutSaml = function (req, res) {
-        req.user.nameID = req.user.saml.nameID;
-        req.user.nameIDFormat = req.user.saml.nameIDFormat;
-        samlStrategy.logout(req, function (err, request) {
-            if (!err) {
-                //redirect to the IdP Logout URL
-                res.redirect(request);
-            }
-        });
-    }
-
-    passport.logoutSamlCallback = function (req, res) {
-        req.logout(function (err) {
-            if (!err) {
-                res.redirect('http://localhost:5173');
-            }
-        });
-    }
-
-    passport.use(samlStrategy);
-
-};
-
 async function getUserFromDbByIdRole(id, role) {
     if (role === 'student') {
         const student = await studentTable.getById(id);
@@ -94,7 +52,53 @@ async function getUserFromDbByIdRole(id, role) {
     }
 }
 
-function localstrategy(passport, config) {
+function setupStrategy(passport, config) {
+
+    const samlStrategy = new SamlStrategy(
+        config.passport.saml,
+        function (user, done) {
+            getUserFromDb(user.email, user.id).then((u) => done(null, { ...u, saml: { nameID: user.nameID, nameIDFormat: user.nameIDFormat } })).catch((err) => done(err));
+        }
+    )
+
+    passport.serializeUser((user, done) => {
+        if (typeof user.saml === 'undefined') {
+            done(null, `${user.id}:${user.role}`);
+        } else {
+            done(null, `${user.id}~${user.role}~${user.saml.nameID}~${user.saml.nameIDFormat}`);
+        }
+    });
+    
+
+    passport.deserializeUser((idrole, done) => {
+        if (idrole.includes('~')) {
+            const [id, role, nameID, nameIDFormat] = idrole.split('~');
+            getUserFromDbByIdRole(id, role).then((user) => done(null, {...user, saml: { nameID: nameID, nameIDFormat: nameIDFormat }})).catch((err) => done(err));
+        } else {
+            const [id, role] = idrole.split(':');
+            getUserFromDbByIdRole(id, role).then((user) => done(null, user)).catch((err) => done(err));
+        }
+    })
+
+    passport.logoutSaml = function (req, res) {
+        req.user.nameID = req.user.saml.nameID;
+        req.user.nameIDFormat = req.user.saml.nameIDFormat;
+        samlStrategy.logout(req, function (err, request) {
+            if (!err) {
+                //redirect to the IdP Logout URL
+                res.redirect(request);
+            }
+        });
+    }
+
+    passport.logoutSamlCallback = function (req, res) {
+        req.logout(function (err) {
+            if (!err) {
+                res.redirect('http://localhost:5173');
+            }
+        });
+    }
+
     passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
@@ -104,23 +108,14 @@ function localstrategy(passport, config) {
         }
     ));
 
-    passport.serializeUser((user, done) => {
-        done(null, `${user.id}:${user.role}`);
-    });
+    passport.use(samlStrategy);
 
-    passport.deserializeUser((idrole, done) => {
-        const [id, role] = idrole.split(':');
-        getUserFromDbByIdRole(id, role).then((user) => done(null, user)).catch((err) => done(err));
-    })
-
-}
+};
 
 
 export default function (passport, config, strategy) {
-    if (strategy === 'local') {
-        localstrategy(passport, config);
-    } else if (strategy === 'saml') {
-        samlstrategy(passport, config);
+    if (strategy === 'local' || strategy === 'saml') {
+        setupStrategy(passport, config);
     } else {
         throw new Error('Unknown strategy');
     }

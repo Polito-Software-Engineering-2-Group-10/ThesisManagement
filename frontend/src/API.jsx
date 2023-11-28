@@ -42,11 +42,11 @@ async function addProposal(proposal) {
 // login,logout,session
 
 async function logInWithSaml() {
-    window.location.replace("http://localhost:3001/api/login");
+    window.location.replace("http://localhost:3001/api/saml/login");
 }
 
 async function logOutWithSaml() {
-    window.location.replace("http://localhost:3001/api/logout");
+    window.location.replace("http://localhost:3001/api/saml/logout");
 }
 
 async function logIn(credentials) {

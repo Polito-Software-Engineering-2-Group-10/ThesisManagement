@@ -8,9 +8,11 @@ import AppContext from '../AppContext.jsx';
 
 import ReactPaginate from 'react-paginate';
 
-function Proposals( { currentProposals, getProfessorsInformation, professors }) {
+function Proposals( { currentProposals, getProfessorsInformation, professors, perPage }) {
     return (
-    <Table striped bordered hover responsive className="items thesis-proposal-tbl" >                            
+    <Table striped bordered hover responsive className="items" style={{
+        height: currentProposals.length === perPage ? '100vh' : `${currentProposals.length * 100/perPage}vh`
+    }}>                            
         <thead>
             <tr>
                 <th className="center-text">Title</th>
@@ -22,7 +24,9 @@ function Proposals( { currentProposals, getProfessorsInformation, professors }) 
         </thead>
         <tbody>
         {currentProposals && currentProposals.map((proposal, index) => (
-        <tr key={index} className="thesis-proposal">
+        <tr key={index} className="thesis-proposal" style={{
+            height: `${100/perPage}%`
+        }}>
             <td>
                 <Link
                     to={`/applyToProp/${proposal.id}`}
@@ -59,7 +63,7 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
     }
     return (
         <>
-            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} />
+            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} perPage={itemsPerPage}/>
 
             <ReactPaginate 
                 nextLabel='next >'
@@ -99,11 +103,19 @@ function SearchForProposals(props) {
     const [activeFilter, setActiveFilter] = useState(null);
 
     useEffect(() => {
-        API.getAllProposals()
+        if (Object.keys(filters).length === 0) {
+            API.getAllProposals()
+                .then((data) => {
+                    setProposals(data);
+                })
+                .catch((err) => console.log(err));
+        } else {
+            API.getFilteredProposals(filters)
             .then((data) => {
                 setProposals(data);
             })
             .catch((err) => console.log(err));
+        }
     }, [proposalsDirty])
 
     useEffect( () => {

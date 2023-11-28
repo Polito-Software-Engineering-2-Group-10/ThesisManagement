@@ -60,25 +60,34 @@ const ProposalForm = (props) => {
       const groups_array = groups.split(/[,;]/).map((k) => k.trim());
       const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
-      const proposal = {
-        "title":            title.trim(),
-        "supervisor":       supervisor,
-        "co_supervisor":    co_supervisor_array,
-        "type":             type,
-        "expiration":       expiration,
-        "level":            level,
-        "groups":           props.teacherDetail.group_name,
-        "keywords":         keywords_array,
-        "description":      description.trim(),
-        "required_knowledge": required_knowledge_array,
-        "notes":            notes.trim(),
-        "programmes": programmes_array,
-        "teacher_id": "1",
-      };
 
-      addProposal(proposal);
-      notify.success('Successfully submitted your proposal!');
-      setTimeout(()=>{ navigate(nextpage) }, 3400);
+      //chiamata API
+      API.retrieveCoSupervisorsGroups(co_supervisor_array)
+      .then((groups) => {
+        console.log(groups);
+
+        const proposal = {
+          "title":            title.trim(),
+          "supervisor":       supervisor,
+          "co_supervisor":    co_supervisor_array,
+          "type":             type,
+          "expiration":       expiration,
+          "level":            level,
+          "groups":           [...groups_array, props.teacherDetail.group_name],
+          "keywords":         keywords_array,
+          "description":      description.trim(),
+          "required_knowledge": required_knowledge_array,
+          "notes":            notes.trim(),
+          "programmes": programmes_array,
+          "teacher_id": "1",
+        };
+  
+        addProposal(proposal);
+        notify.success('Successfully submitted your proposal!');
+        setTimeout(()=>{ navigate(nextpage) }, 3400);
+      })
+      .catch((e) => console.log(e));
+
       //navigate(nextpage);
     }
 

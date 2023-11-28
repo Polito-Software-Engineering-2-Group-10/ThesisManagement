@@ -429,6 +429,23 @@ app.get('/api/teacher/list', async (req, res) => {
     }
 })
 
+app.get('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        let groups = [];
+        let g = '';
+        console.log(req.body.cosup_mails);
+        for (const c of req.body.cosup_mails) {
+            g = await teacherTable.getGroupByMail(c);
+            groups = [...groups, g];
+        }
+        console.log(groups);
+        res.json(groups);
+
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving cosupervisor groups ${err}` })
+    }
+})
+
 app.get('/api/thesis/types', async (req, res) => {
     try {
         const types = await thesisProposalTable.getTypes();

@@ -276,6 +276,19 @@ async function deleteProposal(proposalId) {
   return data;   
 }
 
+async function retrieveCoSupervisorsGroups(co_supervisor_array) {
+  console.log(co_supervisor_array);
+  const response = await fetch(`${URL}/teacher/retrieveCosupGroup`,{
+    method: 'GET',  
+    credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({cosup_mails: co_supervisor_array}),
+  });
+  const data = await response.json();
+  return data;   
+}
 
 const API = {
   logIn,
@@ -298,7 +311,8 @@ const API = {
   setVirtualClock,
   resetVirtualClock,
   getAllProposalsForStudent,
-  deleteProposal
+  deleteProposal,
+  retrieveCoSupervisorsGroups
 };
 
 export default API;

@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
 
-import "../styles/Navigation.css";
+import "../styles/navigation.css";
 
 function Navigation(props) {
     const { setProposalsDirty } = useContext(AppContext);

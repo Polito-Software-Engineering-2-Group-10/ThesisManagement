@@ -14,7 +14,7 @@ const ProposalForm = (props) => {
     const location = useLocation();
 
     const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
-    const isEditing = !!location.state?.proposal;
+    const isEditing = !!location.state?.proposal && !location.state?.copy;
 
     // Form fields
     const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
@@ -111,7 +111,7 @@ const ProposalForm = (props) => {
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">
-              <p>{isEditing ? 'Edit Proposal' : 'Insert a New Proposal'}</p>
+              <p>{isEditing ? 'Update Proposal' : 'Insert a New Proposal'}</p>
             </div>
 
             <Form className="block-example rounded mb-1 form-padding mt-5" onSubmit={handleSubmit}>

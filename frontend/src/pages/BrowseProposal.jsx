@@ -57,18 +57,17 @@ function ProposalTable(props){
 
     const handleCopyClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
-        navigate('/insert', {state: {proposal: proposal, copy: true}});
+        navigate('/insert', {state: {proposal: proposal, action: "copy"}});
     }
 
     const handleUpdateClick = (proposal) => {
-        // navigate to update proposal page with the proposal as a parameter
-        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal}});
+        // navigate to insert proposal page with the proposal as a parameter
+        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal, action: "update"}});
     }
 
     const handleDeleteClick = (proposal) => {
         // navigate to delete proposal page with the proposal as a parameter
         API.deleteProposal(proposal.id).then(()=>{
-            // setProposalList(proposalList.filter((btn-deleteres) => res.id != proposal.id))
             props.setProposalDirty(true);
         })
         .catch((err)=>{console.log(err)});

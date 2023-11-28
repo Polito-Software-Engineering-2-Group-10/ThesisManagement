@@ -14,7 +14,7 @@ const ProposalForm = (props) => {
     const location = useLocation();
 
     const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
-    const isEditing = !!location.state?.proposal && !location.state?.copy;
+    const isEditing = !!(location.state?.action == "update");
 
     // Form fields
     const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
@@ -61,10 +61,9 @@ const ProposalForm = (props) => {
           ...updatedProposalData,
       };
 
-      API.updateProposal(existingProposal.id, updatedProposal)
+      API.updateProposal(updatedProposal)
         .then((response) => {
           setProposalsDirty(true);
-          console.log(existingProposal.id);
         })
         .catch((e) => {
           console.log(e);
@@ -98,9 +97,11 @@ const ProposalForm = (props) => {
       };
    
       if (isEditing) {
-        updateProposal(proposal);
+          // updating the proposal without a new insert
+          updateProposal(proposal);
       } else {
-        addProposal(proposal);
+          // copying the proposal with a new insert 
+          addProposal(proposal);
       }
       navigate(nextpage);
     }
@@ -263,7 +264,7 @@ const ProposalForm = (props) => {
                      <Form.Label>Required Knowledge</Form.Label>
                     </Col>
                     <Col xs={12} md={7}>
-                     <Form.Control as="textarea" rows={3} required={true} value={required_knowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
+                     <Form.Control as="textarea" rows={3} value={required_knowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
                     </Col>
                   </Row>
               </Form.Group>

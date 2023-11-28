@@ -64,7 +64,7 @@ const ProposalForm = (props) => {
       //chiamata API
       API.retrieveCoSupervisorsGroups(co_supervisor_array)
       .then((groups) => {
-        console.log(groups);
+        console.log("Gruppi: "+ groups);
 
         const proposal = {
           "title":            title.trim(),

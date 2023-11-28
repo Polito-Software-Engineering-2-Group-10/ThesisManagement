@@ -429,16 +429,17 @@ app.get('/api/teacher/list', async (req, res) => {
     }
 })
 
-app.get('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res) => {
+app.post('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res) => {
+    console.log("body della request" + req.body);
+
     try {
         let groups = [];
         let g = '';
-        console.log(req.body.cosup_mails);
         for (const c of req.body.cosup_mails) {
             g = await teacherTable.getGroupByMail(c);
             groups = [...groups, g];
         }
-        console.log(groups);
+        console.log("gruppi recuperati dalla query: " + groups);
         res.json(groups);
 
     } catch (err) {

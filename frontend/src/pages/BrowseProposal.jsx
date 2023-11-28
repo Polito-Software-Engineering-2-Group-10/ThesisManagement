@@ -61,14 +61,14 @@ function ProposalTable(props){
     }
 
     const handleUpdateClick = (proposal) => {
-        // navigate to insert proposal page with the proposal as a parameter
+        // navigate to update proposal page with the proposal as a parameter
         navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal}});
     }
 
     const handleDeleteClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
         API.deleteProposal(proposal.id).then(()=>{
-            // setProposalList(proposalList.filter((res) => res.id != proposal.id))
+            // setProposalList(proposalList.filter((btn-deleteres) => res.id != proposal.id))
             props.setProposalDirty(true);
         })
         .catch((err)=>{console.log(err)});
@@ -90,8 +90,9 @@ function ProposalTable(props){
                 
                 <Button className="btn-edit" onClick={()=>handleUpdateClick(result)}><i className="bi bi-pencil-square"></i></Button>
                 <Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button>
+                <Button className="btn-archive" onClick={()=>handleDeleteClick(result)}><i className="bi bi-archive"></i></Button>
                 <Button className="btn-delete" onClick={()=>handleDeleteClick(result)}><i className="bi bi-trash"></i></Button>
-            </span>
+                </span>
           </td>
         </tr>
         )

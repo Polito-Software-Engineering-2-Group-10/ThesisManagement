@@ -288,6 +288,20 @@ async function deleteProposal(proposalId) {
   return data;   
 }
 
+async function archiveProposal(proposalId, status) {
+  
+  const response = await fetch(`${URL}/teacher/ProposalsList/${proposalId}`,{
+    method: 'PATCH',  
+    credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({status:status}),
+  });
+  const data = await response.json();
+  return data;   
+}
+
 
 const API = {
   logIn,
@@ -310,7 +324,8 @@ const API = {
   updateProposal,
   setVirtualClock,
   resetVirtualClock,
-  deleteProposal
+  deleteProposal,
+  archiveProposal
 };
 
 export default API;

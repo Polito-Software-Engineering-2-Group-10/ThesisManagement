@@ -788,3 +788,59 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
         expect(response.body).toEqual({ error: 'Database error during the update of the proposal: Error: Database error' });
     });
 })
+
+describe('DELETE /api/teacher/deleteProposal', () => {
+    test('Should successfully delete a proposal of the logged professor given the ID', async () => {
+        const deletedProposal = {
+                id: 1,
+                title: 'Proposal1',
+                teacher_id: 1,
+                supervisor: 'Supervisor1',
+                cosupervisor: ['Cosupervisor1', 'Cosupervisor2'],
+                keywords: ['keyword1', 'keyword2'],
+                type: 'Type1',
+                groups: ['Group1', 'Group2'],
+                description: 'Description1',
+                required_knowledge: ['Knowledge1', 'Knowledge2'],
+                notes: 'Notes1',
+                expiration: new Date().getMilliseconds(),
+                level: 1,
+                programmes: ['Program1', 'Program2'],
+                archived: true,
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(deletedProposal);
+    });
+
+    test('Should throw an error with 422 status code when the provided proposal ID is not an integer', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 'invalidId'});
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: 'Database error during the deletion of the thesis proposal: Error: Database error' });
+    });
+});

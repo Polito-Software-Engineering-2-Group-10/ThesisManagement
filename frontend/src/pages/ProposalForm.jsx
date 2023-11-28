@@ -96,8 +96,7 @@ const ProposalForm = (props) => {
         "programmes": programmes_array,
         "teacher_id": "1",
       };
-
-      addProposal(proposal);
+   
       if (isEditing) {
         updateProposal(proposal);
       } else {

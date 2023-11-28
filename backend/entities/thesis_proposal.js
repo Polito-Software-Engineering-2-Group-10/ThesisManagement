@@ -294,7 +294,7 @@ WHERE NOT EXISTS (
             params.push(groups);
             i++;
         }
-        query += ` AND archived = false AND expiration > ${i}`
+        query += ` AND archived = false AND expiration > $${i}`
         query += ' ORDER BY thesis_proposal.level, thesis_proposal.expiration ASC, thesis_proposal.type ASC'
         const result = await this.db.executeQueryExpectAny(query, ...params, virtualClock.getSqlDate());
         return result;

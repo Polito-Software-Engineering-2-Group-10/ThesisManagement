@@ -66,7 +66,7 @@ function ProposalTable(props){
     }
 
     const handleDeleteClick = (proposal) => {
-        // navigate to insert proposal page with the proposal as a parameter
+        // navigate to delete proposal page with the proposal as a parameter
         API.deleteProposal(proposal.id).then(()=>{
             // setProposalList(proposalList.filter((btn-deleteres) => res.id != proposal.id))
             props.setProposalDirty(true);
@@ -74,6 +74,12 @@ function ProposalTable(props){
         .catch((err)=>{console.log(err)});
     }
 
+    const handleArchiveClick = (proposal) => {
+        API.archiveProposal(proposal.id).then(()=>{
+            props.setProposalDirty(true);
+        })
+        .catch((err)=>{console.log(err)});
+    }
 
     // generates the row for a proposal
     const generateRow = (result) => {
@@ -90,7 +96,7 @@ function ProposalTable(props){
                 
                 <Button className="btn-edit" onClick={()=>handleUpdateClick(result)}><i className="bi bi-pencil-square"></i></Button>
                 <Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button>
-                <Button className="btn-archive" onClick={()=>handleDeleteClick(result)}><i className="bi bi-archive"></i></Button>
+                <Button className="btn-archive" onClick={()=>handleArchiveClick(result)}><i className="bi bi-archive"></i></Button>
                 <Button className="btn-delete" onClick={()=>handleDeleteClick(result)}><i className="bi bi-trash"></i></Button>
                 </span>
           </td>

@@ -60,6 +60,11 @@ function ProposalTable(props){
         navigate('/insert', {state: {proposal: proposal}});
     }
 
+    const handleUpdateClick = (proposal) => {
+        // navigate to insert proposal page with the proposal as a parameter
+        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal}});
+    }
+
     const handleDeleteClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
         API.deleteProposal(proposal.id).then(()=>{
@@ -83,13 +88,7 @@ function ProposalTable(props){
           <td>
             <span style={{display: "flex"}}>
                 
-                <Button className="btn-edit" onClick={() => {
-                                                if (selectedProposal) {
-                                                  // console.log(selectedProposal)
-                                                  const selectedProposalId = selectedProposal.id;
-                                                  navigate(`/updateProposal/${selectedProposalId}`);
-                                                }
-                                                }}><i className="bi bi-pencil-square"></i></Button>
+                <Button className="btn-edit" onClick={()=>handleUpdateClick(result)}><i className="bi bi-pencil-square"></i></Button>
                 <Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button>
                 <Button className="btn-delete" onClick={()=>handleDeleteClick(result)}><i className="bi bi-trash"></i></Button>
             </span>

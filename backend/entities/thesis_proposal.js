@@ -226,6 +226,11 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
         return ThesisProposal.fromRow(result);
     }
+    async unArchiveThesisProposal(id) {
+        const query = `UPDATE thesis_proposal SET archived = false WHERE id = $1 RETURNING *`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
+        return ThesisProposal.fromRow(result);
+    }
     async getTypes() {
         const query = `SELECT DISTINCT type FROM thesis_proposal ORDER BY type ASC`;
         const result = await this.db.executeQueryExpectAny(query);

@@ -267,6 +267,18 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
             }
             const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
             res.json(proposalResult);
+            
+            //If we decide to take 'unarchive' it will uncomment
+            /*if (propopsalDetail.archived===false) {
+                //return res.status(400).json({ error: 'The proposal has been archived!' });
+                const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
+                res.json(proposalResult);
+            }
+            if (propopsalDetail.archived===true) {
+                //return res.status(400).json({ error: 'The proposal has been archived!' });
+                const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
+                res.json(proposalResult);
+            }*/
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });
         }

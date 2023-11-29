@@ -82,8 +82,26 @@ Content-Type: application/json
     "proposalId": 4
 }
 
-
 ###
+PUT http://localhost:3001/api/teacher/updateProposal/2357 HTTP/1.1
+Content-Type: application/json
+
+{
+    
+    "title": "TEST 2357",
+    "co_supervisor": ["Dr. Johnson"], 
+    "keywords": ["Machine Learning", "Image Processing"], 
+    "type": "Master Thesis", 
+    "groups": ["Computer Vision", "Artificial Intelligence"], 
+    "description": "Explore the applications of machine learning in image processing to improve image recognition.", 
+    "required_knowledge": ["Machine Learning", "Computer Vision"], 
+    "notes": "Please contact for more details.", 
+    "expiration": "2023-12-15", 
+    "level": 1, 
+    "programmes": ["Computer Science"] 
+}
+
+##
 #[
  # {
  #   "id": 1,

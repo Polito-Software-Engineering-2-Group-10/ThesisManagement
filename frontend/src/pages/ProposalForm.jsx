@@ -18,6 +18,9 @@ const ProposalForm = (props) => {
     const notify=useNotification();
 
     const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
+    const isEditing = !!location.state?.proposal && !location.state?.copy;
+
+    // Form fields
     const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
     const [supervisor, setSupervisor]       = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
     const [co_supervisor, setCoSupervisor]  = useState(location.state?.proposal ? location.state.proposal.co_supervisor.join(",") : '');
@@ -49,15 +52,37 @@ const ProposalForm = (props) => {
         }
 
     }, [loggedIn])
-
     
+
+    const updateProposal = (updatedProposalData) => {
+      // Implement the logic to update the existing proposal
+      // You may need to call a different API method or handle the update in a specific way
+      const existingProposal = location.state.proposal;
+      if (existingProposal && existingProposal.id) {
+        // Merge the existing proposal data with the updated data
+        const updatedProposal = {
+          ...existingProposal,
+          ...updatedProposalData,
+      };
+
+      API.updateProposal(existingProposal.id, updatedProposal)
+        .then((response) => {
+          setProposalsDirty(true);
+          console.log(existingProposal.id);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }};
+
+
     const handleSubmit = (event) => {
       event.preventDefault();
 
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
-      //const groups_array = groups.split(/[,;]/).map((k) => k.trim());
+      const groups_array = groups.split(/[,;]/).map((k) => k.trim());
       const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
 
@@ -81,7 +106,11 @@ const ProposalForm = (props) => {
           "programmes": programmes_array,
           "teacher_id": "1",
         };
+           if (isEditing) {
+        updateProposal(proposal);
+      } else {
         addProposal(proposal);
+      }
         notify.success('Successfully submitted your proposal!');
         setTimeout(()=>{ navigate(nextpage) }, 3400);
       })
@@ -97,7 +126,7 @@ const ProposalForm = (props) => {
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">
-              <p>Insert a New Proposal</p>
+              <p>{isEditing ? 'Update Proposal' : 'Insert a New Proposal'}</p>
             </div>
 
             <Form className="block-example rounded mb-1 form-padding mt-5" onSubmit={handleSubmit}>
@@ -266,7 +295,7 @@ const ProposalForm = (props) => {
               </Form.Group>
 
               <div className="d-flex justify-content-center">
-                <Button className="m-2" variant="success" type="submit">Insert</Button>&nbsp;  
+                <Button className="m-2" variant="success" type="submit">{isEditing ? 'Update' : 'Insert'}</Button>&nbsp;  
                 <Link className="btn btn-danger m-2"  to={nextpage}>Go Back</Link>
               </div>
  

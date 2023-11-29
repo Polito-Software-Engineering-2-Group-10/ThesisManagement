@@ -61,7 +61,12 @@ function ProposalTable(props){
 
     const handleCopyClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
-        navigate('/insert', {state: {proposal: proposal}});
+        navigate('/insert', {state: {proposal: proposal, copy: true}});
+    }
+
+    const handleUpdateClick = (proposal) => {
+        // navigate to update proposal page with the proposal as a parameter
+        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal}});
     }
 
     const handleDeleteClick = (proposal) => {
@@ -89,6 +94,12 @@ function ProposalTable(props){
         });
     }
 
+    const handleArchiveClick = (proposal) => {
+        API.archiveProposal(proposal.id).then(()=>{
+            props.setProposalDirty(true);
+        })
+        .catch((err)=>{console.log(err)});
+    }
 
     // generates the row for a proposal
     const generateRow = (result) => {
@@ -103,10 +114,11 @@ function ProposalTable(props){
           <td>
             <span style={{display: "flex"}}>
                 
-                <Button className="btn-edit" onClick={()=>{}}><i className="bi bi-pencil-square"></i></Button>
-                <Button onClick={()=>handleCopyClick(result)}><i className="bi bi-copy"></i></Button>
-                <Button className="btn-delete" onClick={()=>handleDeleteClick(result)}><i className="bi bi-trash"></i></Button>
-            </span>
+                <Button className="btn-edit" title="Update this proposal" onClick={()=>handleUpdateClick(result)}><i className="bi bi-pencil-square"></i></Button>
+                <Button onClick={()=>handleCopyClick(result)} title="Create a new proposal copying the data from this one"><i className="bi bi-copy"></i></Button>
+                <Button className="btn-archive" onClick={()=>handleArchiveClick(result)} title={result.archived ? 'Unarchive this proposal' : 'Archive this proposal'}><i className="bi bi-archive"></i></Button>
+                <Button className="btn-delete" onClick={()=>handleDeleteClick(result)} title="Delete this proposal"><i className="bi bi-trash"></i></Button>
+                </span>
           </td>
         </tr>
         )

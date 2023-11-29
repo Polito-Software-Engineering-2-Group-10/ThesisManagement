@@ -73,6 +73,9 @@ Content-Type: application/json
 {
     "id": 1
 }
+<<<<<<<<< Temporary merge branch 1
+###
+=========
 
 ###
 DELETE http://localhost:3001/api/teacher/deleteProposal

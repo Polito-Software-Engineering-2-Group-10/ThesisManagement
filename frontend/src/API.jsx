@@ -365,7 +365,6 @@ const API = {
   logOut,
   getUserInfo,
   getTeacherProposals,
-  //getProposals,
   getTeacherDetail,
   getStudentDetail,
   getAllProposals,

@@ -254,10 +254,10 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            const errors = validationResult(req);
+            /*const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(422).json({ errors: errors.array() });
-            }
+            }*/
             const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
             if (!propopsalDetail) {
                 return res.status(400).json({ error: 'The proposal does not exist!' });
@@ -588,6 +588,20 @@ app.put('/api/teacher/updateProposal/:thesisid',
     }
 );
 
+/*SEND MAIL APIS*/
+app.post("/api/send_email", 
+    isLoggedInAsTeacher,
+    async(req, res) => {
+    try{
+        sendEmail(req.body)
+        .then((response) => res.send(response.message))
+        .catch((error) => res.status(500).send(error.message));
+    }
+    catch(err){
+        res.status(503).json({ error: `Database error during sending notification ${err}` });
+    }
+});
+
 /*END API*/
 
 
@@ -595,4 +609,4 @@ const server = app.listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-export { server, app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher };
+export { server, app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher, sendEmail };

@@ -55,6 +55,14 @@ async function addProposal(proposal) {
 }
 // login,logout,session
 
+async function logInWithSaml() {
+    window.location.replace("http://localhost:3001/api/saml/login");
+}
+
+async function logOutWithSaml() {
+    window.location.replace("http://localhost:3001/api/saml/logout");
+}
+
 async function logIn(credentials) {
     let response = await fetch(URL + '/login', {
       method: 'POST',
@@ -351,6 +359,8 @@ async function archiveProposal(proposalId, status) {
 }
 
 const API = {
+  logInWithSaml,
+  logOutWithSaml,
   logIn,
   logOut,
   getUserInfo,

@@ -89,7 +89,11 @@ function App() {
 
 
   const doLogOut = async () => {
-    await API.logOut();
+    if (typeof user.saml !== 'undefined') {
+        await API.logOutWithSaml();
+    } else {
+        await API.logOut();
+    }
     setLoggedIn(false);
     setUser(null);
     setUserDetail(null);

@@ -2,7 +2,9 @@ version: '3.1'
 
 services:
   db:
-    image: atari2/thesismanagement:database
+    build:
+      context: ../database
+      dockerfile: ./Dockerfile
     expose:
       - 5432
     ports:
@@ -13,7 +15,9 @@ services:
       timeout: 30s
       retries: 5
   authsources:
-    image: atari2/thesismanagement:authsources
+    build:
+      context: ../saml
+      dockerfile: ./Dockerfile
     volumes:
       - saml_config:/var/www/simplesamlphp/config:rw
     depends_on:
@@ -33,20 +37,5 @@ services:
       - 8080:8080
     volumes:
       - saml_config:/var/www/simplesamlphp/config:ro
-  server:
-    image: atari2/thesismanagement:backend
-    depends_on:
-      db:
-        condition: service_healthy
-    expose:
-      - 3001
-    ports:
-      - 3001:3001
-  frontend:
-    image: atari2/thesismanagement:frontend
-    depends_on:
-      - server
-    ports:
-      - 5173:80
 volumes:
   saml_config:

@@ -1,31 +1,4 @@
-function samlroutes(app, config, passport) {
-    /// THESE ARE STILL WIP
-    app.get('/login',
-        passport.authenticate(config.passport.strategy,
-            {
-                successRedirect: '/',
-                failureRedirect: '/login'
-            })
-    );
-
-    app.post(config.passport.saml.path,
-        passport.authenticate(config.passport.strategy,
-            {
-                failureRedirect: '/',
-                failureFlash: true
-            }),
-        function (req, res) {
-            res.redirect('/');
-        }
-    );
-
-    app.get('/logout/callback', passport.logoutSamlCallback);
-
-    app.get('/logout', passport.logoutSaml);
-
-};
-
-function localroutes(app, config, passport) {
+function routes(app, config, passport) {
 
     const isLoggedIn = (req, res, next) => {
         if (req.isAuthenticated())
@@ -33,8 +6,31 @@ function localroutes(app, config, passport) {
         res.status(401).json({ error: 'Not authenticated' });
     };
 
+    app.get('/api/saml/login',
+    passport.authenticate(config.passport.strategy,
+        {
+            successRedirect: 'http://localhost:5173',
+            failureRedirect: 'http://localhost:5173/login'
+        })
+    );
+
+    app.post(config.passport.saml.path,
+        passport.authenticate(config.passport.strategy,
+            {
+                failureRedirect: '/',
+                failureFlash: true,
+            }),
+        function (req, res) {
+            res.redirect('http://localhost:5173');
+        }
+    );
+
+    app.get('/api/saml/logout/callback', passport.logoutSamlCallback);
+
+    app.get('/api/saml/logout', isLoggedIn, passport.logoutSaml);
+
     app.post('/api/login', function (req, res, next) {
-        passport.authenticate(config.passport.strategy, (err, user, info) => {
+        passport.authenticate('local', (err, user, info) => {
             if (err)
                 return next(err);
             if (!user)
@@ -60,10 +56,8 @@ function localroutes(app, config, passport) {
 }
 
 export default function (app, config, passport, strategy) {
-    if (strategy === 'saml') {
-        samlroutes(app, config, passport);
-    } else if (strategy === 'local') {
-        localroutes(app, config, passport);
+    if (strategy === 'saml' || strategy === 'local') {
+        routes(app, config, passport);
     } else {
         throw new Error('Invalid passport strategy');
     }

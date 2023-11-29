@@ -71,7 +71,7 @@ class TeacherTable {
     async getGroupByMail(email) {
         const query = `SELECT g.name FROM teacher, public.group as g WHERE g.cod_group = teacher.cod_group and teacher.email = $1`;
         const result = await this.db.executeQueryExpectAny(query, email);
-        return result.map(Teacher.fromRow);
+        return result;
     }
 }
 

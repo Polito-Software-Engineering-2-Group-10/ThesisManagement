@@ -435,7 +435,9 @@ app.post('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res
         let g = '';
         for (const c of req.body.cosup_mails) {
             g = await teacherTable.getGroupByMail(c);
-            groups = [...groups, g[0].name];
+            //check if is an external supervisor
+            if(g.length!=0)
+                groups = [...groups, g[0].name];
         }
         res.json(groups);
     } catch (err) {

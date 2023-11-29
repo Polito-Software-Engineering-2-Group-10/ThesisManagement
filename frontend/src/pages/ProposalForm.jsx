@@ -57,13 +57,15 @@ const ProposalForm = (props) => {
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
-      const groups_array = groups.split(/[,;]/).map((k) => k.trim());
+      //const groups_array = groups.split(/[,;]/).map((k) => k.trim());
       const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
 
       //chiamata API
       API.retrieveCoSupervisorsGroups(co_supervisor_array)
       .then((groups) => {
+        let groups_array = [...groups, props.teacherDetail.group_name];
+        groups_array = groups_array.filter((item, index) => groups_array.indexOf(item) == index).filter((n) => n!="");
         const proposal = {
           "title":            title.trim(),
           "supervisor":       supervisor,
@@ -71,7 +73,7 @@ const ProposalForm = (props) => {
           "type":             type,
           "expiration":       expiration,
           "level":            level,
-          "groups":           [...groups_array, props.teacherDetail.group_name,groups[0]],
+          "groups":           groups_array,
           "keywords":         keywords_array,
           "description":      description.trim(),
           "required_knowledge": required_knowledge_array,

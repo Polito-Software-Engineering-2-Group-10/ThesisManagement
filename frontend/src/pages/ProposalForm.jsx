@@ -34,6 +34,7 @@ const ProposalForm = (props) => {
     const [notes, setNotes]                          = useState(location.state?.proposal ? location.state.proposal.notes : '');
     const [programmes, setPrograms]                  = useState(location.state?.proposal ? location.state.proposal.programmes.join(",") : '');
     const [submitted,setSubmitted]                    = useState(false);
+    const [timeoutHandle, setTimeoutHandle] = useState(null);
     const nextpage = location.state?.nextpage || '/';
 
     const addProposal = (proposal) => {
@@ -113,11 +114,18 @@ const ProposalForm = (props) => {
       }
         notify.success('Successfully submitted your proposal!');
         
-        setTimeout(()=>{ navigate(nextpage) }, 3400);
+        const handle = setTimeout(()=>{ navigate(nextpage) }, 3400);
+        setTimeoutHandle(handle);
       })
       .catch((e) => console.log(e));
 
       //navigate(nextpage);
+    }
+
+    const handleGoBack = () => {
+        if(timeoutHandle) clearTimeout(timeoutHandle);
+        setTimeoutHandle(null);
+        navigate(nextpage);
     }
 
 
@@ -297,7 +305,7 @@ const ProposalForm = (props) => {
 
               <div className="d-flex justify-content-center">
                 <Button className="m-2" variant="success" type="submit" disabled={submitted}>{isEditing ? 'Update' : 'Insert'}</Button>&nbsp;  
-                <Link className="btn btn-danger m-2"  to={nextpage}>Go Back</Link>
+                <Button className="btn btn-danger m-2" onClick={handleGoBack}>Go Back</Button>
               </div>
  
             </Form>

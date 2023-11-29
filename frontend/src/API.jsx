@@ -274,7 +274,7 @@ async function acceptDeclineApplication(mailInfo) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                recipient_mail: "s313372@studenti.polito.it",
+                recipient_mail: mailInfo.student_email,
                 subject: `Result on your application about ${mailInfo.thesis_title}`,
                 message: `Hello ${mailInfo.student_gender == 'M' ? 'Mr.' : 'Mrs.'} ${mailInfo.student_name} ${mailInfo.student_surname},\nyour thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been ${mailInfo.status ? 'Accepted' : 'Rejected'}.\nBest Regards, Polito Staff.`
             }),
@@ -312,21 +312,7 @@ async function deleteProposal(proposalId, mailInfo) {
         body: JSON.stringify({ proposalId: proposalId }),
     });
     const data = await response.json();
-    if (response.status == 200) {
-        await fetch(`${URL}/send_email`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                recipient_mail: "salvo.cav96@gmail.com",
-                subject: `Info about on your application about ${mailInfo.thesis_title}`,
-                message: `Hello dear student,\n Unfortunately your thesis application for the ${mailInfo.thesis_title} proposal, supervised by professor ${mailInfo.teacher_surname}, has been cancelled because the thesis proposal was deleted.\nBest Regards, Polito Staff.`
-            }),
-        });
-    }
-    return data;
+    return { data, status: response.status };
 }
 
 async function retrieveCoSupervisorsGroups(co_supervisor_array) {

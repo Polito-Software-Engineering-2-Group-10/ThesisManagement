@@ -130,11 +130,18 @@ class ApplicationTable {
         return Application.fromRow(result);
     }
 
-    async countApplicationForAProposal(application_id){
+    async countAcceptedApplicationForAProposal(application_id){
         const query =`SELECT COUNT(*) FROM application WHERE proposal_id=$1 and status=true`;
         const aid = getNum(application_id);
-        const result=await this.db.executeQueryExpectAny(query, application_id);
+        const result=await this.db.executeQueryExpectAny(query, aid);
         return result[0].count;
+    }
+
+    async getStudentInfoPendingApplicationForAProposal(application_id) {
+        const query = `select student.email, application.id as app_id from application, student where proposal_id=$1 and student.id = application.student_id;`;
+        const aid = getNum(application_id);
+        const result = await this.db.executeQueryExpectAny(query, aid);
+        return result;
     }
 }
 

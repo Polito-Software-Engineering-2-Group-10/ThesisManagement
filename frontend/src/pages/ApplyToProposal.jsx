@@ -12,6 +12,7 @@ function ApplyToProposal(props) {
     const navigate = useNavigate();
     const {propId} = useParams();
     const [proposals, setProposals] = useState(null);
+    const [timeoutHandle, setTimeoutHandle] = useState(null);
     const notify=useNotification();
     useEffect(() => {
 
@@ -31,11 +32,18 @@ function ApplyToProposal(props) {
         props.addApplication(application, () => {
            
             notify.success("Application submitted correctly");
-            setTimeout(()=>{ navigate('/') }, 3400);
+            const timeout = setTimeout(()=>{ navigate('/') }, 3400);
+            setTimeoutHandle(timeout);
         }, (err) => {
             notify.error("You can't apply to the same proposal twice");
             //setErrorMessage("You can't apply to the same proposal twice");
         });
+    }
+
+    const handleGoBack = () => {
+        if(timeoutHandle) clearTimeout(timeoutHandle);
+        setTimeoutHandle(null);
+        navigate('/search');
     }
 
     return (
@@ -89,7 +97,7 @@ function ApplyToProposal(props) {
                             { (props.loggedIn && props.user.role === 'student') ? 
                                 <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => addApplication(p.id)} variant='success'>Apply Now!</Button></Col>
                             : ''}
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={() => navigate('/search')} variant='danger'>Go Back</Button></Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button onClick={handleGoBack} variant='danger'>Go Back</Button></Col>
                         </Row>
                         </Container>
                     )

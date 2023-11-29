@@ -17,7 +17,7 @@ function BrowseAndAcceptApplication(props) {
         setSelectedApplication(application);
     }
     
-    const handleAcceptRejectButtonClick = (id, status,teacher_name,teacher_surname,thesis_title,student_name,student_surname,student_gender) => {
+    const handleAcceptRejectButtonClick = (id, status,teacher_name,teacher_surname,thesis_title,student_name,student_surname,student_gender, student_email) => {
         const mailInfo=
         {
             id: id,
@@ -27,8 +27,8 @@ function BrowseAndAcceptApplication(props) {
             thesis_title:thesis_title,
             student_name:student_name,
             student_surname:student_surname,
-            student_gender:student_gender
-
+            student_gender:student_gender,
+            student_email: student_email
         }
         API.acceptDeclineApplication(mailInfo).then((res) => {
             props.updateAppList().then(() => {
@@ -103,8 +103,8 @@ function BrowseAndAcceptApplication(props) {
                     gap: '20px',
                     marginBottom: '50px'
                 }} md={'auto'}>
-                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender)} >Accept</Button>
-                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender)}>Decline</Button>
+                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)} >Accept</Button>
+                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)}>Decline</Button>
                 </Row>
                     : ""
                 }

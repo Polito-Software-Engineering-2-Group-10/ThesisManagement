@@ -131,8 +131,8 @@ app.get('/api/teacher/applicationDetail/:applicationid',
                 student_ey: applicationDetail.enrollment_year,
             };
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
-            const applicationResult = {status: applicationStatus.status}
-            res.json({detail:cleanApplication, status:applicationResult});
+            const applicationResult = { status: applicationStatus.status }
+            res.json({ detail: cleanApplication, status: applicationResult });
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List` });
         }
@@ -164,15 +164,19 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
                 return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
             }
             const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
-            
+
             if (!applicationStatus) {
                 return res.status(400).json({ error: 'The application does not exist!' });
             }
-            if ( applicationStatus.status !== null) {
-                return res.status(400).json({ error: `This application has already been ${ applicationStatus.status ? 'accepted' : 'rejected'}` });
+            if (applicationStatus.status !== null) {
+                return res.status(400).json({ error: `This application has already been ${applicationStatus.status ? 'accepted' : 'rejected'}` });
             }
-
-            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid,Boolean(req.body.status));
+            const newStatus = Boolean(req.body.status);
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
+            // when an application is accepted, the relative proposal has to be archived
+            if (newStatus === true) {
+                await thesisProposalTable.archiveThesisProposal(applicationDetail.proposal_id);
+            }
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });
@@ -254,33 +258,21 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            /*const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
-            }*/
             const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
             if (!propopsalDetail) {
                 return res.status(400).json({ error: 'The proposal does not exist!' });
             }
-            if (propopsalDetail.archived!==false) {
-                return res.status(400).json({ error: 'The proposal has been archived!' });
-            }
-            const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
-            res.json(proposalResult);
-            
-            //If we decide to take 'unarchive' it will uncomment
-            /*if (propopsalDetail.archived===false) {
-                //return res.status(400).json({ error: 'The proposal has been archived!' });
+
+            if (propopsalDetail.archived === false) {
                 const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
-            }
-            if (propopsalDetail.archived===true) {
-                //return res.status(400).json({ error: 'The proposal has been archived!' });
+            } else if (propopsalDetail.archived === true) {
                 const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
-            }*/
+            }
+
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+            res.status(503).json({ error: `Database error during archival of thesis proposal ${err}` });
         }
     }
 
@@ -328,7 +320,7 @@ app.post('/api/teacher/insertProposal',
         }
         try {
             const proposalId = await thesisProposalTable.addThesisProposal(proposal)
-            
+
             console.log(proposalId);
             res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
         } catch (err) {
@@ -353,12 +345,12 @@ app.post('/api/student/applyProposal',
         }
         const Applyproposal = {
             student_id: req.user.id,
-            proposal_id:req.body.proposal_id,
-            apply_date:req.body.apply_date
+            proposal_id: req.body.proposal_id,
+            apply_date: req.body.apply_date
         }
         try {
-            const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id,Applyproposal.proposal_id,Applyproposal.apply_date);
-            res.json(applypropID); 
+            const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id, Applyproposal.proposal_id, Applyproposal.apply_date);
+            res.json(applypropID);
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
         }
@@ -366,7 +358,7 @@ app.post('/api/student/applyProposal',
     }
 );
 
-app.get('/api/ProposalsList', 
+app.get('/api/ProposalsList',
     async (req, res) => {
         try {
             const proposalList = await thesisProposalTable.getAll();
@@ -380,7 +372,7 @@ app.get('/api/ProposalsList',
 
 
 
-app.post('/api/student/ProposalsList', 
+app.post('/api/student/ProposalsList',
     async (req, res) => {
         try {
             const proposalList = await thesisProposalTable.getAll(req.body.cod_degree);
@@ -405,26 +397,26 @@ app.post('/api/ProposalsList/filter',
         check('groups').isArray().optional()
     ],
     async (req, res) => {
-            try {
-                const errors = validationResult(req);
-                if (!errors.isEmpty()) {
-                    return res.status(422).json({ errors: errors.array() });
-                }
-                const filterObject = {
-                    title: req.body.title || null,
-                    teacher_id: req.body.professor || null,
-                    date: req.body.date || null,
-                    type: req.body.type || null,
-                    keywords: req.body.keywords || null,
-                    level: req.body.level || null,
-                    groups: req.body.groups || null
-                }
-                res.json(await thesisProposalTable.getFilteredProposals(filterObject));
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
             }
-            catch(err){
-                res.status(503).json({ error: `Database error during the getting proposals: ${err}` });
+            const filterObject = {
+                title: req.body.title || null,
+                teacher_id: req.body.professor || null,
+                date: req.body.date || null,
+                type: req.body.type || null,
+                keywords: req.body.keywords || null,
+                level: req.body.level || null,
+                groups: req.body.groups || null
             }
-        
+            res.json(await thesisProposalTable.getFilteredProposals(filterObject));
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during the getting proposals: ${err}` });
+        }
+
     }
 );
 
@@ -450,7 +442,7 @@ app.post('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res
         for (const c of req.body.cosup_mails) {
             g = await teacherTable.getGroupByMail(c);
             //check if is an external supervisor
-            if(g.length!=0)
+            if (g.length != 0)
                 groups = [...groups, g[0].name];
         }
         res.json(groups);
@@ -486,31 +478,47 @@ app.get('/api/thesis/groups', async (req, res) => {
     }
 });
 
-app.delete('/api/teacher/deleteProposal', 
-isLoggedInAsTeacher,
-[
-    check('proposalId').isInt()
-],
- async(req,res)=> {
-    try{
-        const errors = validationResult(req);
-        if(!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
+app.delete('/api/teacher/deleteProposal',
+    isLoggedInAsTeacher,
+    [
+        check('proposalId').isInt()
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            const studentEmails = await applicationTable.getStudentInfoPendingApplicationForAProposal(req.body.proposalId);
+            if (studentEmails.length != 0) {
+                for (const s of studentEmails) {
+                    const app = await applicationTable.getById(s.app_id);
+                    const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
+                    const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
+                    try {
+                        const res = await sendEmail({
+                            recipient_mail: s.email,
+                            subject: `Info about on your application about ${proposalInfo.title}`,
+                            message: `Hello dear student,\n Unfortunately your thesis application for the ${proposalInfo.title} proposal, supervised by professor ${teacherInfo.surname}, has been cancelled because the thesis proposal was deleted.\nBest Regards, Polito Staff.`
+                        });
+                    }
+                    catch (err) {
+                        res.status(500).json({ error: `Server error during sending notification ${err}` });
+                    }
+                }
+            }
+            const nApplication = await applicationTable.countAcceptedApplicationForAProposal(req.body.proposalId)
+            if (nApplication == 0) {
+                const deletedProposal = await thesisProposalTable.deleteById(req.body.proposalId)
+                res.json(deletedProposal);
+            }
+            else
+                res.status(400).json({ error: `The proposal has been accepted by a student, so it cannot be deleted` });
         }
-        const nApplication= await applicationTable.countApplicationForAProposal(req.body.proposalId)
-        console.log(nApplication);
-        if (nApplication==0)
-        {
-        const deletedProposal= await thesisProposalTable.deleteById(req.body.proposalId)
-        res.json(deletedProposal);
+        catch (err) {
+            res.status(503).json({ error: `Database error during the deletion of the thesis proposal: ${err}` });
         }
-        else
-        res.json("NO");
-    }
-    catch(err){
-        res.status(503).json({ error: `Database error during the deletion of the thesis proposal: ${err}` });
-    }
-});
+    });
 app.post('/api/virtualclock', [
     check('date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
 ], async (req, res) => {
@@ -528,19 +536,6 @@ app.delete('/api/virtualclock', (req, res) => {
     virtualClock.resetOffset();
     res.json({ date: dayjs() });
 })
-/*SEND MAIL APIS*/
-app.post("/api/send_email", 
-    isLoggedInAsTeacher,
-    async(req, res) => {
-    try{
-        sendEmail(req.body)
-        .then((response) => res.send(response.message))
-        .catch((error) => res.status(500).send(error.message));
-    }
-    catch(err){
-        res.status(503).json({ error: `Database error during sending notification ${err}` });
-    }
-});
 
 app.put('/api/teacher/updateProposal/:thesisid',
     isLoggedInAsTeacher,
@@ -580,7 +575,7 @@ app.put('/api/teacher/updateProposal/:thesisid',
         }
         try {
             const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId)
-            res.json(proposalId); 
+            res.json(proposalId);
         } catch (err) {
             res.status(503).json({ error: `Database error during the update of the proposal: ${err}` });
         }
@@ -589,18 +584,18 @@ app.put('/api/teacher/updateProposal/:thesisid',
 );
 
 /*SEND MAIL APIS*/
-app.post("/api/send_email", 
+app.post("/api/send_email",
     isLoggedInAsTeacher,
-    async(req, res) => {
-    try{
-        sendEmail(req.body)
-        .then((response) => res.send(response.message))
-        .catch((error) => res.status(500).send(error.message));
-    }
-    catch(err){
-        res.status(503).json({ error: `Database error during sending notification ${err}` });
-    }
-});
+    async (req, res) => {
+        try {
+            sendEmail(req.body)
+                .then((response) => res.send(response.message))
+                .catch((error) => res.status(500).send(error.message));
+        }
+        catch (err) {
+            res.status(503).json({ error: `Server error during sending notification ${err}` });
+        }
+    });
 
 /*END API*/
 

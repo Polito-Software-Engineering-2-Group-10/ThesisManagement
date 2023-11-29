@@ -28,8 +28,8 @@ function BrowseProposal (props){
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
         <ToastContainer/>
         <Container>
-            <ProposalTable title="Active proposals" proposalList={activeProposals} user={props.user}      setProposalDirty={props.setProposalDirty} />
-            <ProposalTable title="Archived proposals" proposalList={archivedProposals} user={props.user}  setProposalDirty={props.setProposalDirty} />
+            <ProposalTable title="Active proposals" active={true} proposalList={activeProposals} user={props.user}      setProposalDirty={props.setProposalDirty} />
+            <ProposalTable title="Archived proposals" active={false} proposalList={archivedProposals} user={props.user}  setProposalDirty={props.setProposalDirty} />
         </Container>
     </>
   )
@@ -41,7 +41,7 @@ function ProposalTable(props){
     const navigate = useNavigate();
     const notify= useNotification();
     // title of the table
-    let {title} = props;
+    const {title, active} = props;
 
     // list of proposal 
     const [proposalList, setProposalList] = useState(null);
@@ -78,15 +78,19 @@ function ProposalTable(props){
             thesis_title:proposal.title
         }
         // navigate to insert proposal page with the proposal as a parameter
-        API.deleteProposal(proposal.id,mailInfo).then((response)=>{
+        API.deleteProposal(proposal.id,mailInfo).then(({ data, status })=>{
             // setProposalList(proposalList.filter((res) => res.id != proposal.id))
             props.setProposalDirty(true);
-            if (response=="NO")
+            if (status == 400)
             {
                 notify.error("You can't delete this proposal because already has accepted application");
             }
-            else 
-            notify.success("Proposal deleted succesfully");
+            else if (status == 200) {
+                notify.success("Proposal deleted succesfully");
+            }
+            else {
+                notify.error(data.error);
+            }
         })
         .catch((err)=>{
             notify.error(err);
@@ -117,7 +121,7 @@ function ProposalTable(props){
                 <Button className="btn-edit" title="Update this proposal" onClick={()=>handleUpdateClick(result)}><i className="bi bi-pencil-square"></i></Button>
                 <Button onClick={()=>handleCopyClick(result)} title="Create a new proposal copying the data from this one"><i className="bi bi-copy"></i></Button>
                 <Button className="btn-archive" onClick={()=>handleArchiveClick(result)} title={result.archived ? 'Unarchive this proposal' : 'Archive this proposal'}><i className="bi bi-archive"></i></Button>
-                <Button className="btn-delete" onClick={()=>handleDeleteClick(result)} title="Delete this proposal"><i className="bi bi-trash"></i></Button>
+                {props.active && <Button className="btn-delete" onClick={()=>handleDeleteClick(result)} title="Delete this proposal"><i className="bi bi-trash"></i></Button>}
                 </span>
           </td>
         </tr>

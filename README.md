@@ -1,5 +1,10 @@
 # Thesis Management
 
+Each component of the application has a dedicated README file.
+- [Front-end](frontend/README.md)
+- [Back-end](backend/README.md)
+- [Database design](database/DESIGN.md), [Database howto](database/HOW_TO_USE.md)
+
 You can find the images on [Docker Hub](https://hub.docker.com/r/atari2/thesismanagement).
 
 To start the application do the following steps:

@@ -288,6 +288,28 @@ The backend exposes the following APIs:
     },
     ...
     ```
+- POST `/api/teacher/retrieveCosupGroup`
+    - This API accepts a json object of the form
+    ```json
+    {
+        "cosup_emails": ["<email of the co-supervisors>", ...]
+    }
+    ```
+    - It will return a list of groups that contain all the co-supervisors in the given list.
+    ```json
+    [
+        "group1", "group2", ...
+    ]
+    ```
+- DELETE `/api/teacher/deleteProposal`
+    - This API accepts a json object of the form
+    ```json
+    {
+        "proposalId": <id of the proposal>
+    }
+    ```
+    - It will delete the proposal with the given id from the database.
+    - It will return 400 if the proposal has been already assigned to a student and 500 if email notifications fail.
 - GET `/api/thesis/types`
     - This API will return all the unique thesis types in the database, as a list of strings.
     ```json
@@ -344,6 +366,32 @@ The backend exposes the following APIs:
         "status": <boolean>
     }
     ```
+- POST `/api/student/ProposalsList`
+    - This API requires a json body with the structure:
+    ```json
+    {
+        "cod_degree": "<cod_degree>",
+    }
+    ```
+    - It will return the list of proposals for the student with the given cod_degree.
+- PUT `/api/teacher/updateProposal/<thesisid>`
+    - This API requires a json body with the structure:
+    ```json
+    {
+        "title": "<thesis title>",
+        "supervisor": "<supervisor email>",
+        "co_supervisor": ["<co-supervisor 1 email>", "<co-supervisor 2 email>"], // array of co-supervisors emails, can be empty
+        "keywords": ["<keyword 1>", "<keyword 2>"], // array of keywords, cannot be empty
+        "type": "<thesis type>", // type of thesis
+        "description": "<thesis description>",
+        "required_knowledge": ["<required knowledge 1>", "<required knowledge 2>"], // array of required knowledge, can be empty
+        "notes": "<notes>", // notes, can be empty
+        "expiration": "<expiration date>", // expiration date
+        "level": "<thesis level>", // thesis level, can be 1 or 2
+        "programmes": ["<programme 1>", "<programme 2>"], // array of programmes, cannot be empty
+    }
+    ```
+    - This API will update the proposal with the given id with the given parameters. It will return the ID of the updated proposal.
 - GET `/api/teacher/ProposalsList`:
     - This API will return a list of all active and archived proposals in the following format:
     ```json
@@ -410,6 +458,10 @@ The backend exposes the following APIs:
         ]
       }
     ```
+- PATCH `/api/teacher/ProposalsList/<proposalid>`
+    - No parameters, this api will archive or unarchive the proposal with the given id.
+    - It returns the entire proposal object
+- 
 - POST `/api/virtualclock`
     - This API will accept a JSON object with the following structure:
     ```json
@@ -432,3 +484,14 @@ The backend exposes the following APIs:
         "date": <YYYY-MM-DD>
     }
     ```
+- POST `/api/send_email`
+    - This API will accept a JSON object with the following structure:
+    ```json
+    {
+        "recipient_email": "<email of the recipient>",
+        "subject": "<subject of the email>",
+        "message": "<text of the email>"
+    }
+    ```
+    - It will send an email to the given recipient with the given subject and text.
+    - It returns a string detailing the result of the operation.

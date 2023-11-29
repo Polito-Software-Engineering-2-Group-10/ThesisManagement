@@ -276,21 +276,10 @@ async function acceptDeclineApplication(mailInfo) {
   return data;
 }
 
-async function updateProposal(id, proposal) {
-  const currentproposal = {
-    // id: proposal.id,
-    title: proposal.title,
-    co_supervisor: proposal.co_supervisor,
-    keywords: proposal.keywords,
-    type: proposal.type,
-    groups: proposal.groups,
-    description: proposal.description,
-    required_knowledge: proposal.required_knowledge,
-    notes: proposal.notes,
-    expiration: proposal.expiration,
-    level: proposal.level,
-    programmes: proposal.programmes
-}
+async function updateProposal(proposal) {
+  const id = proposal.id;
+  delete proposal.id;
+    
   const response = await fetch(`${URL}/teacher/updateProposal/${id}`, {
     credentials: 'include',
     method: 'PUT',
@@ -298,7 +287,7 @@ async function updateProposal(id, proposal) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(currentproposal)
+    body: JSON.stringify(proposal)
   });
   
   const data = await response.json();
@@ -306,9 +295,7 @@ async function updateProposal(id, proposal) {
 }
 
 
-async function deleteProposal(proposalId,mailInfo) {
-  console.log(proposalId);
-  
+async function deleteProposal(proposalId) {
   const response = await fetch(`${URL}/teacher/deleteProposal`,{
     method: 'DELETE',  
     credentials: 'include',

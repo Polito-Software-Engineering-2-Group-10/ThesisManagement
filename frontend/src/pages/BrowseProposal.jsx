@@ -61,12 +61,12 @@ function ProposalTable(props){
 
     const handleCopyClick = (proposal) => {
         // navigate to insert proposal page with the proposal as a parameter
-        navigate('/insert', {state: {proposal: proposal, copy: true}});
+        navigate('/insert', {state: {proposal: proposal, action: "copy"}});
     }
 
     const handleUpdateClick = (proposal) => {
-        // navigate to update proposal page with the proposal as a parameter
-        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal}});
+        // navigate to insert proposal page with the proposal as a parameter
+        navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal, action: "update"}});
     }
 
     const handleDeleteClick = (proposal) => {

@@ -145,7 +145,7 @@ function SearchForProposals(props) {
             })
             .catch((err) => console.log(err));
         }
-    }, [proposalsDirty,studInfo,props.user])
+    }}, [proposalsDirty,studInfo,props.user])
 
     useEffect( () => {
         API.getAllTeachers()

@@ -123,13 +123,23 @@ function SearchForProposals(props) {
     },[props.user,dirty2])
 
     useEffect(() => {
+        console.log(studInfo);
+        console.log(filters);
         if(props.user && studInfo && props.user.role==="student")
         {  
-            API.getAllProposalsForStudent(studInfo.cod_degree)
-                .then((data2) => {
-                    setProposals(data2);
+            if (Object.keys(filters).length === 0) {
+                API.getAllProposalsForStudent(studInfo.cod_degree)
+                    .then((data) => {
+                        setProposals(data);
+                    })
+                    .catch((err) => console.log(err));
+            } else {
+                API.getFilteredProposals(filters, studInfo.cod_degree)
+                .then((data) => {
+                    setProposals(data);
                 })
-                .catch((err) => console.log(err))  
+                .catch((err) => console.log(err));
+            }
         }
         else{
         if (Object.keys(filters).length === 0) {
@@ -226,7 +236,7 @@ function SearchForProposals(props) {
     };
 
     const handleApplyFilter = () => {
-        API.getFilteredProposals(filters)
+        API.getFilteredProposals(filters, studInfo?.cod_degree)
             .then((data) => {
                 setProposals(data);
             })
@@ -241,7 +251,7 @@ function SearchForProposals(props) {
     const handleRemoveFilter = (filter) => {
         const { [filter]: removedFilter, ...restFilters } = filters;
         setFilters(restFilters);
-        API.getFilteredProposals(restFilters)
+        API.getFilteredProposals(restFilters, studInfo?.cod_degree)
             .then((data) => {
                 setProposals(data);
             })
@@ -351,7 +361,7 @@ function SearchForProposals(props) {
                                     )))}
                                 </div>
                                 {activeFilter && (
-                                    <Form className="mt-3">
+                                    <Form className="mt-3" onSubmit={(ev) => { ev.preventDefault(); handleApplyFilter(); }}>
                                         {activeFilter === 'title' && (
                                             <Form.Group controlId='titleFilter'>
                                                 <Form.Label>Filter by title:</Form.Label>

@@ -175,7 +175,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus == true) {
-                await thesisProposalTable.archiveThesisProposal(applicationDetail.proposal_id);
+                await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
             }
             res.json(applicationResult);
         } catch (err) {
@@ -392,7 +392,8 @@ app.post('/api/ProposalsList/filter',
         check('type').isArray().optional(),
         check('keywords').isArray().optional(),
         check('level').isInt({ min: 1, max: 2 }).optional(),
-        check('groups').isArray().optional()
+        check('groups').isArray().optional(),
+        check('cod_degree').isString().optional()
     ],
     async (req, res) => {
         try {
@@ -407,7 +408,8 @@ app.post('/api/ProposalsList/filter',
                 type: req.body.type || null,
                 keywords: req.body.keywords || null,
                 level: req.body.level || null,
-                groups: req.body.groups || null
+                groups: req.body.groups || null,
+                cod_degree: req.body.cod_degree || null
             }
             res.json(await thesisProposalTable.getFilteredProposals(filterObject));
         }

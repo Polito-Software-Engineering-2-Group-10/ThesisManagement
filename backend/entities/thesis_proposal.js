@@ -316,6 +316,14 @@ WHERE NOT EXISTS (
             params.push(keywords);
             i++;
         }
+        if (filterObject.cod_degree !== null) {
+            query += ` AND EXISTS (
+                SELECT 1 FROM unnest(groups) AS code_degree
+                WHERE code_degree LIKE '%' || $${i} || '%'
+              )`;
+            params.push(filterObject.cod_degree);
+            i++;
+        }
         if (filterObject.level !== null) {
             query += ` AND level = $${i}`;
             params.push(getNum(filterObject.level));

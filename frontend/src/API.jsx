@@ -226,7 +226,7 @@ async function getAllGroups() {
     return data;
 }
 
-async function getFilteredProposals(filters) {
+async function getFilteredProposals(filters, cod_degree) {
     const filtersObject = {
         "title": filters.title,
         "professor": filters.professor,
@@ -235,6 +235,7 @@ async function getFilteredProposals(filters) {
         "keywords": filters.keywords,
         "level": filters.level,
         "groups": filters.groups,
+        "cod_degree": cod_degree
     }
     const response = await fetch(`${URL}/ProposalsList/filter`, {
         method: 'POST',

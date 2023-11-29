@@ -16,7 +16,7 @@ services:
       retries: 5
   authsources:
     build:
-      context: ../saml
+      context: ../authsources
       dockerfile: ./Dockerfile
     volumes:
       - saml_config:/var/www/simplesamlphp/config:rw

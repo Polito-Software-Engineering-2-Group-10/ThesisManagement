@@ -200,10 +200,10 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
         jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
-        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockResolvedValueOnce(true);
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: false})
         expect(response.status).toBe(200);
-        expect(response.body).toBeTruthy();
+        expect(response.body).toBe(true);
     });
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {
@@ -478,6 +478,11 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             level: 1,
             programmes: ['Program1', 'Program2'],
         }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
         jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
         const response = await request(app)
             .put(`/api/teacher/updateProposal/${proposalID}`)
@@ -501,6 +506,11 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             level: 1,
             programmes: ['Program1', 'Program2'],
         }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
         const response = await request(app)
             .put(`/api/teacher/updateProposal/${proposalID}`)
             .send(InvalidProposalUpdated);
@@ -523,6 +533,11 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             level: 1,
             programmes: ['Program1', 'Program2'],
         }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
         jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => {
             throw new Error('Database error');
         })
@@ -538,7 +553,6 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
 describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
 
     test('Should successfully update the status of the proposal to archived', async () => {
-
         const proposal = {
             title: 'Title1',
             expiration: '2023/01/01',
@@ -546,7 +560,6 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
             type: 'Type1',
             archived: false
         }
-
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -554,6 +567,26 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
         });
         jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposal);
         jest.spyOn(thesisProposalTable, 'archiveThesisProposal').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/ProposalsList/1');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(true);
+    });
+
+    test('Should successfully update the status of the proposal to active', async () => {
+        const proposal = {
+            title: 'Title1',
+            expiration: '2023/01/01',
+            level: 1,
+            type: 'Type1',
+            archived: true
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposal);
+        jest.spyOn(thesisProposalTable, 'unArchiveThesisProposal').mockImplementationOnce(() => true);
         const response = await request(app).patch('/api/teacher/ProposalsList/1');
         expect(response.status).toBe(200);
         expect(response.body).toEqual(true);
@@ -571,39 +604,16 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
         expect(response.body).toEqual({error: 'The proposal does not exist!'});
     });
 
-    test('Should throw an error when trying to archive an already archived proposal', async () => {
-
-        const proposal = {
-            title: 'Title1',
-            expiration: '2023/01/01',
-            level: 1,
-            type: 'Type1',
-            archived: true
-        }
-
-        registerMockMiddleware(app, 0, (req, res, next) => {
-            req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1, role: 'teacher' };
-            next();
-        });
-
-        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposal);
-        const response = await request(app).patch('/api/teacher/ProposalsList/1');
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({error: 'The proposal has been archived!'});
-    });
-
     test('Should throw an error with 503 status code when a database error occurs', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-
         jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => { throw new Error('Database error')});
         const response = await request(app).patch('/api/teacher/ProposalsList/1');
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: `Database error during retrieving application List Error: Database error` });
+        expect(response.body).toEqual({ error: `Database error during archival of thesis proposal Error: Database error` });
     });
 });
 

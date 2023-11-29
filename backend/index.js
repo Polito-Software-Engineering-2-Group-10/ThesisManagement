@@ -174,7 +174,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             const newStatus = Boolean(req.body.status);
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
             // when an application is accepted, the relative proposal has to be archived
-            if (newStatus === true) {
+            if (newStatus == true) {
                 await thesisProposalTable.archiveThesisProposal(applicationDetail.proposal_id);
             }
             res.json(applicationResult);
@@ -252,21 +252,21 @@ app.get('/api/teacher/ProposalsList',
 );
 
 //Archive Proposal
-//PATCH /api/teacher/applicationDetail/<proposalid>
+//PATCH /api/teacher/ProposalsList/<proposalid>
 //should be used when the teacher clicks on the Archive button
 app.patch('/api/teacher/ProposalsList/:proposalid',
     isLoggedInAsTeacher,
     async (req, res) => {
         try {
-            const propopsalDetail = await thesisProposalTable.getById(req.params.proposalid);
-            if (!propopsalDetail) {
+            const proposalDetail = await thesisProposalTable.getById(req.params.proposalid);
+            if (!proposalDetail) {
                 return res.status(400).json({ error: 'The proposal does not exist!' });
             }
 
-            if (propopsalDetail.archived === false) {
+            if (proposalDetail.archived === false) {
                 const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
-            } else if (propopsalDetail.archived === true) {
+            } if (proposalDetail.archived === true) {
                 const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
             }
@@ -320,8 +320,6 @@ app.post('/api/teacher/insertProposal',
         }
         try {
             const proposalId = await thesisProposalTable.addThesisProposal(proposal)
-
-            console.log(proposalId);
             res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of proposal: ${err}` });

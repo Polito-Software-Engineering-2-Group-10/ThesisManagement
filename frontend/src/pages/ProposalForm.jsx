@@ -33,7 +33,7 @@ const ProposalForm = (props) => {
     const [required_knowledge, setRequiredKnowledge] = useState(location.state?.proposal ? location.state.proposal.required_knowledge.join(",") : '');
     const [notes, setNotes]                          = useState(location.state?.proposal ? location.state.proposal.notes : '');
     const [programmes, setPrograms]                  = useState(location.state?.proposal ? location.state.proposal.programmes.join(",") : '');
-    
+    const [submitted,setSubmitted]                    = useState(false);
     const nextpage = location.state?.nextpage || '/';
 
     const addProposal = (proposal) => {
@@ -77,7 +77,7 @@ const ProposalForm = (props) => {
 
     const handleSubmit = (event) => {
       event.preventDefault();
-
+      setSubmitted(true);
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
@@ -112,6 +112,7 @@ const ProposalForm = (props) => {
           addProposal(proposal);
       }
         notify.success('Successfully submitted your proposal!');
+        
         setTimeout(()=>{ navigate(nextpage) }, 3400);
       })
       .catch((e) => console.log(e));
@@ -295,7 +296,7 @@ const ProposalForm = (props) => {
               </Form.Group>
 
               <div className="d-flex justify-content-center">
-                <Button className="m-2" variant="success" type="submit">{isEditing ? 'Update' : 'Insert'}</Button>&nbsp;  
+                <Button className="m-2" variant="success" type="submit" disabled={submitted}>{isEditing ? 'Update' : 'Insert'}</Button>&nbsp;  
                 <Link className="btn btn-danger m-2"  to={nextpage}>Go Back</Link>
               </div>
  

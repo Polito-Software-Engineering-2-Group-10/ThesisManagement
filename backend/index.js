@@ -364,6 +364,20 @@ app.get('/api/ProposalsList',
     }
 )
 
+
+
+app.post('/api/student/ProposalsList', 
+    async (req, res) => {
+        try {
+            const proposalList = await thesisProposalTable.getAll(req.body.cod_degree);
+            res.json(proposalList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+)
+
 /*Search Proposal*/
 //GET /api/ProposalList
 app.post('/api/ProposalsList/filter',
@@ -412,6 +426,22 @@ app.get('/api/teacher/list', async (req, res) => {
         }));
     } catch (err) {
         res.status(503).json({ error: `Database error during retrieving teacher list ${err}` });
+    }
+})
+
+app.post('/api/teacher/retrieveCosupGroup', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        let groups = [];
+        let g = '';
+        for (const c of req.body.cosup_mails) {
+            g = await teacherTable.getGroupByMail(c);
+            //check if is an external supervisor
+            if(g.length!=0)
+                groups = [...groups, g[0].name];
+        }
+        res.json(groups);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving cosupervisor groups ${err}` })
     }
 })
 

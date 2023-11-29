@@ -51,7 +51,14 @@ class ThesisProposalTable {
             
             const result = await this.db.executeQueryExpectAny(query);
             return result;
-        } else {
+        }
+        else if (include_expired && Cds) {  //todo: modify the query
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
+            const result = await this.db.executeQueryExpectAny(query);
+            return result;
+        }
+        else {
             const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id and expiration > NOW()
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`;
             const result = await this.db.executeQueryExpectAny(query);
@@ -59,15 +66,42 @@ class ThesisProposalTable {
         }
     }*/
 
-    async getAll() {
+    async getAll(cod_degree) {
+        if (typeof cod_degree === 'undefined') {
+            cod_degree = false;
+        }
         const current_date_string = virtualClock.getSqlDate();
+
+        if(cod_degree)
+        {
         const active = await this.db.executeQueryExpectAny(
+            `SELECT 
+            tp.*, t.name as teacher_name, t.surname as teacher_surname
+            FROM thesis_proposal as tp, teacher as t 
+            WHERE 
+            tp.teacher_id = t.id AND 
+            tp.archived = false AND 
+            tp.expiration > $1 AND
+            EXISTS (
+                      SELECT 1 FROM unnest(groups) AS code_degree
+                      WHERE code_degree LIKE '%' || $2 || '%'
+                    )
+         
+                ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
+            current_date_string,cod_degree
+        )
+        return active.map(ThesisProposal.fromRow);
+        }
+        else
+        {
+        const active2 = await this.db.executeQueryExpectAny(
             `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal as tp, teacher as t WHERE tp.teacher_id = t.id
             AND tp.archived = false AND tp.expiration > $1
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
             current_date_string
         )
-        return active.map(ThesisProposal.fromRow);
+        return active2.map(ThesisProposal.fromRow);
+        }
     }
 
     async getById(id, include_expired) {

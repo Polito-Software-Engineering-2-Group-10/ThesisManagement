@@ -3,13 +3,15 @@ import { Table, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
 import dayjs from 'dayjs'
 import API from '../API';
-
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 function BrowseAndAcceptApplication(props) {
 
     // to select a row in the table
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const notify= useNotification();
     const handleApplicationClick = (application) => {
         setErrorMessage('');
         setSelectedApplication(application);
@@ -30,11 +32,15 @@ function BrowseAndAcceptApplication(props) {
         }
         API.acceptDeclineApplication(mailInfo).then((res) => {
             props.updateAppList().then(() => {
+                notify.success(`Student application ${status? 'accepted' : 'rejected' } correctly!`)
                 setSelectedApplication(null);
             }).catch((err) => {
+                notify.success(err)
                 setErrorMessage(`${JSON.stringify(err)}`); 
             })
+            
         }).catch((err) => {
+            
             setErrorMessage(`${JSON.stringify(err)}`); 
         });
     }
@@ -43,6 +49,7 @@ function BrowseAndAcceptApplication(props) {
     
     return (
         <>
+            <ToastContainer/>
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user} />
             <div id="left-box">
              { props.appList ?

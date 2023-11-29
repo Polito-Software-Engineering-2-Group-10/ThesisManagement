@@ -128,6 +128,23 @@ async function logIn(credentials) {
     }
   }
 
+  async function getAllProposalsForStudent(cod_degree) {
+    const response = await fetch(URL+'/student/ProposalsList', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({cod_degree:cod_degree}),
+    });
+    const propList = await response.json();
+    if (response.ok) {
+      return propList;
+    } else {
+      throw propList;
+    }
+  }
+  
   async function getApplicationsList() {
     const response = await fetch(URL+'/student/ApplicationsList', {
       credentials: 'include'
@@ -291,6 +308,18 @@ async function deleteProposal(proposalId,mailInfo) {
   return data;   
 }
 
+async function retrieveCoSupervisorsGroups(co_supervisor_array) {
+  const response = await fetch(`${URL}/teacher/retrieveCosupGroup`,{
+    method: 'POST',  
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ cosup_mails : co_supervisor_array }),
+  });
+  const data = await response.json();
+  return data;   
+}
 
 const API = {
   logIn,
@@ -313,7 +342,9 @@ const API = {
   acceptDeclineApplication,
   setVirtualClock,
   resetVirtualClock,
-  deleteProposal
+  getAllProposalsForStudent,
+  deleteProposal,
+  retrieveCoSupervisorsGroups
 };
 
 export default API;

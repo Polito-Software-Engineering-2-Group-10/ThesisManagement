@@ -10,7 +10,7 @@
 - [x] For story 7, professor should see only **active** proposals
 - [x] Accepted proposals are automatically archived
 - [ ] When adding a thesis proposal, groups should be auto-selected from the supervisor and co-supervisors
-- [ ] When student, only show proposals of his CdS
+- [x] When student, only show proposals of his CdS
 - [ ] Fix the fact that a professor can belong to more than one group
 - [x] Separate list of proposals (archived / active)
 - [x] Remove button "browse proposals" from professor's page

@@ -68,6 +68,11 @@ class TeacherTable {
         const result = await this.db.executeQueryExpectAny(query, cod_department);
         return result.map(Teacher.fromRow);
     }
+    async getGroupByMail(email) {
+        const query = `SELECT g.name FROM teacher, public.group as g WHERE g.cod_group = teacher.cod_group and teacher.email = $1`;
+        const result = await this.db.executeQueryExpectAny(query, email);
+        return result;
+    }
 }
 
 export { Teacher, TeacherTable };

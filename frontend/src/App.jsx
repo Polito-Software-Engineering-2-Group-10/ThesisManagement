@@ -10,13 +10,14 @@ import BrowseAppDecision from './pages/BrowseApplicationDecision.jsx';
 import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
+import useNotification from './hooks/useNotifcation.js';
 import AppContext from './AppContext.jsx';
 
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 
 function App() {
-
+  const notify =useNotification();
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [userDetail, setUserDetail] = useState(null);
@@ -102,8 +103,14 @@ function App() {
 
   function addApplication(application, success_callback, error_callback){
     API.addApplication(application)
-      .then(() => { setDirty(true); success_callback(); })
-      .catch((err) => error_callback(err));
+      .then(() => { 
+        setDirty(true); 
+        success_callback(); 
+      })
+      .catch(
+        (err) => 
+        error_callback()
+        );
   }
 
   const contextObject = {
@@ -122,7 +129,7 @@ function App() {
             <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
             <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
             <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
-            <Route path='/insert' element={<ProposalForm loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
+            <Route path='/insert' element={<ProposalForm teacherDetail={userDetail} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
             <Route path='/proposal' element={loggedIn ? <BrowseProposal setProposalDirty={setProposalsDirty} proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
             <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchTeacherAppsList}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
         </Routes>

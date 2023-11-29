@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
 
-import "../styles/Navigation.css";
+import "../styles/navigation.css";
 
 function Navigation(props) {
     const { setProposalsDirty } = useContext(AppContext);
@@ -22,7 +22,8 @@ function Navigation(props) {
         setProposalsDirty(true);
     };
     return (
-      <Navbar expand="lg" bg='primary' data-bs-theme="dark">
+      <Navbar expand="lg" bg="primary" data-bs-theme="dark">
+        
         <Container>
           <Navbar.Brand onClick={()=>{navigate("/");}} className="brand">Thesis Management</Navbar.Brand>
           { props.loggedIn ? 
@@ -40,12 +41,22 @@ function Navigation(props) {
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Nav>
-              { props.loggedIn ? <Button className='mx-2' variant='light' onClick={props.logout}><i className="bi bi-box-arrow-left"></i> Logout</Button> : <Link to='/login'><Button className='mx-2' variant='light'><i className="bi bi-person"></i> Login</Button></Link>}
+              {props.loggedIn ? (
+                <Button className="mx-2" variant="light" onClick={props.logout}>
+                  <i className="bi bi-box-arrow-left"></i> Logout
+                </Button>
+              ) : (
+                <Link to="/login">
+                  <Button className="mx-2" variant="light">
+                    <i className="bi bi-person"></i> Login
+                  </Button>
+                </Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-    )
+    );
     
 }
 

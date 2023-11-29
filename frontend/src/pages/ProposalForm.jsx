@@ -3,6 +3,9 @@ import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from "./Navigation";
 import API from '../API';
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import dayjs from 'dayjs';
 
 
@@ -12,6 +15,7 @@ const ProposalForm = (props) => {
     // useNavigate hook to change page
     const navigate = useNavigate();
     const location = useLocation();
+    const notify=useNotification();
 
     const { loggedIn, user, proposalsDirty, setProposalsDirty } = props;
     const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
@@ -45,40 +49,51 @@ const ProposalForm = (props) => {
         }
 
     }, [loggedIn])
-    
 
+    
     const handleSubmit = (event) => {
       event.preventDefault();
 
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
       const programmes_array = programmes.split(/[,;]/).map((k) => k.trim());
-      const groups_array = groups.split(/[,;]/).map((k) => k.trim());
+      //const groups_array = groups.split(/[,;]/).map((k) => k.trim());
       const co_supervisor_array = co_supervisor.split(/[,;]/).map((k) => k.trim());
 
-      const proposal = {
-        "title":            title.trim(),
-        "supervisor":       supervisor,
-        "co_supervisor":    co_supervisor_array,
-        "type":             type,
-        "expiration":       expiration,
-        "level":            level,
-        "groups":           groups_array,
-        "keywords":         keywords_array,
-        "description":      description.trim(),
-        "required_knowledge": required_knowledge_array,
-        "notes":            notes.trim(),
-        "programmes": programmes_array,
-        "teacher_id": "1",
-      };
 
-      addProposal(proposal);
-      navigate(nextpage);
+      //chiamata API
+      API.retrieveCoSupervisorsGroups(co_supervisor_array)
+      .then((groups) => {
+        let groups_array = [...groups, props.teacherDetail.group_name];
+        groups_array = groups_array.filter((item, index) => groups_array.indexOf(item) == index).filter((n) => n!="");
+        const proposal = {
+          "title":            title.trim(),
+          "supervisor":       supervisor,
+          "co_supervisor":    co_supervisor_array,
+          "type":             type,
+          "expiration":       expiration,
+          "level":            level,
+          "groups":           groups_array,
+          "keywords":         keywords_array,
+          "description":      description.trim(),
+          "required_knowledge": required_knowledge_array,
+          "notes":            notes.trim(),
+          "programmes": programmes_array,
+          "teacher_id": "1",
+        };
+        addProposal(proposal);
+        notify.success('Successfully submitted your proposal!');
+        setTimeout(()=>{ navigate(nextpage) }, 3400);
+      })
+      .catch((e) => console.log(e));
+
+      //navigate(nextpage);
     }
 
 
     return (
         <>
+            <ToastContainer/>
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">
@@ -169,10 +184,10 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-start align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Groups</Form.Label>
+                          <Form.Label>Group</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={groups} onChange={event => setGroups(event.target.value)} />
+                          <Form.Control type="text" required={false} value={props.teacherDetail.group_name} disabled/>
                         </Col>
                       </Row>
                     </Form.Group>

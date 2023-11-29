@@ -453,8 +453,15 @@ isLoggedInAsTeacher,
         if(!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
+        const nApplication= await applicationTable.countApplicationForAProposal(req.body.proposalId)
+        console.log(nApplication);
+        if (nApplication==0)
+        {
         const deletedProposal= await thesisProposalTable.deleteById(req.body.proposalId)
         res.json(deletedProposal);
+        }
+        else
+        res.json("You can delete this proposal because there is already one application accepted");
     }
     catch(err){
         res.status(503).json({ error: `Database error during the deletion of the thesis proposal: ${err}` });

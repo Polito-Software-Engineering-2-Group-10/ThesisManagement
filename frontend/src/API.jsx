@@ -262,6 +262,7 @@ async function acceptDeclineApplication(mailInfo) {
 
 async function deleteProposal(proposalId,mailInfo) {
   console.log(proposalId);
+  
   const response = await fetch(`${URL}/teacher/deleteProposal`,{
     method: 'DELETE',  
     credentials: 'include',
@@ -271,6 +272,7 @@ async function deleteProposal(proposalId,mailInfo) {
       body: JSON.stringify({proposalId:proposalId}),
   });
   const data = await response.json();
+  console.log(data);
   if(response.status==200)
   {
     await fetch(`${URL}/send_email`,{

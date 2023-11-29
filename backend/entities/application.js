@@ -129,6 +129,13 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, sid, pid, status, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
         return Application.fromRow(result);
     }
+
+    async countApplicationForAProposal(application_id){
+        const query =`SELECT COUNT(*) FROM application WHERE proposal_id=$1 and status=true`;
+        const aid = getNum(application_id);
+        const result=await this.db.executeQueryExpectAny(query, application_id);
+        return result[0].count;
+    }
 }
 
 export { Application, ApplicationTable };

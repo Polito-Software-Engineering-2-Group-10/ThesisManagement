@@ -491,7 +491,7 @@ isLoggedInAsTeacher,
         res.json(deletedProposal);
         }
         else
-        res.json("You can delete this proposal because there is already one application accepted");
+        res.json("NO");
     }
     catch(err){
         res.status(503).json({ error: `Database error during the deletion of the thesis proposal: ${err}` });

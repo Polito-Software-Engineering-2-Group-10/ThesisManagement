@@ -35,7 +35,7 @@ function BrowseAndAcceptApplication(props) {
                 notify.success(`Student application ${status? 'accepted' : 'rejected' } correctly!`)
                 setSelectedApplication(null);
             }).catch((err) => {
-                notify.success(err)
+                notify.error(err)
                 setErrorMessage(`${JSON.stringify(err)}`); 
             })
             

@@ -6,6 +6,9 @@ import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
 import API from '../API';
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 function BrowseProposal (props){
   // console.log(props.user);
     // utility to generate a table row from a proposal
@@ -23,7 +26,7 @@ function BrowseProposal (props){
     return (
     <>
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
-
+        <ToastContainer/>
         <Container>
             <ProposalTable title="Active proposals" proposalList={activeProposals} user={props.user}      setProposalDirty={props.setProposalDirty} />
             <ProposalTable title="Archived proposals" proposalList={archivedProposals} user={props.user}  setProposalDirty={props.setProposalDirty} />
@@ -36,7 +39,7 @@ function BrowseProposal (props){
 function ProposalTable(props){
     
     const navigate = useNavigate();
-    
+    const notify= useNotification();
     // title of the table
     let {title} = props;
 
@@ -70,11 +73,20 @@ function ProposalTable(props){
             thesis_title:proposal.title
         }
         // navigate to insert proposal page with the proposal as a parameter
-        API.deleteProposal(proposal.id,mailInfo).then(()=>{
+        API.deleteProposal(proposal.id,mailInfo).then((response)=>{
             // setProposalList(proposalList.filter((res) => res.id != proposal.id))
             props.setProposalDirty(true);
+            if (response=="NO")
+            {
+                notify.error("You can't delete this proposal because already has accepted application");
+            }
+            else 
+            notify.success("Proposal deleted succesfully");
         })
-        .catch((err)=>{console.log(err)});
+        .catch((err)=>{
+            notify.error(err);
+            console.log(err)
+        });
     }
 
 

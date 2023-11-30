@@ -86,11 +86,11 @@ The stories we have done are:
   
   
 - Which ones you were not able to achieve? Why?
-  We haven't achieved the second one(Avoid overworking on the last 2 days) partially because there were some unexpected bugs during the last days. 
+  - We haven't achieved the second one(Avoid overworking on the last 2 days) partially because there were some unexpected bugs during the last days. 
   
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-  We should spend more time in end to end testing.
-  We should reserve time for fixing bugs not only developing.
+  - We should spend more time in end to end testing.
+  - We should reserve time for fixing bugs not only developing.
 
 - One thing you are proud of as a Team!!
-  We are proud of the fact that we have wasted less time in this sprint thanks to the improvment made in communication and in the division of the tasks. 
+  - We are proud of the fact that we have wasted less time in this sprint thanks to the improvment made in communication and in the division of the tasks. 

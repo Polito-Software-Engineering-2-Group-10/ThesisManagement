@@ -6002,3 +6002,10 @@ COPY public.application (id, student_id, proposal_id, apply_date, status) FROM s
 3	2	430	2023-11-30	\N
 4	2	1254	2023-11-30	\N
 \.
+
+COPY public.application (id, student_id, proposal_id, apply_date, status) FROM stdin;
+1	6	795	2023-11-30	\N
+2	6	1318	2023-11-30	\N
+3	6	1458	2023-11-30	\N
+4	6	1071	2023-11-30	\N
+\.

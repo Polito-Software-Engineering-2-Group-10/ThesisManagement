@@ -106,6 +106,13 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, sid, pid, apply_date, `Application with student_id ${student_id} and proposal_id ${proposal_id} already exists`);
         return Application.fromRow(result);
     }
+    async getCountByFK(student_id, proposal_id) {
+        const query = `SELECT COUNT(*) as count FROM application WHERE student_id = $1 AND proposal_id = $2`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
+        return result;
+    }
     async updateApplicationStatusById(id, status) {
         const query = `UPDATE application SET status = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);

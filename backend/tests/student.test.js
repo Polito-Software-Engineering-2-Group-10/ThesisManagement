@@ -132,6 +132,10 @@ describe('POST /api/student/applyProposal', () => {
             req.user = { id: 1, role: 'student' };
             next();
         })
+        const countMock = {
+            count: 0
+        };
+        jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         jest.spyOn(applicationTable, 'addApplicationWithDate').mockImplementationOnce(() => valid_id);
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: '2023-12-31'});
@@ -145,6 +149,10 @@ describe('POST /api/student/applyProposal', () => {
             req.user = { id: 1, role: 'student' };
             next();
         })
+        const countMock = {
+            count: 0
+        };
+        jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: 'invalid_date'});
         expect(response.status).toBe(422);
@@ -157,6 +165,10 @@ describe('POST /api/student/applyProposal', () => {
             req.user = { id: 1, role: 'student' };
             next();
         })
+        const countMock = {
+            count: 0
+        };
+        jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         jest.spyOn(applicationTable, 'addApplicationWithDate').mockImplementationOnce(() => {
             throw new Error("Database error")
         });

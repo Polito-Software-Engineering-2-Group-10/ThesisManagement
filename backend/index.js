@@ -347,6 +347,10 @@ app.post('/api/student/applyProposal',
             apply_date: req.body.apply_date
         }
         try {
+            const existingApplication = await applicationTable.getCountByFK(Applyproposal.student_id, Applyproposal.proposal_id);
+            if (existingApplication.count > 0) {
+                return res.status(400).json({ error: `The student already applied to this proposal` });
+            }
             const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id, Applyproposal.proposal_id, Applyproposal.apply_date);
             res.json(applypropID);
         } catch (err) {

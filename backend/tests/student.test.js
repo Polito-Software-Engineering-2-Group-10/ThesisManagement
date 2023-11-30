@@ -1,15 +1,11 @@
 import request from 'supertest';
-import { server, psqlDriver, app, isLoggedInAsStudent } from '../index.js';
+import { psqlDriver, app, isLoggedInAsStudent } from '../index.js';
 import {applicationTable, studentTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
     await psqlDriver.closeAll();
 });
-
-afterEach(async() => {
-    await server.close();
-})
 
 function registerMockMiddleware(app, index, middleware) {
     function mockWare(req, res, next) {

@@ -590,7 +590,7 @@ app.post("/api/send_email",
         try {
             sendEmail(req.body)
                 .then((response) => res.send(response.message))
-                .catch((error) => res.status(500).send(error.message));
+                .catch((error) =>  res.status(500).json({ error: error.message}));
         }
         catch (err) {
             res.status(503).json({ error: `Server error during sending notification ${err}` });
@@ -599,9 +599,4 @@ app.post("/api/send_email",
 
 /*END API*/
 
-
-const server = app.listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
-});
-
-export { server, app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher, sendEmail };
+export { app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher, sendEmail };

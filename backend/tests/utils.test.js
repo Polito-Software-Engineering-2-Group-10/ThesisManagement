@@ -1,15 +1,11 @@
 import request from 'supertest';
-import { server, psqlDriver, app, isLoggedIn } from '../index.js';
+import { psqlDriver, app, isLoggedIn } from '../index.js';
 import { thesisProposalTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
     await psqlDriver.closeAll();
 });
-
-afterEach(async() => {
-    await server.close();
-})
 
 describe('isLoggedIn middleware', () => {
     test('Should allow the user who is still logged in to proceed', async () => {

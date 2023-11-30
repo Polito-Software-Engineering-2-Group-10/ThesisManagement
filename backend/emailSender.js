@@ -23,8 +23,7 @@ function sendEmail(parameters/*{recipient_email, subject,message }*/) {
     
     transporter.sendMail(mail_configs, function (error, info) {
       if (error) {
-        console.log(error);
-        return reject({ message: `An error has occurred` });
+        return reject({ message: error.message });
       }
       return resolve({ message: "Email sent successfully" });
     });

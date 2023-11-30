@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { server, psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
+import { psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
 import { thesisProposalTable, applicationTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
 import { response } from 'express';
@@ -7,10 +7,6 @@ import { response } from 'express';
 afterAll(async () => {
     await psqlDriver.closeAll();
 });
-
-afterEach(async() => {
-    await server.close();
-})
 
 function registerMockMiddleware(app, index, middleware) {
     function mockWare(req, res, next) {
@@ -640,9 +636,9 @@ describe('POST /api/send_email', () => {
             next();
         });
 
-        const response = await sendEmail(params);
-        expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
+        const response = await request(app).post('/api/send_email').send(params);
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "No recipients defined" });
         // jest.spyOn(sendEmail(params)).mockImplementationOnce(() => { throw new Error('Database error')});
         // const response = await request(app).post('/api/send_email');
         // expect(response.status).toBe(503);

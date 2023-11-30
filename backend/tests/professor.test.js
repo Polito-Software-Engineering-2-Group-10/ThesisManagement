@@ -427,6 +427,8 @@ describe('DELETE /api/teacher/deleteProposal', () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
+        jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(200);
         expect(response.body).toEqual(deletedProposal);
@@ -452,6 +454,9 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => {
             throw new Error('Database error')
         });
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
+        jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
+        
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during the deletion of the thesis proposal: Error: Database error' });

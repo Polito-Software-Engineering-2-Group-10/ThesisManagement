@@ -5996,23 +5996,23 @@ It is desired knowledge in evaluation and assessment. GIS, Stakeholder analysis,
 ('Sviluppo di tecniche numeriche per problemi di contatto su mesh arbitrarie', 326, 'berrone.stefano@polito.it', ARRAY['pieraccini.sandra@polito.it','scialo.stefano@polito.it','vicini.fabio@polito.it']::text[], ARRAY['PDE CONTRAINED OPTIMIZATION']::text[], 'Tesi di Laurea', ARRAY['Analisi Numerica E Calcolo Scientifico']::text[], 'La tesi di propone di analizare tecniche numeriche innovative per la discretizzazione di problemi di contatto su mesh non conformi alla geometria dei corpi a contatto.', ARRAY[]::text[], '', '2024-07-11', 1, ARRAY['L-38 - Zootechnical Sciences and Animal Production Technologies','L-17 - Architectural Sciences']::text[]),
 ('Strumenti e metodi per l''home working nella progettazione sostenibile', 514, 'osello.anna@polito.it', ARRAY['mariaugliotti.francesca@polito.it']::text[], ARRAY['PROGETTAZIONE SOSTENIBILE','REALTÀ VIRTUALE E AUMENTATA']::text[], 'SPERIMENTALE - PROGETTAZIONE', ARRAY['Drawingtothefuture E Vr@Polito']::text[], '-', ARRAY[]::text[], '', '2024-05-22', 1, ARRAY['L-23 - Construction Sciences and Techniques']::text[]);
 
-COPY public.application (id, student_id, proposal_id, apply_date, status) FROM stdin;
-1	2	1147	2023-11-30	\N
-2	2	710	2023-11-30	\N
-3	2	430	2023-11-30	\N
-4	2	1254	2023-11-30	\N
+COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+2	1147	2023-11-30	\N
+2	710	2023-11-30	\N
+2	430	2023-11-30	\N
+2	1254	2023-11-30	\N
 \.
 
-COPY public.application (id, student_id, proposal_id, apply_date, status) FROM stdin;
-1	6	795	2023-11-30	\N
-2	6	1318	2023-11-30	\N
-3	6	1458	2023-11-30	\N
-4	6	1071	2023-11-30	\N
+COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+6	795	2023-11-30	\N
+6	1318	2023-11-30	\N
+6	1458	2023-11-30	\N
+6	1071	2023-11-30	\N
 \.
 
-COPY public.application (id, student_id, proposal_id, apply_date, status) FROM stdin;
-1	1	871	2023-11-30	\N
-2	1	1147	2023-11-30	\N
-3	1	65	2023-11-30	\N
-4	1	1254	2023-11-30	\N
+COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+1	871	2023-11-30	\N
+1	1147	2023-11-30	\N
+1	65	2023-11-30	\N
+1	1254	2023-11-30	\N
 \.

@@ -59,8 +59,8 @@ The stories we have done are:
 - Unit Testing:
   - Total hours estimated 5h
   - Total hours spent 4h30m
-  - Nr of automated unit test cases 
-  - Coverage (if available)
+  - Nr of automated unit test cases 58
+  - Coverage 75%
 - E2E testing:
   - Total hours estimated: 5h
   - Total hours spent: 5h

@@ -57,16 +57,16 @@ The stories we have done are:
 ## QUALITY MEASURES 
 
 - Unit Testing:
-  - Total hours estimated
-  - Total hours spent
+  - Total hours estimated 5h
+  - Total hours spent 4h30m
   - Nr of automated unit test cases 
   - Coverage (if available)
 - E2E testing:
   - Total hours estimated: 5h
-  - Total hours spent: 4h
+  - Total hours spent: 5h
 - Code review 
   - Total hours estimated: 5h
-  - Total hours spent: 4h 15m
+  - Total hours spent: 3h 15m
   
 
 

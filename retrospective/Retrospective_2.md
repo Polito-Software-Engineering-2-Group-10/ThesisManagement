@@ -1,4 +1,4 @@
-TEMPLATE FOR RETROSPECTIVE (Team ##)
+TEMPLATE FOR RETROSPECTIVE (Team 10)
 =====================================
 
 The retrospective should include _at least_ the following
@@ -24,7 +24,7 @@ The stories we have done are:
 #4 - Copy Proposal
 #5 - Archive Proposal
 
-**Remember** ja story is done ONLY if it fits the Definition of Done:
+**Remember** a story is done ONLY if it fits the Definition of Done:
  
 - Unit Tests passing
 - Code review completed
@@ -81,15 +81,16 @@ The stories we have done are:
   - We learned that could be usefull to spent more time on test especially after each commit, in this way we will not encounter some untested  bugs on the last days 
 
 - Which improvement goals set in the previous retrospective were you able to achieve? 
-  The improvement goals that we had set in the previous retrospective are:
+
   - Set more intermediate goals through the entire sprint to make sure teammates aren't waiting on needed features for too long so they can start working on their tasks.
-  - Avoid overworking on the last 2 days of the sprint to finish the needed tasks.
+  
   
 - Which ones you were not able to achieve? Why?
-  We achieved the second one partially because there were some unexpected bugs during the last days. 
+  We haven't achieved the second one(Avoid overworking on the last 2 days) partially because there were some unexpected bugs during the last days. 
   
 - Improvement goals for the next sprint and how to achieve them (technical tasks, team coordination, etc.)
-  we should spend more time in end to end testing.
+  We should spend more time in end to end testing.
+  We should reserve time for fixing bugs not only developing.
 
 - One thing you are proud of as a Team!!
   We are proud of the fact that we have wasted less time in this sprint thanks to the improvment made in communication and in the division of the tasks. 

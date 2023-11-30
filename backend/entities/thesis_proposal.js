@@ -90,7 +90,9 @@ class ThesisProposalTable {
                 ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
             current_date_string,cod_degree
         )
-        return active.map(ThesisProposal.fromRow);
+        // Not using ThesisProposal.fromRow because we need to return the raw data, otherwise teacher_name and teacher_surname 
+        // are not returned
+        return active;
         }
         else
         {
@@ -100,7 +102,9 @@ class ThesisProposalTable {
             ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
             current_date_string
         )
-        return active2.map(ThesisProposal.fromRow);
+        // Not using ThesisProposal.fromRow because we need to return the raw data, otherwise teacher_name and teacher_surname 
+        // are not returned
+        return active2;
         }
     }
 
@@ -109,14 +113,14 @@ class ThesisProposalTable {
             include_expired = true;
         }
         if (include_expired) {
-            const query = `SELECT * FROM thesis_proposal WHERE id = $1`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal tp, teacher t WHERE tp.teacher_id = t.id AND tp.id = $1`;
             const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
-            return ThesisProposal.fromRow(result);
+            return result;
         } else {
             const current_date_string = virtualClock.getSqlDate();
-            const query = `SELECT * FROM thesis_proposal WHERE id = $1 AND expiration > $2`;
+            const query = `SELECT tp.*, t.name as teacher_name, t.surname as teacher_surname FROM thesis_proposal tp, teacher t WHERE tp.teacher_id = t.id AND tp.id = $1 AND expiration > $2`;
             const result = await this.db.executeQueryExpectOne(query, getNum(id), current_date_string, `ThesisProposal with id ${id} not found`);
-            return ThesisProposal.fromRow(result);
+            return result;
         }
     }
     async getByTeacherId(teacher_id, include_expired) {

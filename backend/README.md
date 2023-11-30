@@ -258,6 +258,8 @@ The backend exposes the following APIs:
         "teacher_surname": "<teacher surname>"
     },
     ```
+- GET `/api/proposal/<proposalid>`
+    - This API will return the details of the given proposal id, in the same format as the one returned by `/api/ProposalsList`.
 - GET `/api/ProposalsList/filter`
     - This API will return all the thesis proposals that match the given filters, it expects a json object of type:
     ```json

@@ -11,14 +11,14 @@ function ApplyToProposal(props) {
     const [ errorMessage, setErrorMessage ] = useState('');
     const navigate = useNavigate();
     const {propId} = useParams();
-    const [proposals, setProposals] = useState(null);
+    const [proposal, setProposal] = useState(null);
     const [timeoutHandle, setTimeoutHandle] = useState(null);
     const notify=useNotification();
     useEffect(() => {
 
-        API.getAllProposals()
+        API.getProposal(propId)
         .then((p) => {
-            setProposals(p);
+            setProposal(p);
         })
         .catch((err) => console.log(err));
     }, []);
@@ -51,8 +51,8 @@ function ApplyToProposal(props) {
         <ToastContainer/>
         <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
         {
-            (proposals && propId) ? (
-                proposals.filter((p) => p.id == propId).map((p)=> {
+            (proposal && propId) ? (
+                [proposal].map((p)=> {
                     return(
                         <Container key={p.id} style={{paddingTop: '30px', width: '70%', margin: '0 auto'}}>
                         <Row>

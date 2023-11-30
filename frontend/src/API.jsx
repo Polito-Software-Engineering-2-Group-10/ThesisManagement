@@ -136,6 +136,19 @@ async function getAllProposals() {
     }
 }
 
+async function getProposal(id) {
+    const response = await fetch(URL + '/proposal/' + id, {
+        credentials: 'include'
+    });
+    const prop = await response.json();
+    if (response.ok) {
+        return prop;
+    } else {
+        throw prop;
+    }
+
+}
+
 async function getAllProposalsForStudent(cod_degree) {
     const response = await fetch(URL + '/student/ProposalsList', {
         method: 'POST',
@@ -348,6 +361,7 @@ const API = {
     logIn,
     logOut,
     getUserInfo,
+    getProposal,
     getTeacherProposals,
     getTeacherDetail,
     getStudentDetail,

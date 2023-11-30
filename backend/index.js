@@ -356,6 +356,15 @@ app.post('/api/student/applyProposal',
     }
 );
 
+app.get('/api/proposal/:proposalid', async (req, res) => {
+    try {
+        const proposal = await thesisProposalTable.getById(req.params.proposalid);
+        res.json(proposal);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving proposal ${err}` });
+    }
+});
+
 app.get('/api/ProposalsList',
     async (req, res) => {
         try {

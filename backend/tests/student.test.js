@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsStudent } from '../index.js';
-import {applicationTable, studentTable} from '../dbentities.js';
+import {applicationTable, studentTable, thesisProposalTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
@@ -176,5 +176,47 @@ describe('POST /api/student/applyProposal', () => {
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during the insert of the application: Error: Database error' });
+    });
+});
+
+describe('POST /api/student/ProposalsList', () => {
+    test('Should successfully return the list of applications issued by the logged student', async () => {
+        const proposals = [
+            {
+                title: 'Title1',
+                expiration: '2023/01/01',
+                level: 1,
+                type: 'Type1'
+            },
+            {
+                title: 'Title2',
+                expiration: '2023/01/01',
+                level: 2,
+                type: 'Type2'
+            },
+        ];
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisProposalTable, 'getAll').mockImplementationOnce(() => proposals);
+        const response = await request(app).post('/api/student/ProposalsList').send({});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(proposals);
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisProposalTable, 'getAll').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).post('/api/student/ProposalsList').send({});
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving application List Error: Database error'});
     });
 });

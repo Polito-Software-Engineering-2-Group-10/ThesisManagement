@@ -2,6 +2,8 @@ import request from 'supertest';
 import { psqlDriver, app, isLoggedIn } from '../index.js';
 import { thesisProposalTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
+import virtualClock from "../VirtualClock.js";
+import dayjs from "dayjs";
 
 afterAll(async () => {
     await psqlDriver.closeAll();
@@ -267,5 +269,33 @@ describe('GET /api/proposal/:proposalid', () => {
         const response = await request(app).get('/api/proposal/1');
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during retrieving proposal Error: Database error' });
+    });
+});
+
+describe('POST /api/virtualclock', () => {
+    test('Should successfully modify the virtual clock', async () => {
+        const date = '2023-12-12'
+        jest.spyOn(virtualClock, 'setOffset').mockImplementationOnce(() => true);
+        const response = await request(app).post('/api/virtualclock')
+            .send({date});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({date: dayjs(date).toISOString()});
+    });
+
+    test('Should throw an error with 422 status code when the date passed is not in a valid format', async () => {
+        const invalid_date = 'invalid_date'
+        const response = await request(app).post('/api/virtualclock')
+            .send({invalid_date});
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+});
+
+describe('DELETE /api/virtualclock', () => {
+    test('Should successfully reset the virtual clock', async () => {
+        jest.spyOn(virtualClock, 'resetOffset').mockImplementationOnce(() => true);
+        const response = await request(app).delete('/api/virtualclock')
+        expect(response.status).toBe(200);
+        expect(response.body).toBeTruthy();
     });
 });

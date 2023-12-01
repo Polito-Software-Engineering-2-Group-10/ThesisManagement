@@ -180,7 +180,30 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
 });
 
 describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
-    test('Should successfully update the status of the application with the specified ID', async () => {
+    test('Should successfully accept the application with the specified ID and archive the relative proposal', async () => {
+        const application = {
+            id: 1,
+            status: undefined,
+        }
+        const application2 = {
+            id: 1,
+            status: null,
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => true);
+        jest.spyOn(thesisProposalTable, 'archiveThesisProposal').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
+        expect(response.status).toBe(200);
+        expect(response.body).toBe(true);
+    });
+
+    test('Should successfully reject the application with the specified ID', async () => {
         const application = {
             id: 1,
             status: undefined,
@@ -405,30 +428,30 @@ describe('POST /api/teacher/insertProposal', () => {
 describe('DELETE /api/teacher/deleteProposal', () => {
     test('Should successfully delete a proposal of the logged professor given the ID', async () => {
         const deletedProposal = {
-                id: 1,
-                title: 'Proposal1',
-                teacher_id: 1,
-                supervisor: 'Supervisor1',
-                cosupervisor: ['Cosupervisor1', 'Cosupervisor2'],
-                keywords: ['keyword1', 'keyword2'],
-                type: 'Type1',
-                groups: ['Group1', 'Group2'],
-                description: 'Description1',
-                required_knowledge: ['Knowledge1', 'Knowledge2'],
-                notes: 'Notes1',
-                expiration: new Date().getMilliseconds(),
-                level: 1,
-                programmes: ['Program1', 'Program2'],
-                archived: true,
+            id: 1,
+            title: 'Proposal1',
+            teacher_id: 1,
+            supervisor: 'Supervisor1',
+            cosupervisor: ['Cosupervisor1', 'Cosupervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: new Date().getMilliseconds(),
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+            archived: true,
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
         jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
         jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
+        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(200);
         expect(response.body).toEqual(deletedProposal);
@@ -445,18 +468,65 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         expect(response.body).toBeTruthy();
     });
 
-    test('Should throw an error with 503 status code when a database error occurs', async () => {
+    test('Should throw an error with 400 status code if the application has already been accepted by a student', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => {
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
+        jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 1);
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ error: `The proposal has been accepted by a student, so it cannot be deleted` });
+    });
+
+    /*test('Should throw an error with 500 status code when it fails to send a notification to the relative students', async () => {
+        const deletedProposal = {
+            id: 1,
+        }
+        const application = {
+            id: 1,
+        }
+        const proposalInfo = {
+            title: "Proposal1",
+        }
+        const teacherInfo = {
+            name: 'Professor1',
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal')
+            .mockImplementationOnce(() => ['mail1']);
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => application);
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposalInfo);
+        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => teacherInfo);
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
+        expect(response.status).toBe(500);
+        expect(response.body).toBeTruthy();
+    });*/
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        const application = {
+            id: 1,
+        }
+        const proposalInfo = {
+            title: "Proposal1",
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => ['mail1'])
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => application);
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposalInfo);
+        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => {
             throw new Error('Database error')
         });
-        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
-        jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
-        
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during the deletion of the thesis proposal: Error: Database error' });
@@ -618,6 +688,53 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
     });
 });
 
+describe('POST /api/teacher/retrieveCosupGroup', () => {
+    test('Should successfully return the groups of the co-supervisors given their email', async () => {
+        const groups = [
+            'Group1',
+            'Group2'
+        ];
+        const group1 = [
+            {
+                name: 'Group1'
+            }
+        ]
+        const group2 = [
+            {
+                name: 'Group2'
+            }
+        ]
+        const group3 = []
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => group1);
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => group2);
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => group3);
+        const response = await request(app).post('/api/teacher/retrieveCosupGroup')
+            .send({cosup_mails: ['mail1', 'mail2', 'mail3']});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(groups);
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+        const response = await request(app).post('/api/teacher/retrieveCosupGroup')
+            .send({cosup_mails: ['mail1']});
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving cosupervisor groups Error: Database error'});
+    });
+});
+
 //send notification
 describe('POST /api/send_email', () => {
     const params = {
@@ -625,7 +742,7 @@ describe('POST /api/send_email', () => {
         subject: 'pluto',
         message: 'paperino'
     }
-    
+
     //correct email sending
 
     //internal server error 500
@@ -633,7 +750,7 @@ describe('POST /api/send_email', () => {
 
     //database error 503
 
-    
+
     test('Should throw an error with 503 status code when a database error occurs', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);

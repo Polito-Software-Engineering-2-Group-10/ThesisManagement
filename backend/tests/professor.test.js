@@ -654,7 +654,6 @@ describe('POST /api/send_email', () => {
         });
 
         const response = await request(app).post('/api/send_email').send(params);
-        console.log(response);
         expect(response.status).toBe(200);
         //capire perchè il body della response è vuoto
         //expect(response.body).toEqual({ message: 'Email sent successfully' });

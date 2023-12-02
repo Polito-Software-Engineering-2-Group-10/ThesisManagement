@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Col, Container, Form, Row,Alert } from "react-bootstrap";
+import { Button, Col, Container, Form, Row,Alert,Card } from "react-bootstrap";
 import { useNavigate} from "react-router-dom";
 import API from "../API";
+import "../styles/LoginPage.css";
 
 function LoginPage(props){
     const [email, setEmail] = useState('ferrero.renato@polito.it');
@@ -46,13 +47,29 @@ function LoginPage(props){
             {/*<Navigation logout={props.logout} loggedIn={props.loggedIn}/>*/}
             <Container style={{paddingTop: "50px"}}>
             <Row>
-                <Col xs={3}></Col>
+                <Col xs={3}>
+                
+                </Col>
+                    
+                
                 <Col xs={6}>
-                    <h1>Welcome to thesis Management</h1>
-                    <h2>Log in to be able to use the services dedicated to you</h2>
+                <h1 className="title">Welcome to Thesis Management</h1>
+                <Card style={{padding: "25px"}}>
+                <div className="text-center">   
+                    
+                    
+                    <img 
+                    width="260"
+                    height="115"
+                    className="d-inline-block align-center"
+                    align="center"
+                    src="/src/img/LogoBlu.svg" />
+                    </div>
+                    
+                    
                     <Form onSubmit={handleSubmit}>
                         {errorMessage ? <Alert variant='danger' dismissible onClick={()=>setErrorMessage('')}>{errorMessage}</Alert> : ''}
-                        <Form.Group controlId='email'>
+                        <Form.Group controlId='email' >
                             <Form.Label>Email</Form.Label>
                             <Form.Control type='email' value={email} onChange={ev => setEmail(ev.target.value)} />
                         </Form.Group>
@@ -64,7 +81,10 @@ function LoginPage(props){
                         <Button className='my-2 mx-2' variant='info' onClick={() => API.logInWithSaml() }>Login with SAML</Button>
                         <Button className='my-2 mx-2' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
                     </Form>
+        
+                    </Card>
                 </Col>
+                
                 <Col xs={3}></Col>
             </Row>
         </Container>

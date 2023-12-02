@@ -77,9 +77,11 @@ function LoginPage(props){
                             <Form.Label>Password</Form.Label>
                             <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} />
                         </Form.Group>
-                        <Button className='my-2' variant='info' type='submit'>Login</Button>
-                        <Button className='my-2 mx-2' variant='info' onClick={() => API.logInWithSaml() }>Login with SAML</Button>
-                        <Button className='my-2 mx-2' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
+                        <div align="center">
+                        <Button className='my-2 buttons' type='submit'>Login</Button>
+                        <Button className='my-2 mx-2 buttons2' onClick={() => API.logInWithSaml() }>SAML Login</Button>
+                        <Button className='my-2 mx-2 buttons3' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
+                        </div>
                     </Form>
         
                     </Card>

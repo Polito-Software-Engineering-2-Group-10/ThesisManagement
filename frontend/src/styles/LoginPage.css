@@ -1,3 +1,24 @@
 .title{
     color:  #002B49;
 }
+
+.buttons{   
+    background-color:  #002B49;
+    color: white;
+    border-color: #002B49;
+}
+
+.buttons2{
+    background-color:  #0066CC;
+    color: white;
+    border-color: #0066CC;
+
+}
+
+.buttons3{
+    background-color:  #B61601;
+    color: white;
+    border-color: #B61601;
+
+}
+

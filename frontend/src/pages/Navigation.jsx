@@ -52,7 +52,7 @@ function Navigation(props) {
                     fontSize: "20px",
                     fontWeight: "bold"
                   }}
-            className="d-inline-block align-center">Polito Thesis Management</p>
+            className="justify-content-center align-self-center">Polito Thesis Management</p>
           </Navbar.Brand>
           {props.loggedIn && (
             <Nav
@@ -102,8 +102,8 @@ function Navigation(props) {
               </Nav.Item>
             </Nav>
           ) : (
-            <Nav className="justify-content-end">
-              <Link to="/login">
+            <Nav className="justify-content-end ">
+              <Link className="justify-content-center align-self-center" to="/login">
                 <Button className="mx-2" variant="light">
                   <i className="bi bi-person-circle"></i> LOGIN
                 </Button>

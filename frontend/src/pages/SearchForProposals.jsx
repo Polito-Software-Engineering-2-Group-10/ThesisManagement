@@ -264,8 +264,22 @@ function SearchForProposals(props) {
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
             { (professors && proposals) ? 
                 (
+
                     <div className="container mt-4">
-                        <h1 className="text-center mt-4 mb-4">Thesis Proposals</h1>
+                        <Container>
+                            <Row>
+                                <Col sm={4}>
+                                <img 
+                                width="260"
+                                height="115"
+                                className="d-inline-block align-center"
+                                align="center"
+                                src="/src/img/LogoBlu.svg" />
+                                </Col>
+                                <Col sm={4} className="justify-content-center align-self-center"><h1 style={{color: "#002B49"}} className="text-center">Thesis Proposals</h1></Col>
+                                
+                            </Row>
+                        </Container>
                         { props.loggedIn ? 
                             <Container>
                                 <Row>

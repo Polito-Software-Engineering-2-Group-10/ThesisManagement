@@ -621,9 +621,7 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
 
 //send notification
 
-beforeEach(() => {
-    jest.resetModules();
-  });
+
 
 describe('POST /api/send_email', () => {
 
@@ -655,8 +653,7 @@ describe('POST /api/send_email', () => {
 
         const response = await request(app).post('/api/send_email').send(params);
         expect(response.status).toBe(200);
-        //capire perchè il body della response è vuoto
-        //expect(response.body).toEqual({ message: 'Email sent successfully' });
+        expect(response.text).toEqual('Email sent successfully');
     });
 
     //internal server error 500

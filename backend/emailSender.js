@@ -25,7 +25,6 @@ function sendEmail(parameters/*{recipient_email, subject,message }*/) {
       if (error) {
         return reject({ message: error.message });
       }
-      console.log('Email inviata correttamente');
       return resolve({ message: "Email sent successfully" });
     });
   });

@@ -1,4 +1,5 @@
 import request from 'supertest';
+import dayjs from 'dayjs';
 import { psqlDriver, app, isLoggedIn } from '../index.js';
 import { thesisProposalTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
@@ -269,3 +270,33 @@ describe('GET /api/proposal/:proposalid', () => {
         expect(response.body).toEqual({ error: 'Database error during retrieving proposal Error: Database error' });
     });
 });
+
+//virtual clock
+describe('POST /api/virtualclock', () => {
+    test('Should throw an error 422 when the format request is not valid', async () => {
+        const test = { date: 'prova' };
+
+        const response = await request(app).post('/api/virtualclock').send(test);
+        expect(response.status).toBe(422);
+        expect(response.body.errors[0].msg).toEqual('Invalid value');
+    });
+
+    test('Should successfully update the date of the virtual clock', async () => {
+        const test = { date: '2023-01-01' };
+        const new_date = dayjs(test.date);
+
+        const response = await request(app).post('/api/virtualclock').send(test);
+        expect(response.status).toBe(200);
+        expect(JSON.stringify(response.body.date)).toEqual(JSON.stringify(new_date));
+    })
+})
+
+describe('DELETE /api/virtualclock', () => {
+    test('Should reset the virtual clock', async () => {
+
+        const response = await request(app).delete('/api/virtualclock');
+        const now = dayjs();
+        expect(response.status).toBe(200);
+        expect(response.body.date).toEqual(now);
+    });
+})

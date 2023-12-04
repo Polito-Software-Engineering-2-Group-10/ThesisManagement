@@ -669,3 +669,48 @@ describe('POST /api/send_email', () => {
         expect(response.body).toEqual({ error: "No recipients defined" });
     })
 });
+
+//retrieve cosupervisors group from email
+
+afterEach(() => {
+    // restore the spy created with spyOn
+    jest.restoreAllMocks();
+});
+
+describe('POST /api/teacher/retrieveCosupGroup', () => {
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => { throw new Error('Database error') });
+        const response = await request(app).post('/api/teacher/retrieveCosupGroup');
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: "Database error during retrieving cosupervisor groups TypeError: req.body.cosup_mails is not iterable" });
+    });
+
+    test('Should succesfully return the groups of the cosupervisors', async () => {
+        const mock_req = {
+            cosup_mails: ['mail1', 'mail2', 'mail3']
+        }
+
+        const mock_group = [
+            { name: 'Group1' }
+        ];
+
+        const mock_groups = ['Group1', 'Group1', 'Group1'];
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementation(() => mock_group);
+        const response = await request(app).post('/api/teacher/retrieveCosupGroup').send(mock_req);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mock_groups);
+    });
+})

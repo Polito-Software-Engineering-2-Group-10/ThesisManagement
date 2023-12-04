@@ -143,6 +143,22 @@ describe('POST /api/student/applyProposal', () => {
         expect(response.body).toEqual(valid_id);
     });
 
+    test('Should throw a 400 error when the student already applied for a proposal', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        const countMock = {
+            count: 1
+        };
+        jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
+        const response = await request(app).post('/api/student/applyProposal')
+            .send({proposal_id: 1, apply_date: '2023-12-31'});
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ error: 'The student already applied to this proposal' });
+    });
+
     test('Should throw an error with 422 status code when the format of the parameters is invalid', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);

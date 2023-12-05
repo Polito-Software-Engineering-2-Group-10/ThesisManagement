@@ -135,3 +135,29 @@ CREATE TABLE IF NOT EXISTS public.application
         ON DELETE CASCADE
 );
 ALTER TABLE IF EXISTS public.application OWNER TO thesismanager;
+
+-- thesis_request
+CREATE TABLE IF NOT EXISTS public.thesis_request
+(
+    id serial NOT NULL,
+    student_id integer NOT NULL,
+    proposal_id integer NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    supervisor text NOT NULL,
+    co_supervisor text[],
+    apply_date date NOT NULL,
+    status_clerk boolean,
+    status_teacher boolean,
+    approval_date date,
+    CONSTRAINT thesis_request_pk PRIMARY KEY (id),
+    CONSTRAINT thesis_request_student_id_fkey FOREIGN KEY (student_id)
+        REFERENCES public.student(id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT thesis_request_proposal_id_fkey FOREIGN KEY (proposal_id)
+        REFERENCES public.thesis_proposal(id)
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE
+);
+ALTER TABLE IF EXISTS public.thesis_request OWNER TO thesismanager;

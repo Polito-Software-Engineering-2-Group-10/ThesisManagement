@@ -71,6 +71,11 @@ const isLoggedInAsStudent = (req, res, next) => {
         return next();
     res.status(401).json({ error: 'Not authenticated' });
 };
+const isLoggedInAsClerk = (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === 'clerk')
+        return next();
+    res.status(401).json({ error: 'Not authenticated' });
+};
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {

@@ -62,7 +62,7 @@ function App() {
 
   useEffect(()=> {
     if(user && dirty){
-      if(user.role=='teacher'){
+      if(user.role==='teacher'){
         API.getTeacherDetail()
             .then((teacher) => {
                 setUserDetail(teacher);
@@ -71,7 +71,7 @@ function App() {
                 setDirty(false);
                })
             .catch((err) => console.log(err));
-      } else {
+      } else if (user.role === 'student') {
           API.getStudentDetail()
               .then((student) => {
                   setUserDetail(student);
@@ -83,6 +83,9 @@ function App() {
                 .catch((err) => console.log(err));
               })
               .catch((err) => console.log(err));
+      } else {
+        // FIXME: handle 'clerk' role
+        console.log(`User role ${user.role} not supported`)
       }
     }
   }, [dirty]);

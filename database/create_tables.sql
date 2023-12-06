@@ -161,3 +161,13 @@ CREATE TABLE IF NOT EXISTS public.thesis_request
         ON DELETE CASCADE
 );
 ALTER TABLE IF EXISTS public.thesis_request OWNER TO thesismanager;
+
+-- secretary clerk
+CREATE TABLE IF NOT EXISTS public.secretary_clerk
+(
+    id integer NOT NULL,
+    surname text NOT NULL,
+    name text NOT NULL,
+    email text NOT NULL
+);
+ALTER TABLE IF EXISTS public.secretary_clerk OWNER TO thesismanager;

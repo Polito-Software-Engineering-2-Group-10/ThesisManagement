@@ -96,3 +96,11 @@
 | STATUS_CLERK        | BOOL    | YES         |          | Status of the request evaluated by clerk, NULL means not evaluated, TRUE means accepted, FALSE means rejected   |
 | STATUS_TEACHER      | BOOL    | YES         |          | Status of the request evaluated by teacher, NULL means not evaluated, TRUE means accepted, FALSE means rejected |
 | APPROVAL_DATE       | DATE    | YES         |          | Date of a new request is approved                                                                               |
+
+### Secretary clerk table
+| FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
+| ID             | INTEGER | NO          | PRIMARY  | Id of the clerk                                       |
+| SURNAME        | TEXT    | NO          |          | Surname of the clerk                                  |
+| NAME           | TEXT    | NO          |          | Name of the clerk                                     |
+| EMAIL          | TEXT    | NO          |          | Email of the clerk                                    |

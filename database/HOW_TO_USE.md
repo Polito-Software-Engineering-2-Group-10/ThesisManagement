@@ -23,8 +23,7 @@ In order to add the data to the database you can run (all these commands are to 
 ```postgresql
 SET CLIENT_ENCODING TO 'utf8';
 \i init_data.sql
-\i thesis_data_raw.sql
-\i init_Request_data.sql
+\i testing_data.sql
 ```
 
 To remove the data from the database you can run:

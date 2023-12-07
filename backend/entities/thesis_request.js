@@ -41,6 +41,30 @@ class ThesisRequestTable {
         return result.map(ThesisRequest.fromRow);
     }
 
+    async addThesisRequestNoDate(student_id, proposal_id, request) {
+        const query = `INSERT INTO thesis_request (student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, request.title, request.description, request.supervisor, request.co_supervisor, `Failed to add ThesisRequest`);
+        return ThesisRequest.fromRow(result);
+    }
+
+    async addThesisRequestWithDate(student_id, proposal_id, request) {
+        const query = `INSERT INTO thesis_request (student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, request.title, request.description, request.supervisor, request.co_supervisor, request.apply_date, `Failed to add Request`);
+        return ThesisRequest.fromRow(result);
+    }
+
+    async getCountByFK(student_id, proposal_id) {
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND proposal_id = $2`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
+        return result;
+    }
+
 }
 
 

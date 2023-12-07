@@ -17,7 +17,8 @@ import {
     degreeTable,
     groupTable,
     thesisProposalTable,
-    applicationTable
+    applicationTable,
+    thesisRequestTable
 } from './dbentities.js';
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
@@ -364,6 +365,51 @@ app.post('/api/student/applyProposal',
 
     }
 );
+
+/*Apply thesis request */
+
+//POST /api/student/applyRequest/:thesisid
+//apply thesis request
+app.post('/api/student/applyRequest/:thesisid',
+    isLoggedInAsStudent,
+    [
+        check('title').isString().isLength({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('supervisor').isEmail(),
+        check('co_supervisor').isArray().optional(),
+        check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true }),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const request = {
+            title: req.body.title,
+            description: req.body.description,
+            supervisor: req.body.supervisor,
+            co_supervisor: req.body.co_supervisor,
+            apply_date: req.body.apply_date
+        }
+        try {
+            const existingRequest = await thesisRequestTable.getCountByFK(req.user.id, req.params.thesisid);
+            if (existingRequest.count > 0) {
+                return res.status(400).json({ error: `The student already request to this thesis before!` });
+            }
+           // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
+            const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
+            res.json(requestInfo);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+
+        }
+
+    }
+);
+
+/*End*/
+
 
 app.get('/api/proposal/:proposalid', async (req, res) => {
     try {

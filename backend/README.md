@@ -226,6 +226,47 @@ The backend exposes the following APIs:
         "archived": false
     }
     ```
+- POST `/api/student/applyRequest/<thesisid>`
+    - This API accepts a JSON object with the following structure:
+    ```json
+    {
+        "title": "<thesis title>",
+        "description": "<thesis description>",
+        "supervisor": "<supervisor email>",
+        "co_supervisor": ["<co-supervisor 1 email>", "<co-supervisor 2 email>"], // array of co-supervisors emails, can be empty
+        "apply_date": "<apply request date>", // apply a new request date
+    }
+    ```
+    - This API will insert a new thesis requeset in the database and return the entire details of request in the database.
+        
+    Example request:
+    ```json
+    {
+        "title": "test title",
+        "supervisor": "morisio.maurizio@polito.it",
+        "co_supervisor": [],
+        "description": "test description",
+        "apply_date": "2023-08-26"
+    }
+    ```
+        
+    Example response:
+    
+    ```json
+    {
+        "id": 17,
+        "student_id": 7,
+        "proposal_id": 22,
+        "title": "test title",
+        "description": "test description",
+        "supervisor": "morisio.maurizio@polito.it",
+        "co_supervisor": [],
+        "apply_date": "2024-08-25T23:00:00.000Z",
+        "status_clerk": null,
+        "status_teacher": null,
+        "approval_date": null
+    }
+    ```
 - GET `/api/ProposalsList`
     - This API will return all the thesis proposals inserted in the database, it expects no parameters. It returns a list of thesis proposals in the form:
     ```json

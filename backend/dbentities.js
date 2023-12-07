@@ -6,6 +6,8 @@ import { Student, StudentTable } from "./entities/student.js";
 import { Teacher, TeacherTable } from "./entities/teacher.js";
 import { Career, CareerTable } from "./entities/career.js";
 import { Department, DepartmentTable } from "./entities/department.js";
+import { ThesisRequest, ThesisRequestTable } from "./entities/thesis_request.js";
+import { SecretaryClerk, SecretaryClerkTable } from "./entities/secretary_clerk.js";
 
 
 const studentTable = await StudentTable.initialize();
@@ -16,6 +18,8 @@ const departmentTable = await DepartmentTable.initialize();
 const careerTable = await CareerTable.initialize();
 const thesisProposalTable = await ThesisProposalTable.initialize();
 const applicationTable = await ApplicationTable.initialize();
+const thesisRequestTable = await ThesisRequestTable.initialize();
+const secretaryClerkTable = await SecretaryClerkTable.initialize();
 
 export {
     applicationTable,
@@ -25,5 +29,7 @@ export {
     studentTable,
     teacherTable,
     careerTable,
-    departmentTable
+    departmentTable,
+    thesisRequestTable,
+    secretaryClerkTable
 };

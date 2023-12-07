@@ -1,4 +1,5 @@
 import request from 'supertest';
+import dayjs from 'dayjs';
 import { psqlDriver, app, isLoggedIn } from '../index.js';
 import { thesisProposalTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';

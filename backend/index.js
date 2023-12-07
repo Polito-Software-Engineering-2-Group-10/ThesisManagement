@@ -509,7 +509,7 @@ app.delete('/api/teacher/deleteProposal',
                     const app = await applicationTable.getById(s.app_id);
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
-                    try {
+                    try {                                             
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,

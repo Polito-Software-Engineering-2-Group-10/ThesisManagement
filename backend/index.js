@@ -9,6 +9,7 @@ import cors from 'cors';
 import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
+import multer from 'multer';
 import {
     studentTable,
     teacherTable,
@@ -609,6 +610,24 @@ app.post("/api/send_email",
             res.status(503).json({ error: `Server error during sending notification ${err}` });
         }
     });
+
+/*UPLOAD FILE API*/
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      return cb(null, "./public/files")
+    },
+    filename: function (req, file, cb) {
+      return cb(null, `${Date.now()}_${file.originalname}`)
+    }
+  })
+  
+  const upload = multer({storage})
+  
+  app.post('/upload', upload.single('file'), (req, res) => {
+    console.log(req.body)
+    console.log(req.file)
+  })
+
 
 /*END API*/
 

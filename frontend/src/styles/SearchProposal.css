@@ -1,24 +1,55 @@
 @import "colors.css";
 
 
-.searchButton
+.search-filter-btn
 {
+    background-color: white;
     border-color:  var(--orange);
     color: black;
+    border-color: var(--orange);
 }
 
-
-.searchButton:hover
+.search-filter-btn:hover
 {
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
+    border-color: var(--orange);
     
 }
-.searchButton:content
+
+.search-filter-btn:active:focus
 {
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
+    border-color: var(--orange);
+    
+}
+
+.selected-search-filter-btn
+{
+    background-color:  var(--orange);
+    border-color:  var(--orange);
+    color:white;
+    border-color: var(--orange);
+
+}
+
+.selected-search-filter-btn:hover
+{
+    background-color:  var(--orange);
+    border-color:  var(--orange);
+    color:white;
+    border-color: var(--orange);
+
+}
+
+.selected-search-filter-btn:active:focus
+{
+    background-color:  var(--orange);
+    border-color:  var(--orange);
+    color:white;
+    border-color: var(--orange);
 
 }

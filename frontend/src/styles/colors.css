@@ -10,4 +10,5 @@
     --samlButton: #0066CC;
     --cancelButton: #B61601;
     --orange: #EF7B00;
+    --info:var(--orange)
 }

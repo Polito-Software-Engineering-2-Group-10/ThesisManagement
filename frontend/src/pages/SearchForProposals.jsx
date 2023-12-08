@@ -301,51 +301,51 @@ function SearchForProposals(props) {
                                         <div className="mb-3">
                                             <div display="inline-block ">Filter by: </div>
                                             <Button
-                                                variant={activeFilter === 'title' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('title')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'title' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Title
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('professor')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'professor' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Professor
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('expirationDate')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'expirationDate' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Expiration Date
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'type' ? 'info' : 'outline-info'}
+                                               
                                                 onClick={() => handleFilterClick('type')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'type' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Type
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'level' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('level')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'level' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Level
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('keywords')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'keywords' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Keywords
                                             </Button>
                                             <Button
-                                                variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
+                                                
                                                 onClick={() => handleFilterClick('groups')}
-                                                className="search-filter-btn searchButton"
+                                                className={activeFilter === 'groups' ? 'selected-search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Groups
                                             </Button>

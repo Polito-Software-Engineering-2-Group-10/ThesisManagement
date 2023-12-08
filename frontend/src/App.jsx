@@ -14,6 +14,7 @@ import useNotification from './hooks/useNotifcation.js';
 import AppContext from './AppContext.jsx';
 
 import BrowseProposal from './pages/BrowseProposal';
+import BrowseArchivedProposals from './pages/BrowseArchivedProposals';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 
 function App() {
@@ -138,6 +139,7 @@ function App() {
             <Route path='/search' element={<SearchForProposals loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
             <Route path='/insert' element={<ProposalForm teacherDetail={userDetail} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/>}></Route>   
             <Route path='/proposal' element={loggedIn ? <BrowseProposal setProposalDirty={setProposalsDirty} proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
+            <Route path='/archivedProposals' element={loggedIn ? <BrowseArchivedProposals setProposalDirty={setProposalsDirty} proposalList={proposalList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
             <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchTeacherAppsList}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
             <Route path='/updateProposal/:thesisId' element={loggedIn ? <ProposalForm teacherDetail={userDetail} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
         </Routes>

@@ -283,7 +283,7 @@ The backend exposes the following APIs:
     },
     ```
 
-- PATCH /api/clerk/Requestlist/:requestid
+- PATCH `/api/clerk/Requestlist/:requestid`
     - This API will update the status of a request by clerk. When it successes, it will return all the details of the request in the database.
     Example request:
     ```json

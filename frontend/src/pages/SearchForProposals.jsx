@@ -32,6 +32,7 @@ function Proposals( { currentProposals, getProfessorsInformation, professors, pe
                 <Link
                     to={`/applyToProp/${proposal.id}`}
                     className="text-primary"
+                    style={{"text-decoration" : "none"}}
                 >
                     {proposal.title}
                 </Link>

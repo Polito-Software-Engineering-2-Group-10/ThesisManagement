@@ -4,6 +4,7 @@ import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col } from 
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
 import './pagination.css';
+import "../styles/SearchProposal.css";
 import AppContext from '../AppContext.jsx';
 
 import ReactPaginate from 'react-paginate';
@@ -302,49 +303,49 @@ function SearchForProposals(props) {
                                             <Button
                                                 variant={activeFilter === 'title' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('title')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Title
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('professor')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Professor
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('expirationDate')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Expiration Date
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'type' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('type')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Type
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'level' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('level')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Level
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('keywords')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Keywords
                                             </Button>
                                             <Button
                                                 variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
                                                 onClick={() => handleFilterClick('groups')}
-                                                className="search-filter-btn"
+                                                className="search-filter-btn searchButton"
                                             >
                                                 Groups
                                             </Button>

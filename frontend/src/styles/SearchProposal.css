@@ -1,0 +1,24 @@
+@import "colors.css";
+
+
+.searchButton
+{
+    border-color:  var(--orange);
+    color: black;
+}
+
+
+.searchButton:hover
+{
+    background-color:  var(--orange);
+    border-color:  var(--orange);
+    color:white;
+    
+}
+.searchButton:content
+{
+    background-color:  var(--orange);
+    border-color:  var(--orange);
+    color:white;
+
+}

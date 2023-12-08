@@ -45,6 +45,26 @@ function BrowseAndAcceptApplication(props) {
         });
     }
 
+    const handleDownloadGeneratedCVButtonClick = (id, student_id) => {
+        API.getStudentGeneratedCv(id, student_id).then((res) => {
+            if (res.message) {
+                notify.error(res.message);
+            }
+        }).catch((err) => {
+            notify.error(err);
+        });
+    }
+
+    const handleDownloadSubmittedCVButtonClick = (id, student_id) => {
+        API.getStudentSubmittedCv(id, student_id).then((res) => {
+            if (res.message) {
+                notify.error(res.message);
+            }
+        }).catch((err) => {
+            notify.error(err);
+        });
+    }
+
     
     
     return (
@@ -105,6 +125,8 @@ function BrowseAndAcceptApplication(props) {
                 }} md={'auto'}>
                     <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)} >Accept</Button>
                     <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)}>Decline</Button>
+                    <Button variant="secondary" onClick={() => handleDownloadGeneratedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download generated CV</Button>
+                    <Button variant="secondary" onClick={() => handleDownloadSubmittedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download submitted CV</Button>
                 </Row>
                     : ""
                 }

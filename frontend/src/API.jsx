@@ -364,6 +364,51 @@ async function uploadFile(file){
 
 }
 
+async function getStudentGeneratedCv(applicationId, studentId) {
+    const response = await fetch(`${URL}/teacher/getGeneratedCV/${applicationId}`, {
+        credentials: 'include',
+        method: 'GET',
+    });
+    if (response.ok) {
+        const blob = await response.text();
+        const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${studentId}_generated_cv.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        return {};
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
+}
+
+async function getStudentSubmittedCv(applicationId, studentId) {
+    const response = await fetch(`${URL}/teacher/getSubmittedCV/${applicationId}`, {
+        credentials: 'include',
+        method: 'GET',
+    });
+    if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${studentId}_generated_cv.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        return {};
+    } else if (response.status === 404) {
+        return {
+            status: 404,
+            message: 'No CV submitted by the student'
+        };
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
+}
+
 const API = {
     logInWithSaml,
     logOutWithSaml,
@@ -392,7 +437,9 @@ const API = {
     deleteProposal,
     retrieveCoSupervisorsGroups,
     archiveProposal,
-    uploadFile
+    uploadFile,
+    getStudentGeneratedCv,
+    getStudentSubmittedCv,
 };
 
 export default API;

@@ -411,6 +411,56 @@ app.post('/api/student/applyRequest/:thesisid',
 /*End*/
 
 
+/*Get thesis request list - clerk */
+
+//GET /api/clerk/Requestlist
+//Get thesis request
+app.get('/api/clerk/Requestlist',
+    isLoggedInAsClerk,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllNotApprovedByClerkRequest();
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+)
+/*End*/
+
+/*Approve thesis request - clerk */
+
+//PATCH /api/clerk/Requestlist/:requestid
+//Approve a thesis request
+app.patch('/api/clerk/Requestlist/:requestid',
+      isLoggedInAsClerk,
+    [
+        check('status_clerk').isBoolean()
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            if (requestDetail.status_clerk !== null) {
+                return res.status(400).json({ error: `This request has already been ${requestDetail.status_clerk ? 'accepted' : 'rejected'}` });
+            }
+            const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
+            res.json(requestResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+);
+
+/*End*/
+
 app.get('/api/proposal/:proposalid', async (req, res) => {
     try {
         const proposal = await thesisProposalTable.getById(req.params.proposalid);

@@ -41,6 +41,27 @@ class ThesisRequestTable {
         return result.map(ThesisRequest.fromRow);
     }
 
+    async getAllNotApprovedByClerkRequest() {
+        const query= `SELECT * FROM thesis_request WHERE status_clerk IS null`;
+        const result = await this.db.executeQueryExpectAny(query);
+        return result.map(ThesisRequest.fromRow);
+       // return result;
+    }
+
+    async getRequestDetailById(id) {
+        const query= `SELECT * FROM thesis_request WHERE id=$1`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `Request with id ${id} not found`);
+        return result;
+    }
+
+    async getRequestDetailByFK(student_id, proposal_id) {
+        const query = `SELECT * FROM thesis_request WHERE student_id = $1 AND proposal_id = $2`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Request with student_id ${student_id} and proposal_id ${proposal_id} not found`);
+        return result;
+    }
+
     async addThesisRequestNoDate(student_id, proposal_id, request) {
         const query = `INSERT INTO thesis_request (student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date) VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING *`;
         const sid = getNum(student_id);
@@ -61,8 +82,23 @@ class ThesisRequestTable {
         const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND proposal_id = $2`;
         const sid = getNum(student_id);
         const pid = getNum(proposal_id);
-        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, `Request with student_id ${student_id} and proposal_id ${proposal_id} not found`);
         return result;
+    }
+
+    async updateRequestClerkStatusById(id, status) {
+        const query = `UPDATE thesis_request SET status_clerk = $2 WHERE id = $1 RETURNING *`;
+        const aid = getNum(id);
+        const result = await this.db.executeQueryExpectOne(query, aid, status, `Request with id ${id} not found`);
+        return ThesisRequest.fromRow(result);
+    }
+
+    async updateRequestClerkStatusByFK(student_id, proposal_id, status) {
+        const query = `UPDATE thesis_request SET status_clerk = $3 WHERE student_id = $1 AND proposal_id = $2 RETURNING *`;
+        const sid = getNum(student_id);
+        const pid = getNum(proposal_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, pid, status, `Request with student_id ${student_id} and proposal_id ${proposal_id} not found`);
+        return ThesisRequest.fromRow(result);
     }
 
 }

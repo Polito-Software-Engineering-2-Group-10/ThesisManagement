@@ -508,17 +508,18 @@ function SearchForProposals(props) {
                                                     </div>
                                                 )}
                                                 <Button
-                                                    variant="success"
+                                                    
                                                     onClick={handleApplyFilter}
-                                                    style={{marginTop:'10px'}}
+                                                    
+                                                    className='apply-btn'
                                                 >
                                                     Apply Filter
                                                 </Button>
                                                 {' '}
                                                 <Button
-                                                    variant="outline-secondary"
+                                                    
                                                     onClick={handleCancelFilter}
-                                                    style={{marginTop:'10px'}}
+                                                    className='cancel-btn'
                                                 >
                                                     Close Filter
                                                 </Button>

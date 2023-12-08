@@ -47,9 +47,22 @@
 
 .selected-search-filter-btn:active:focus
 {
-    background-color:  var(--orange);
+    background-color:  var(--dark-yellow);
     border-color:  var(--orange);
     color:white;
     border-color: var(--orange);
 
+}
+
+.apply-btn
+{
+    margin-top:10px;
+    background-color: var(--dark-green);
+
+}
+
+.cancel-btn
+{
+    margin-top: 10px;
+    background-color: var(--cancelButton);
 }

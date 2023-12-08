@@ -349,10 +349,6 @@ app.post('/api/teacher/insertProposal',
 /*Apply for a thesis proposal*/
 app.post('/api/student/applyProposal',
     isLoggedInAsStudent,
-    [
-        check('proposal_id').isInt(),
-        check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
-    ],
     upload.single('file'),
     async (req, res) => {
 

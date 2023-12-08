@@ -269,6 +269,7 @@ function SearchForProposals(props) {
                     /*<div className="container mt-4">*/
                     <Container>
                     <Row>
+                    
                         <Container>
                             <Row>
                                 <Col sm={4}>

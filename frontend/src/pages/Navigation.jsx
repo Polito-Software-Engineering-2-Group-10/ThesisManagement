@@ -47,12 +47,7 @@ function Navigation(props) {
         <Container>
           <Navbar.Brand href="/">
             
-            <p 
-            style={{
-                    fontSize: "20px",
-                    fontWeight: "bold"
-                  }}
-            className="justify-content-center align-self-center">Polito Thesis Management</p>
+            Polito Thesis Management
           </Navbar.Brand>
           {props.loggedIn && (
             <Nav

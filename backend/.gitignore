@@ -1,2 +1,4 @@
 node_modules/
 coverage/
+public/files/*
+!public/files/.gitkeep

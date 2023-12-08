@@ -272,7 +272,7 @@ function SearchForProposals(props) {
                     
                         <Container>
                             <Row>
-                                <Col sm={4}>
+                                <Col sm={3}>
                                 <img 
                                 width="260"
                                 height="115"
@@ -280,14 +280,14 @@ function SearchForProposals(props) {
                                 align="center"
                                 src="/src/img/LogoBlu.svg" />
                                 </Col>
-                                <Col sm={4} className="justify-content-center align-self-center"><h1 style={{color: "#002B49"}} className="text-center">Thesis Proposals</h1></Col>
+                                <Col className="justify-content-center align-self-center"><h1 style={{color: "#002B49"}} className="text-center">Thesis Proposals</h1></Col>
                                 
                             </Row>
                         </Container>
                     </Row>
                         
                         <Row>
-                            <Col xs="3">
+                            <Col sm={3}>
                                 { props.loggedIn ? 
                                     <Container>
                                         <Row>

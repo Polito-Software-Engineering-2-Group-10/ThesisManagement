@@ -21,7 +21,7 @@ $config = array(
      * external url, no matter where you come from (direct access or via the
      * reverse proxy).
      */
-    'baseurlpath' => 'simplesaml/',
+    'baseurlpath' => getenv('SIMPLESAMLPHP_IDP_BASE_URL') ?: '' . 'simplesaml/',
     'certdir' => 'cert/',
     'loggingdir' => 'log/',
     'datadir' => 'data/',
@@ -283,7 +283,12 @@ $config = array(
      * ),
      *
      */
-
+    'module.enable' => [
+        'core' => null,
+        'saml' => true,
+        'exampleauth' => false,
+        'sqlauth' => true,
+    ],
 
     /*
      * This value is the duration of the session in seconds. Make sure that the time duration of

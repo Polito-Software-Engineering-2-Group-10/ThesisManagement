@@ -71,6 +71,11 @@ const isLoggedInAsStudent = (req, res, next) => {
         return next();
     res.status(401).json({ error: 'Not authenticated' });
 };
+const isLoggedInAsClerk = (req, res, next) => {
+    if (req.isAuthenticated() && req.user.role === 'clerk')
+        return next();
+    res.status(401).json({ error: 'Not authenticated' });
+};
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {
@@ -600,14 +605,9 @@ app.put('/api/teacher/updateProposal/:thesisid',
 app.post("/api/send_email",
     isLoggedInAsTeacher,
     async (req, res) => {
-        try {
-            sendEmail(req.body)
-                .then((response) => res.send(response.message))
-                .catch((error) =>  res.status(500).json({ error: error.message}));
-        }
-        catch (err) {
-            res.status(503).json({ error: `Server error during sending notification ${err}` });
-        }
+        sendEmail(req.body)
+            .then((response) => res.send(response.message))
+            .catch((error) => res.status(500).json({ error: error.message }));
     });
 
 /*END API*/

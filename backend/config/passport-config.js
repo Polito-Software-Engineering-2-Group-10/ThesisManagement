@@ -1,10 +1,12 @@
 import { Strategy as SamlStrategy } from '@node-saml/passport-saml';
 import { Strategy as LocalStrategy } from 'passport-local'
-import { studentTable, teacherTable } from '../dbentities.js'
+import { studentTable, teacherTable, secretaryClerkTable } from '../dbentities.js'
 
 async function getUserFromDb(email, password) {
     const students = await studentTable.getByAuthInfo(email, password);
     const teachers = await teacherTable.getByAuthInfo(email, password);
+    const secretaryClerks = await secretaryClerkTable.getByAuthInfo(email, password);
+
     if (students.length > 0) {
         const student = students[0];
         return {
@@ -22,6 +24,15 @@ async function getUserFromDb(email, password) {
             name: teacher.name,
             surname: teacher.surname,
             role: 'teacher'
+        };
+    } else if (secretaryClerks.length > 0) {
+        const secretaryClerk = secretaryClerks[0];
+        return {
+            id: secretaryClerk.id,
+            email: secretaryClerk.email,
+            name: secretaryClerk.name,
+            surname: secretaryClerk.surname,
+            role: 'clerk'
         };
     } else {
         throw new Error('Incorrect username or password');
@@ -46,6 +57,15 @@ async function getUserFromDbByIdRole(id, role) {
             name: teacher.name,
             surname: teacher.surname,
             role: 'teacher'
+        };
+    } else if (role === 'clerk') {
+        const secretaryClerk = await secretaryClerkTable.getById(id);
+        return {
+            id: secretaryClerk.id,
+            email: secretaryClerk.email,
+            name: secretaryClerk.name,
+            surname: secretaryClerk.surname,
+            role: 'clerk'
         };
     } else {
         throw new Error('Unknown role');

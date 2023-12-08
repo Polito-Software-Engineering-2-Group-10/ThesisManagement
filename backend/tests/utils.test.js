@@ -1,4 +1,5 @@
 import request from 'supertest';
+import dayjs from 'dayjs';
 import { psqlDriver, app, isLoggedIn } from '../index.js';
 import { thesisProposalTable, teacherTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
@@ -272,30 +273,31 @@ describe('GET /api/proposal/:proposalid', () => {
     });
 });
 
+//virtual clock
 describe('POST /api/virtualclock', () => {
-    test('Should successfully modify the virtual clock', async () => {
-        const date = '2023-12-12'
-        jest.spyOn(virtualClock, 'setOffset').mockImplementationOnce(() => true);
-        const response = await request(app).post('/api/virtualclock')
-            .send({date});
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({date: dayjs(date).toISOString()});
+    test('Should throw an error 422 when the format request is not valid', async () => {
+        const test = { date: 'prova' };
+
+        const response = await request(app).post('/api/virtualclock').send(test);
+        expect(response.status).toBe(422);
+        expect(response.body.errors[0].msg).toEqual('Invalid value');
     });
 
-    test('Should throw an error with 422 status code when the date passed is not in a valid format', async () => {
-        const invalid_date = 'invalid_date'
-        const response = await request(app).post('/api/virtualclock')
-            .send({invalid_date});
-        expect(response.status).toBe(422);
-        expect(response.body).toBeTruthy();
-    });
-});
+    test('Should successfully update the date of the virtual clock', async () => {
+        const test = { date: '2023-01-01' };
+        const new_date = dayjs(test.date);
+
+        const response = await request(app).post('/api/virtualclock').send(test);
+        expect(response.status).toBe(200);
+        expect(JSON.stringify(response.body.date)).toEqual(JSON.stringify(new_date));
+    })
+})
 
 describe('DELETE /api/virtualclock', () => {
-    test('Should successfully reset the virtual clock', async () => {
-        jest.spyOn(virtualClock, 'resetOffset').mockImplementationOnce(() => true);
-        const response = await request(app).delete('/api/virtualclock')
+    test('Should reset the virtual clock', async () => {
+
+        const response = await request(app).delete('/api/virtualclock');
         expect(response.status).toBe(200);
-        expect(response.body).toBeTruthy();
+        expect(response.body.date).toBeTruthy();
     });
-});
+})

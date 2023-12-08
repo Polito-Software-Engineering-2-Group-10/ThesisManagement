@@ -36,7 +36,7 @@ ALTER TABLE IF EXISTS public.group OWNER TO thesismanager;
 -- teacher
 CREATE TABLE IF NOT EXISTS public.teacher
 (
-    id integer NOT NULL,
+    id serial NOT NULL,
     surname text NOT NULL,
     name text NOT NULL,
     email text NOT NULL,
@@ -83,7 +83,7 @@ ALTER TABLE IF EXISTS public.thesis_proposal OWNER TO thesismanager;
 -- student
 CREATE TABLE IF NOT EXISTS public.student
 (
-    id integer NOT NULL,
+    id serial NOT NULL,
     surname text NOT NULL,
     name text NOT NULL,
     gender text NOT NULL,
@@ -102,7 +102,7 @@ ALTER TABLE IF EXISTS public.student OWNER TO thesismanager;
 -- career
 CREATE TABLE IF NOT EXISTS public.career
 (
-    id integer NOT NULL,
+    id serial NOT NULL,
     cod_course text NOT NULL,
     title_course text NOT NULL,
     CFU integer NOT NULL,
@@ -165,9 +165,30 @@ ALTER TABLE IF EXISTS public.thesis_request OWNER TO thesismanager;
 -- secretary clerk
 CREATE TABLE IF NOT EXISTS public.secretary_clerk
 (
-    id integer NOT NULL,
+    id serial NOT NULL,
     surname text NOT NULL,
     name text NOT NULL,
     email text NOT NULL
 );
 ALTER TABLE IF EXISTS public.secretary_clerk OWNER TO thesismanager;
+
+-- applicant cv
+CREATE TABLE IF NOT EXISTS public.applicant_cv
+(
+    id serial NOT NULL,
+    proposal_id integer NOT NULL,
+    student_id integer NOT NULL,
+    teacher_id integer NOT NULL,
+    application_id integer NOT NULL,
+    filepath text NOT NULL,
+    CONSTRAINT applicant_cv_pk PRIMARY KEY (id, student_id, teacher_id, application_id),
+    CONSTRAINT applicant_cv_fkey FOREIGN KEY (application_id, student_id, proposal_id)
+        REFERENCES public.application(id, student_id, proposal_id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT applicant_cv_teacher_id_fkey FOREIGN KEY (teacher_id)
+        REFERENCES public.teacher(id)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+ALTER TABLE IF EXISTS public.applicant_cv OWNER TO thesismanager;

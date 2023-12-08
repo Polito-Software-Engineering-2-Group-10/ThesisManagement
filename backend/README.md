@@ -238,7 +238,7 @@ The backend exposes the following APIs:
     }
     ```
     - This API will insert a new thesis requeset in the database and return the entire details of request in the database.
-        
+    
     Example request:
     ```json
     {
@@ -249,9 +249,7 @@ The backend exposes the following APIs:
         "apply_date": "2023-08-26"
     }
     ```
-        
     Example response:
-    
     ```json
     {
         "id": 17,
@@ -267,6 +265,49 @@ The backend exposes the following APIs:
         "approval_date": null
     }
     ```
+- GET `/api/clerk/Requestlist`
+    - This API will return all the requests need to be evaluated by cletk in the database, it expects no parameters. It returns a list of thesis requests in the form:
+    ```json
+        {
+        "id": <id of the request>,
+        "student_id": <id of a student>,
+        "proposal_id": <id of a proposal>,
+        "title": "<title of the thesis>",
+        "description": "<explanation of the thesis>",
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": "<email of the co-supervisor>", //could be empty
+        "apply_date": "<apply request date>", // date of the request applied
+        "status_clerk": null,  //status evaluated by clerk
+        "status_teacher": null, //status evaluated by teacher
+        "approval_date": null //approval date of a request, it can be true only with 'status_teacher' and 'status_clerk' are both true.
+    },
+    ```
+
+- PATCH /api/clerk/Requestlist/:requestid
+    - This API will update the status of a request by clerk. When it successes, it will return all the details of the request in the database.
+    Example request:
+    ```json
+    {
+        "status_clerk" : true
+    }
+    ```
+   Example response:
+    ```json
+    {
+        "id": 17,
+        "student_id": 7,
+        "proposal_id": 22,
+        "title": "test title",
+        "description": "test description",
+        "supervisor": "morisio.maurizio@polito.it",
+        "co_supervisor": [],
+        "apply_date": "2024-08-25T23:00:00.000Z",
+        "status_clerk": true,
+        "status_teacher": null,
+        "approval_date": null
+    }
+    ```
+
 - GET `/api/ProposalsList`
     - This API will return all the thesis proposals inserted in the database, it expects no parameters. It returns a list of thesis proposals in the form:
     ```json

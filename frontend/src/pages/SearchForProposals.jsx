@@ -265,7 +265,9 @@ function SearchForProposals(props) {
             { (professors && proposals) ? 
                 (
 
-                    <div className="container mt-4">
+                    /*<div className="container mt-4">*/
+                    <Container>
+                    <Row>
                         <Container>
                             <Row>
                                 <Col sm={4}>
@@ -280,251 +282,263 @@ function SearchForProposals(props) {
                                 
                             </Row>
                         </Container>
-                        { props.loggedIn ? 
-                            <Container>
-                                <Row>
-                                    <Col style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                        <Button variant='primary' onClick={() => navigate('/')}>Main Page</Button>
-                                    </Col>
-                                </Row>
-                            </Container>
-                        : ''}
-                        <Card className="mb-4" style={{marginTop: '20px'}}>
-                            <Card.Body>
-                                <div className="mb-3">
-                                    <span>Filter by: </span>
-                                    <Button
-                                        variant={activeFilter === 'title' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('title')}
-                                        className="search-filter-btn"
-                                    >
-                                        Title
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('professor')}
-                                        className="search-filter-btn"
-                                    >
-                                        Professor
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('expirationDate')}
-                                        className="search-filter-btn"
-                                    >
-                                        Expiration Date
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'type' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('type')}
-                                        className="search-filter-btn"
-                                    >
-                                        Type
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'level' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('level')}
-                                        className="search-filter-btn"
-                                    >
-                                        Level
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('keywords')}
-                                        className="search-filter-btn"
-                                    >
-                                        Keywords
-                                    </Button>
-                                    <Button
-                                        variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
-                                        onClick={() => handleFilterClick('groups')}
-                                        className="search-filter-btn"
-                                    >
-                                        Groups
-                                    </Button>
-                                </div>
-                                <div className="mb-3">
-                                    Applied Filters:
-                                    <span
-                                        style={{ marginRight: '10px'}}
-                                    />
-                                    {(Object.entries(filters).map(([filter, value]) => (
-                                        value && (
-                                            <Badge
-                                                key={filter}
-                                                pill
-                                                variant="info"
-                                                className="mr-2 badge-clickable"
+                    </Row>
+                        
+                        <Row>
+                            <Col xs="3">
+                                { props.loggedIn ? 
+                                    <Container>
+                                        <Row>
+                                            <Col style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                                                <Button variant='primary' onClick={() => navigate('/')}>Main Page</Button>
+                                            </Col>
+                                        </Row>
+                                    </Container>
+                                : ''}
+                                <Card className="mb-4" style={{marginTop: '20px'}}>
+                                    <Card.Body>
+                                        <div className="mb-3">
+                                            <div display="inline-block ">Filter by: </div>
+                                            <Button
+                                                variant={activeFilter === 'title' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('title')}
+                                                className="search-filter-btn"
                                             >
-                                                {filter}
-                                                :
-                                                {filter === 'title' ? value : ''}
-                                        {filter === 'professor' ? professors.find((a) => a.id == value).surname : ''}
-                                        {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : ''}
-                                        {filter === 'level' ? ((value==1) ? 'Bachelor' : 'Master') : ''}
-                                                {(filter === 'type' || filter === 'keywords' || filter === 'groups') ? ' ...' : ''}
-                                                <span
-                                                    className="badge-close"
-                                                    onClick={() => handleRemoveFilter(filter)}
-                                                    style={{ cursor: 'pointer' }}
-                                                >
-                                                    &times;
-                                                </span>
-                                            </Badge>
-                                        )
-                                    )))}
-                                </div>
-                                {activeFilter && (
-                                    <Form className="mt-3" onSubmit={(ev) => { ev.preventDefault(); handleApplyFilter(); }}>
-                                        {activeFilter === 'title' && (
-                                            <Form.Group controlId='titleFilter'>
-                                                <Form.Label>Filter by title:</Form.Label>
-                                                <Form.Control
-                                                    type="text"
-                                                    name="title"
-                                                    placeholder={`Enter title...`}
-                                                    value={filters.title || ''}
-                                                    onChange={handleFilterChange}
-                                                />
-                                            </Form.Group>
-                                        )}
-                                        {activeFilter === 'professor' && (
-                                            <div>
-                                                <Form.Group controlId="professorFilter">
-                                                    <Form.Label>Filter by Professor:</Form.Label>
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="professor"
-                                                        value={filters.professor || ''}
-                                                        onChange={handleFilterChange}
+                                                Title
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'professor' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('professor')}
+                                                className="search-filter-btn"
+                                            >
+                                                Professor
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'expirationDate' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('expirationDate')}
+                                                className="search-filter-btn"
+                                            >
+                                                Expiration Date
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'type' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('type')}
+                                                className="search-filter-btn"
+                                            >
+                                                Type
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'level' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('level')}
+                                                className="search-filter-btn"
+                                            >
+                                                Level
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'keywords' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('keywords')}
+                                                className="search-filter-btn"
+                                            >
+                                                Keywords
+                                            </Button>
+                                            <Button
+                                                variant={activeFilter === 'groups' ? 'info' : 'outline-info'}
+                                                onClick={() => handleFilterClick('groups')}
+                                                className="search-filter-btn"
+                                            >
+                                                Groups
+                                            </Button>
+                                        </div>
+                                        <div className="mb-3">
+                                            Applied Filters:
+                                            <span
+                                                style={{ marginRight: '10px'}}
+                                            />
+                                            {(Object.entries(filters).map(([filter, value]) => (
+                                                value && (
+                                                    <Badge
+                                                        key={filter}
+                                                        pill
+                                                        variant="info"
+                                                        className="mr-2 badge-clickable"
                                                     >
-                                                        <option value="">All Professors</option>
-                                                        {professors.map((professor) => (
-                                                            <option key={professor.id} value={professor.id}>
-                                                                {`${professor.surname} ${professor.name}`}
-                                                            </option>
-                                                        ))}
-                                                    </Form.Control>
-                                                </Form.Group>
-                                            </div>
-                                        )}
-                                        {activeFilter === 'expirationDate' && (
-                                            <FormGroup>
-                                                <Form.Label>Filter by expiration date:</Form.Label>
-                                                <input
-                                                    type="date"
-                                                    name="date"
-                                                    value={filters.date || ''}
-                                                    onChange={handleFilterChange}
-                                                />
-                                                <span
-                                                    style={{ marginRight: '10px'}}
-                                                />
-                                            </FormGroup>
-                                        )}
-                                        {activeFilter === 'level' && (
-                                            <div>
-                                                <Form.Group controlId="levelFilter">
-                                                    <Form.Label>Filter by Level:</Form.Label>
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="level"
-                                                        value={filters.level || ''}
-                                                        onChange={handleFilterChange}
-                                                    >
-                                                        <option value=''>All Levels</option>
-                                                        <option value='1'>Bachelor</option>
-                                                        <option value='2'>Master</option>
-                                                    </Form.Control>
-                                                </Form.Group>
-                                            </div>
-                                        )}
-                                        {activeFilter === 'type' && (
-                                            <div>
-                                                <Form.Group controlId="typeFilter">
-                                                    <Form.Label>Filter by type:</Form.Label>
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="type"
-                                                        value={filters.type || []}
-                                                        onChange={handleFilterChange}
-                                                        multiple={true}
-                                                    >
-                                                        {types.map((type) => (
-                                                            <option key={type} value={type}>
-                                                                {type}
-                                                            </option>
-                                                        ))}
-                                                    </Form.Control>
+                                                        {filter}
+                                                        :
+                                                        {filter === 'title' ? value : ''}
+                                                {filter === 'professor' ? professors.find((a) => a.id == value).surname : ''}
+                                                {filter === 'expirationDate' ? new Date(value).toLocaleDateString() : ''}
+                                                {filter === 'level' ? ((value==1) ? 'Bachelor' : 'Master') : ''}
+                                                        {(filter === 'type' || filter === 'keywords' || filter === 'groups') ? ' ...' : ''}
+                                                        <span
+                                                            className="badge-close"
+                                                            onClick={() => handleRemoveFilter(filter)}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
+                                                            &times;
+                                                        </span>
+                                                    </Badge>
+                                                )
+                                            )))}
+                                        </div>
+                                        {activeFilter && (
+                                            <Form className="mt-3" onSubmit={(ev) => { ev.preventDefault(); handleApplyFilter(); }}>
+                                                {activeFilter === 'title' && (
+                                                    <Form.Group controlId='titleFilter'>
+                                                        <Form.Label>Filter by title:</Form.Label>
+                                                        <Form.Control
+                                                            type="text"
+                                                            name="title"
+                                                            placeholder={`Enter title...`}
+                                                            value={filters.title || ''}
+                                                            onChange={handleFilterChange}
+                                                        />
+                                                    </Form.Group>
+                                                )}
+                                                {activeFilter === 'professor' && (
+                                                    <div>
+                                                        <Form.Group controlId="professorFilter">
+                                                            <Form.Label>Filter by Professor:</Form.Label>
+                                                            <Form.Control
+                                                                as="select"
+                                                                name="professor"
+                                                                value={filters.professor || ''}
+                                                                onChange={handleFilterChange}
+                                                            >
+                                                                <option value="">All Professors</option>
+                                                                {professors.map((professor) => (
+                                                                    <option key={professor.id} value={professor.id}>
+                                                                        {`${professor.surname} ${professor.name}`}
+                                                                    </option>
+                                                                ))}
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'expirationDate' && (
+                                                    <FormGroup>
+                                                        <Form.Label>Filter by expiration date:</Form.Label>
+                                                        <input
+                                                            type="date"
+                                                            name="date"
+                                                            value={filters.date || ''}
+                                                            onChange={handleFilterChange}
+                                                        />
+                                                        <span
+                                                            style={{ marginRight: '10px'}}
+                                                        />
+                                                    </FormGroup>
+                                                )}
+                                                {activeFilter === 'level' && (
+                                                    <div>
+                                                        <Form.Group controlId="levelFilter">
+                                                            <Form.Label>Filter by Level:</Form.Label>
+                                                            <Form.Control
+                                                                as="select"
+                                                                name="level"
+                                                                value={filters.level || ''}
+                                                                onChange={handleFilterChange}
+                                                            >
+                                                                <option value=''>All Levels</option>
+                                                                <option value='1'>Bachelor</option>
+                                                                <option value='2'>Master</option>
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'type' && (
+                                                    <div>
+                                                        <Form.Group controlId="typeFilter">
+                                                            <Form.Label>Filter by type:</Form.Label>
+                                                            <Form.Control
+                                                                as="select"
+                                                                name="type"
+                                                                value={filters.type || []}
+                                                                onChange={handleFilterChange}
+                                                                multiple={true}
+                                                            >
+                                                                {types.map((type) => (
+                                                                    <option key={type} value={type}>
+                                                                        {type}
+                                                                    </option>
+                                                                ))}
+                                                            </Form.Control>
 
-                                                </Form.Group>
-                                            </div>
+                                                        </Form.Group>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'keywords' && (
+                                                    <div>
+                                                        <Form.Group controlId="keywordsFilter">
+                                                            <Form.Label>Filter by keywords:</Form.Label>
+                                                            <Form.Control
+                                                                as="select"
+                                                                name="keywords"
+                                                                value={filters.keywords || []}
+                                                                onChange={handleFilterChange}
+                                                                multiple={true}
+                                                            >
+                                                                {keywords.map((keyword) => (
+                                                                    <option key={keyword} value={keyword}>
+                                                                        {keyword}
+                                                                    </option>
+                                                                ))}
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                    </div>
+                                                )}
+                                                {activeFilter === 'groups' && (
+                                                    <div>
+                                                        <Form.Group controlId="groupsFilter">
+                                                            <Form.Label>Filter by groups:</Form.Label>
+                                                            <Form.Control
+                                                                as="select"
+                                                                name="groups"
+                                                                value={filters.groups || []}
+                                                                onChange={handleFilterChange}
+                                                                multiple={true}
+                                                            >
+                                                                {groups.map((group) => (
+                                                                    <option key={group} value={group}>
+                                                                        {group}
+                                                                    </option>
+                                                                ))}
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                    </div>
+                                                )}
+                                                <Button
+                                                    variant="success"
+                                                    onClick={handleApplyFilter}
+                                                    style={{marginTop:'10px'}}
+                                                >
+                                                    Apply Filter
+                                                </Button>
+                                                {' '}
+                                                <Button
+                                                    variant="outline-secondary"
+                                                    onClick={handleCancelFilter}
+                                                    style={{marginTop:'10px'}}
+                                                >
+                                                    Close Filter
+                                                </Button>
+                                            </Form>
                                         )}
-                                        {activeFilter === 'keywords' && (
-                                            <div>
-                                                <Form.Group controlId="keywordsFilter">
-                                                    <Form.Label>Filter by keywords:</Form.Label>
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="keywords"
-                                                        value={filters.keywords || []}
-                                                        onChange={handleFilterChange}
-                                                        multiple={true}
-                                                    >
-                                                        {keywords.map((keyword) => (
-                                                            <option key={keyword} value={keyword}>
-                                                                {keyword}
-                                                            </option>
-                                                        ))}
-                                                    </Form.Control>
-                                                </Form.Group>
-                                            </div>
-                                        )}
-                                        {activeFilter === 'groups' && (
-                                            <div>
-                                                <Form.Group controlId="groupsFilter">
-                                                    <Form.Label>Filter by groups:</Form.Label>
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="groups"
-                                                        value={filters.groups || []}
-                                                        onChange={handleFilterChange}
-                                                        multiple={true}
-                                                    >
-                                                        {groups.map((group) => (
-                                                            <option key={group} value={group}>
-                                                                {group}
-                                                            </option>
-                                                        ))}
-                                                    </Form.Control>
-                                                </Form.Group>
-                                            </div>
-                                        )}
-                                        <Button
-                                            variant="success"
-                                            onClick={handleApplyFilter}
-                                            style={{marginTop:'10px'}}
-                                        >
-                                            Apply Filter
-                                        </Button>
-                                        {' '}
-                                        <Button
-                                            variant="outline-secondary"
-                                            onClick={handleCancelFilter}
-                                            style={{marginTop:'10px'}}
-                                        >
-                                            Close Filter
-                                        </Button>
-                                    </Form>
-                                )}
-                            </Card.Body>
-                        </Card>
-                        {/* this items per page count is a sister variable with the 10% height in pagination.css in the .thesis-proposal class filter
-                            if you change one you have to change the other 
-                            I'm using fixed height rows because that way it avoids having the navigation bar at the bottom of the page shift around because of the table constant resizing    
-                        */}
-                       <PaginatedProposals itemsPerPage={10} proposalList={proposals} getProfessorsInformation={getProfessorsInformation} professors={professors}/>
-                    </div>
+                                    </Card.Body>
+                                </Card>
+                                {/* this items per page count is a sister variable with the 10% height in pagination.css in the .thesis-proposal class filter
+                                    if you change one you have to change the other 
+                                    I'm using fixed height rows because that way it avoids having the navigation bar at the bottom of the page shift around because of the table constant resizing    
+                                */}
+                            </Col>
+                            <Col>
+                                    <Card className="mb-4" style={{marginTop: '20px'}}>
+                                    <PaginatedProposals itemsPerPage={10} proposalList={proposals} getProfessorsInformation={getProfessorsInformation} professors={professors}/>
+                                    </Card>
+                            </Col>
+                        </Row>
+                        
+                    </Container>
+                    //</div>
                 )
             : ''}
         </>

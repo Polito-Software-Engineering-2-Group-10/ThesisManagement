@@ -123,8 +123,6 @@ function SearchForProposals(props) {
     },[props.user,dirty2])
 
     useEffect(() => {
-        console.log(studInfo);
-        console.log(filters);
         if(props.user && studInfo && props.user.role==="student")
         {  
             if (Object.keys(filters).length === 0) {

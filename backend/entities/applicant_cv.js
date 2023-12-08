@@ -33,6 +33,11 @@ class ApplicantCvTable {
         const result = await this.db.executeQueryExpectOne(query, getNum(proposal_id), getNum(student_id), getNum(teacher_id), getNum(application_id), filepath, `Applicant CV failed to insert`);
         return ApplicantCv.fromRow(result);
     }
+    async getByApplicationId(application_id) {
+        const query = `SELECT * FROM applicant_cv WHERE application_id = $1`;
+        const result = await this.db.executeQueryExpectAny(query, getNum(application_id));
+        return result.map(ApplicantCv.fromRow);
+    }
 }
 
 export { ApplicantCv, ApplicantCvTable };

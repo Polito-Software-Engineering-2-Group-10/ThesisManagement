@@ -25,6 +25,9 @@ import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
 import { check, validationResult } from "express-validator"; // validation middleware
 import dayjs from 'dayjs';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+
 const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
@@ -345,6 +348,61 @@ app.post('/api/teacher/insertProposal',
 
     }
 );
+
+/*Get a CV based on an application to a thesis*/
+app.get('/api/teacher/getGeneratedCV/:applicationid', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        const application = await applicationTable.getById(req.params.applicationid);
+        const careerData = await careerTable.getByStudentId(application.student_id);
+        const studentData = await studentTable.getById(application.student_id);
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        })
+        doc.setFontSize(20);
+        doc.text('Curriculum Vitae', 105, 15, { align: 'center' });
+        doc.setFontSize(15);
+        doc.text('Student Information', 105, 30, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Name: ${studentData.name}`, 10, 40);
+        doc.text(`Surname: ${studentData.surname}`, 10, 50);
+        doc.text(`Email: ${studentData.email}`, 10, 60);
+        doc.text(`Cod degree: ${studentData.cod_degree}`, 10, 70);
+        doc.text(`Enrollment year: ${dayjs(studentData.enrollment_year).format('YYYY-MM-DD')}`, 10, 80);
+        doc.setFontSize(15);
+        doc.text('Career', 105, 100, { align: 'center' });
+        doc.setFontSize(12);
+        doc.autoTable( 
+            {
+                head: [['Cod Course', 'Title Course', 'CFU', 'Grade', 'Date']],
+                body: careerData.map(c => [c.cod_course, c.title_course, c.cfu, c.grade, dayjs(c.date).format('YYYY-MM-DD')]),
+                startY: 110
+            },
+        );
+        const blob = doc.output();
+        res.send(blob);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving CV ${err}` });
+    }
+});
+
+/*Get a CV based on an application to a thesis*/
+app.get('/api/teacher/getSubmittedCV/:applicationid', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        const cvs = await applicantCvTable.getByApplicationId(req.params.applicationid);
+        if (cvs.length == 0) {
+            return res.status(404).json({ error: `No CV submitted for this application` });
+        } else {
+            const cv = cvs[0];
+            const filepath = `./public/files/${cv.filepath}`;
+            res.download(filepath);
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(503).json({ error: `Database error during retrieving CV ${err}` });
+    }
+});
 
 /*Apply for a thesis proposal*/
 app.post('/api/student/applyProposal',

@@ -6,4 +6,8 @@
     --red:#ea4e69;   
     --danger: var(--red);
     --danger-hover: var(--darkred);
+    --prussiaBlue: #002B49;
+    --samlButton: #0066CC;
+    --cancelButton: #B61601;
+    --orange: #EF7B00;
 }

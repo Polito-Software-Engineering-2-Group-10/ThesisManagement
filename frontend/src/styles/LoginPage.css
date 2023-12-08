@@ -1,24 +1,26 @@
+@import "colors.css";
+
 .title{
-    color:  #002B49;
+    color:  var(--prussiaBlue);
 }
 
 .buttons{   
-    background-color:  #002B49;
+    background-color:  var(--prussiaBlue);
     color: white;
-    border-color: #002B49;
+    border-color: var(--prussiaBlue);
 }
 
 .buttons2{
-    background-color:  #0066CC;
+    background-color:  var(--samlButton);
     color: white;
-    border-color: #0066CC;
+    border-color: var(--samlButton);
 
 }
 
 .buttons3{
-    background-color:  #B61601;
+    background-color:  var(--cancelButton);
     color: white;
-    border-color: #B61601;
+    border-color:  var(--cancelButton);
 
 }
 

@@ -191,28 +191,24 @@ async function getApplicationsListTeacher() {
 }
 
 
-function addApplication(application) {
-    return new Promise((resolve, reject) => {
-        fetch(URL + `/student/applyProposal`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(Object.assign({}, application, { proposal_id: application.proposal_id, apply_date: dayjs(application.apply_date).format('YYYY-MM-DD') }))
-        }).then((response) => {
-            if (response.ok) {
-                response.json()
-                    .then((id) => resolve(id))
-                    .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
-            } else {
-                // analyze the cause of error
-                response.json()
-                    .then((message) => { reject(message); }) // error message in the response body
-                    .catch(() => { reject({ error: "Cannot parse server response." }) }); // something else
-            }
-        }).catch(() => { reject({ error: "Cannot communicate with the server." }) }); // connection errors
+async function addApplication(application) {
+    const data = new FormData();
+    data.append('file', application.file);
+    data.append('proposal_id', application.proposal_id);
+    data.append('apply_date', dayjs(application.apply_date).format('YYYY-MM-DD'));
+    const response = await fetch(URL + '/student/applyProposal', {
+        method: 'POST',
+        credentials: 'include',
+        body: data
     });
+
+    if (response.ok) {
+        const id = await response.json();
+        return id;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
 }
 
 async function getAllTeachers() {

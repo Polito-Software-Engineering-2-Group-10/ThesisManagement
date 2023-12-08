@@ -14,7 +14,7 @@ function ApplyToProposal(props) {
   const [proposal, setProposal] = useState(null);
   const [timeoutHandle, setTimeoutHandle] = useState(null);
   const notify = useNotification();
-  const [file, setFile] = useState()
+  const [file, setFile] = useState(null)
   
   const upload = () => {
     API.uploadFile(file)
@@ -29,22 +29,19 @@ function ApplyToProposal(props) {
         setProposal(p);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [propId]);
 
   const addApplication = (p_id) => {
 
     const application = {
       proposal_id: p_id,
       apply_date: dayjs(),
+      file: file
     };
     setErrorMessage("");
     props.addApplication(
       application,
       () => {
-        if(file)
-        {
-            upload();
-        }
         notify.success("Application submitted correctly");
         const timeout = setTimeout(() => {
           navigate("/");
@@ -52,7 +49,12 @@ function ApplyToProposal(props) {
         setTimeoutHandle(timeout);
       },
       (err) => {
-        notify.error("You can't apply to the same proposal twice");
+        console.log(err);
+        if (err) {
+            notify.error(err.error);
+        } else {
+            notify.error("Something went wrong, please try again!");
+        }
         //setErrorMessage("You can't apply to the same proposal twice");
       }
     );

@@ -18,7 +18,8 @@ import {
     degreeTable,
     groupTable,
     thesisProposalTable,
-    applicationTable
+    applicationTable,
+    applicantCvTable
 } from './dbentities.js';
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
@@ -77,6 +78,17 @@ const isLoggedInAsClerk = (req, res, next) => {
         return next();
     res.status(401).json({ error: 'Not authenticated' });
 };
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      return cb(null, "./public/files")
+    },
+    filename: function (req, file, cb) {
+      return cb(null, `${Date.now()}_${file.originalname}`)
+    }
+})
+  
+const upload = multer({storage})
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {
@@ -341,6 +353,7 @@ app.post('/api/student/applyProposal',
         check('proposal_id').isInt(),
         check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
     ],
+    upload.single('file'),
     async (req, res) => {
 
         const errors = validationResult(req);
@@ -355,9 +368,13 @@ app.post('/api/student/applyProposal',
         try {
             const existingApplication = await applicationTable.getCountByFK(Applyproposal.student_id, Applyproposal.proposal_id);
             if (existingApplication.count > 0) {
-                return res.status(400).json({ error: `The student already applied to this proposal` });
+                return res.status(400).json({ error: `You can't apply to the same proposal twice` });
             }
             const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id, Applyproposal.proposal_id, Applyproposal.apply_date);
+            if (req.file) {
+                const proposalInfo = await thesisProposalTable.getById(Applyproposal.proposal_id);
+                await applicantCvTable.addApplicantCv(Applyproposal.proposal_id, Applyproposal.student_id, proposalInfo.teacher_id, applypropID.id, req.file.filename);
+            }
             res.json(applypropID);
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
@@ -612,22 +629,9 @@ app.post("/api/send_email",
     });
 
 /*UPLOAD FILE API*/
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      return cb(null, "./public/files")
-    },
-    filename: function (req, file, cb) {
-      return cb(null, `${Date.now()}_${file.originalname}`)
-    }
-  })
-  
-  const upload = multer({storage})
-  
-  app.post('/upload', upload.single('file'), (req, res) => {
-    console.log(req.body)
-    console.log(req.file)
-  })
-
+app.post('/upload', upload.single('file'), (req, res) => {
+    return res.json({uploaded: true})
+})
 
 /*END API*/
 

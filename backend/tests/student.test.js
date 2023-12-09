@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsStudent } from '../index.js';
-import {applicationTable, studentTable, thesisProposalTable} from '../dbentities.js';
+import {applicationTable, studentTable, thesisProposalTable, thesisRequestTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
@@ -234,5 +234,93 @@ describe('POST /api/student/ProposalsList', () => {
         const response = await request(app).post('/api/student/ProposalsList').send({});
         expect(response.status).toBe(503);
         expect(response.body).toEqual({error: 'Database error during retrieving application List Error: Database error'});
+    });
+});
+
+describe('POST /api/student/applyRequest/:thesisid', () => {
+    test('Should successfully create a start request for a proposal and return its details', async () => {
+        const startRequest = {
+            title: 'Title',
+            description: 'Description',
+            supervisor: 'Supervisor@polito.it',
+            co_supervisor: ['Co-supervisor1', 'Co-supervisor2'],
+            apply_date: '2023-12-12'
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getCountByFK').mockImplementationOnce(() => {
+            return {count: 0};
+        });
+        jest.spyOn(thesisRequestTable, 'addThesisRequestWithDate').mockImplementationOnce(() => startRequest);
+        const response = await request(app).post('/api/student/applyRequest/1')
+            .send(startRequest);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(startRequest);
+    });
+
+    test('Should throw an error with 422 status code when a validation error occurs', async () => {
+        const startRequest = {
+            title: 'Title',
+            description: 'Description',
+            supervisor: 'Supervisor@polito.it',
+            co_supervisor: 18,
+            apply_date: 'invalid_date'
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        const response = await request(app).post('/api/student/applyRequest/1')
+            .send(startRequest);
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 400 status code if the student has already submitted a request for the proposal', async () => {
+        const startRequest = {
+            title: 'Title',
+            description: 'Description',
+            supervisor: 'Supervisor@polito.it',
+            co_supervisor: ['Co-supervisor1', 'Co-supervisor2'],
+            apply_date: '2023-12-12'
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getCountByFK').mockImplementationOnce(() => {
+            return {count: 1};
+        });
+        const response = await request(app).post('/api/student/applyRequest/1')
+            .send(startRequest);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ error: `The student already request to this thesis before!` });
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        const startRequest = {
+            title: 'Title',
+            description: 'Description',
+            supervisor: 'Supervisor@polito.it',
+            co_supervisor: ['Co-supervisor1', 'Co-supervisor2'],
+            apply_date: '2023-12-12'
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getCountByFK').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).post('/api/student/applyRequest/1')
+            .send(startRequest);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: `Database error during retrieving application List: Error: Database error` });
     });
 });

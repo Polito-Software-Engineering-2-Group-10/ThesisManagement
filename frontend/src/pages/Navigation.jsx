@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, Button, Form, Modal } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
@@ -16,6 +16,10 @@ function Navigation(props) {
     const [showModal, setShowModal] = useState(false);
     const [virtualClock, setVirtualClock] = useState(new Date().toISOString().substring(0, 10));
     const [temporaryClock, setTemporaryClock] = useState(new Date().toISOString().substring(0, 10));
+    
+
+    const location = useLocation();
+    const [title, setTitle] = useState(location.state?.pageTitle ? location.state.pageTitle : 'Thesis proposals');
 
     const handleVirtualClockClick = (set) => {
         if(set){
@@ -42,7 +46,21 @@ function Navigation(props) {
     };
 
     return (
-      <Navbar className="color-nav" expand="lg" data-bs-theme="dark">
+      <div>
+        
+        <Container id="navbarTitle" >
+            <img 
+                    width="260"
+                    height="115"
+                    className="d-inline-block align-center"
+                    align="center"
+                    src="/src/img/LogoBlu.svg" />
+
+            <h1 className="title">{title}</h1>  
+
+        </Container>
+        
+              <Navbar className="color-nav" expand="lg" data-bs-theme="dark">
     
         <Container>
           <Navbar.Brand href="/">
@@ -133,6 +151,7 @@ function Navigation(props) {
           </Modal>
         </Container>
       </Navbar>
+    </div>
     );
 }
 

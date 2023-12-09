@@ -9,7 +9,7 @@ function MainPage(props){
             { props.loggedIn ? 
                 <>
                     <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
-                    <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail}></Infobox>
+                    <Infobox loggedIn={props.loggedIn} user={props.user} userDetail={props.userDetail} setProposalDirty={props.setProposalsDirty} proposalList={props.proposalList}></Infobox>
                 </>
                 :
                 <SearchForProposals logout={props.logout} loggedIn={props.loggedIn} user={props.user}></SearchForProposals>}

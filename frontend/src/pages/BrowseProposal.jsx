@@ -23,11 +23,6 @@ function BrowseProposal(props) {
 
     return (
         <>
-            <Navigation
-                logout={props.logout}
-                loggedIn={props.loggedIn}
-                user={props.user}
-            />
             <ToastContainer/>
             <Container>
                 <ProposalTable
@@ -132,18 +127,10 @@ function ProposalTable(props) {
         <Container className="proposal-table">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <Button
-                    onClick={handleBackToMainClick}
-                    variant="outline-dark"
-                    className="d-flex align-items-center"
-                >
-                    <FontAwesomeIcon icon={faArrowLeft} className="mr-2" style={{ marginRight: '8px' }} />
-                    <span>Back to main page</span>
-                </Button>
-
-                <Button
                     onClick={handleViewArchivedClick}
                     variant="outline-dark"
                     className="d-flex align-items-center"
+                    id='view-archived-proposals'
                 >
                     <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
                     <span>View Archived Proposals</span>

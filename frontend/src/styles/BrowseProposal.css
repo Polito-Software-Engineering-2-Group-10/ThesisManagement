@@ -41,3 +41,7 @@
 .proposal-table {
     margin-top: 2em;
 }
+
+#view-archived-proposals {
+    margin-left: auto;
+}

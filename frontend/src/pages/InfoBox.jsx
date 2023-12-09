@@ -2,7 +2,7 @@ import {Container, Button, Card, Col, Row} from "react-bootstrap"
 import dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
 import "/src/index.css"
-
+import BrowseProposal from "./BrowseProposal";
 
 function InfoBox(props){
 
@@ -12,54 +12,11 @@ function InfoBox(props){
         <>
         { (props.loggedIn && props.userDetail) ? 
                     ( props.user.role == 'teacher' ?
-                    <Container style={{width: "50%", marginTop: "30px"}}>
-                        <Row>
-                            <Col style={{textAlign: "center"}}>
-                                <h1 style={{textDecorationLine: "underline"}}>Thesis Management Menu</h1>
-                                <div>
-                                    <p>Here you can manage all your thesis proposals and see the state of them all.</p>
-                                    <br></br>
-                                    <ul style={{ textAlign: "center", listStyle: 'none'}}>
-                                        <li>Professor <b>{props.userDetail.name} {props.userDetail.surname}</b></li>
-                                        <li>Group: <b>{props.userDetail.group_name}</b></li>
-                                        <li>Department: <b>{props.userDetail.department_short_name} - {props.userDetail.department_name}</b></li>
-                                    </ul>
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row style={{paddingTop: "30px"}}>
-                            
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                            <Card  onClick={() => navigate('/insert')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
-                                <Card.Body>
-                                    <Card.Title>Insert a new thesis proposal</Card.Title>
-                                </Card.Body>
-                            </Card>
-                            </Col>
-                        </Row>
-                        <Row style={{paddingTop: "30px"}}>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                {/* <Card style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2"> */}
-                                <Card  onClick={() => navigate('/browseApp')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto'}} bg="primary" text="light" className="mb-2">
-                                <Card.Body>
-                                    <Card.Title>Browse all Applications</Card.Title>
-                                    <Card.Text>
-                                        if you want to accept or reject one
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                            </Col>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                <Card onClick={() => navigate('/proposal')} style={{ width: '18rem', cursor: 'pointer', margin: '0 auto', verticalAlign: "center"}} bg="primary" text="light" className="mb-2">
-                                <Card.Body>
-                                    <Card.Title >Browse your proposals</Card.Title>
-                                    <Card.Text>
-                                        and operate on them
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                            </Col>
-                        </Row>
+                    <Container >
+                        
+                    <BrowseProposal setProposalDirty={props.setProposalsDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
+
+
                     </Container>
                     :
                     // student

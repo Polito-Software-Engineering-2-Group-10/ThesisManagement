@@ -1,6 +1,7 @@
 import {Container, Button, Card, Col, Row} from "react-bootstrap"
 import dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
+import "/src/index.css"
 
 
 function InfoBox(props){

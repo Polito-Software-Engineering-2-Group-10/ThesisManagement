@@ -7,3 +7,10 @@
 .color-nav{
     background-color: var(--prussiaBlue);
 }
+
+
+.btn {
+    font-size: .75em;
+    font-family: Poppins-Bold;
+    padding: 0.5em;
+}

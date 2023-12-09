@@ -9,7 +9,7 @@ import API from '../API';
 import useNotification from '../hooks/useNotifcation';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faArrowRotateRight} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faArrowRotateRight, faBoxArchive} from "@fortawesome/free-solid-svg-icons";
 import {ToastContainer} from "react-toastify";
 
 function BrowseProposal(props) {
@@ -145,7 +145,7 @@ function ProposalTable(props) {
                     variant="outline-dark"
                     className="d-flex align-items-center"
                 >
-                    <FontAwesomeIcon icon={faArrowRotateRight} className="mr-2" style={{ marginRight: '8px' }} />
+                    <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
                     <span>View Archived Proposals</span>
                 </Button>
 

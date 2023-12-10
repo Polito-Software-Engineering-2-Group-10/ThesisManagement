@@ -1,0 +1,5 @@
+@import "colors.css";
+.btn:hover{
+    background-color: var(--prussiaBlue);
+    color:var(--orange) !important;
+}

@@ -58,13 +58,14 @@
 {
     margin-top:10px;
     background-color: var(--dark-green);
-
+    color:white !important;
 }
 
 .cancel-btn
 {
     margin-top: 10px;
     background-color: var(--cancelButton);
+    color:white !important;
 }
 
 

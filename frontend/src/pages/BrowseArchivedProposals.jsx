@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import {ToastContainer} from "react-toastify";
-
+import "../styles/BrowseArchivedProposal.css";
 function BrowseArchivedProposals(props) {
     const [archivedProposals, setArchivedProposals] = useState(null);
 
@@ -96,7 +96,7 @@ function ProposalTable(props) {
     };
 
     const handleViewActiveClick = () => {
-        navigate('/proposal');
+        navigate('/');
     };
 
     const generateRow = (result) => {

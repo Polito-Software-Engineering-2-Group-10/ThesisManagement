@@ -1,5 +1,11 @@
 @import "colors.css";
 
+
+#basic-nav-dropdown
+{
+    width:max-content;
+}
+
 .brand {
     cursor: pointer;
 }
@@ -118,7 +124,42 @@ a:hover, #nav-links > a:hover {
     flex-wrap: wrap;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 981px)
+{
+    .color-nav {
+        height: 4.5em;
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (max-width: 695px) {
+    .color-nav {
+        height: 4em;
+        flex-wrap: wrap;
+    }
+    
+
+    .color-nav  .container
+    {
+        --bs-gutter-x: 0;
+    }
+    
+    .navbar-nav{
+        background-color: var(--prussiaBlue);
+        width: 100%;
+    }
+    
+    .navbar-nav #nav-links{
+        
+        display: flex;
+        flex-direction: column;
+        align-items: normal;
+    }
+    #basic-nav-dropdown {
+        width: max-content;
+        margin: 0.5em;
+    }
+
     #navbarTitle {
         flex-direction: column;
         align-items: center;

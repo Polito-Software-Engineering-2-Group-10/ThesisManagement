@@ -2,25 +2,32 @@
 
 .title{
     color:  var(--prussiaBlue);
+    text-align: center;
 }
 
 .buttons{   
     background-color:  var(--prussiaBlue);
-    color: white;
+    color: white !important;
     border-color: var(--prussiaBlue);
 }
 
 .buttons2{
     background-color:  var(--samlButton);
-    color: white;
+    color: white !important;
     border-color: var(--samlButton);
 
 }
 
 .buttons3{
     background-color:  var(--cancelButton);
-    color: white;
+    color: white !important;
     border-color:  var(--cancelButton);
 
 }
 
+@media screen and (max-width: 768px)  {
+    .col-6 {
+        width: 100%;
+    }
+    
+}

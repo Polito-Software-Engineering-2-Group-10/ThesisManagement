@@ -1,3 +1,4 @@
+@import "src/styles/colors.css";
 .pagination {
     display: flex;
     width: 100%;
@@ -16,4 +17,9 @@
 .search-filter-btn {
     margin-right: 10px;
     margin-left: 10px;
+}
+
+a[rel="canonical"]{
+    background-color: var(--prussiaBlue) !important ;
+    border-color: var(--prussiaBlue);
 }

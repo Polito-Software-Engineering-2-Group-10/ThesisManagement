@@ -43,7 +43,7 @@ function ApplyToProposal(props) {
     const handleGoBack = () => {
         if(timeoutHandle) clearTimeout(timeoutHandle);
         setTimeoutHandle(null);
-        navigate('/search');
+        navigate('/');
     }
 
     return (

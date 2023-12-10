@@ -11,7 +11,7 @@ import ReactPaginate from 'react-paginate';
 
 function Proposals( { currentProposals, getProfessorsInformation, professors, perPage }) {
     return (
-    <Table striped bordered hover responsive className="items" style={{
+    <Table  bordered hover responsive className="items" style={{
         height: currentProposals?.length === perPage ? '100vh' : `${currentProposals?.length * 100/perPage}vh`
     }}>                            
         <thead>

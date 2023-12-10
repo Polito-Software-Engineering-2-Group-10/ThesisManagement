@@ -66,3 +66,13 @@
     margin-top: 10px;
     background-color: var(--cancelButton);
 }
+
+
+.text-primary {
+    color: var(--prussiaBlue) !important;
+    font-family: Poppins-SemiBold;
+}
+
+button{
+    color: var(--prussiaBlue) !important;
+}

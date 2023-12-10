@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
 import "/src/index.css"
 import BrowseProposal from "./BrowseProposal";
-
+import SearchForProposals from "./SearchForProposals";
 function InfoBox(props){
 
     const navigate = useNavigate();
@@ -20,7 +20,16 @@ function InfoBox(props){
                     </Container>
                     :
                     // student
+                    <Container>
+
+                        <SearchForProposals loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
+
+                    </Container>
+                    /*
                     <Container style={{width: "50%", marginTop: "30px"}}>
+
+
+                       
                         <Row>
                             <Col style={{textAlign: "center"}}>
                                 <h1 style={{textDecorationLine: "underline"}}>Thesis Management Menu</h1>
@@ -58,6 +67,7 @@ function InfoBox(props){
                             </Col>
                         </Row>
                     </Container>
+                        */
                     )
                  : 
                  //pagina non autenticato

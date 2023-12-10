@@ -1,4 +1,4 @@
-import { Navbar, Nav, Container, Button, Form, Modal } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Form, Modal, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import AppContext from '../AppContext';
@@ -8,6 +8,7 @@ import API from '../API'
 import "../styles/navigation.css";
 
 function Navigation(props) {
+  
     const { setProposalsDirty } = useContext(AppContext);
     
     // necessary to use navigate() inside a function
@@ -19,7 +20,8 @@ function Navigation(props) {
     
 
     const location = useLocation();
-    const [title, setTitle] = useState(location.state?.pageTitle ? location.state.pageTitle : 'Thesis proposals');
+    // const [title, setTitle] = useState(location.state?.pageTitle ? location.state.pageTitle : 'Thesis proposals');
+    const title = "Thesis Management";
 
     const handleVirtualClockClick = (set) => {
         if(set){
@@ -46,74 +48,53 @@ function Navigation(props) {
     };
 
     return (
-      <div>
+      <div id="navbar">
         
         <Container id="navbarTitle" >
-            <img 
-                    width="260"
-                    height="115"
-                    className="d-inline-block align-center"
-                    align="center"
-                    src="/src/img/LogoBlu.svg" />
+            <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')}/>
 
-            <h1 className="title">{title}</h1>  
-
-        </Container>
+            <h1 className="title" onClick={()=>navigate('/')}>{title}</h1>  
         
-              <Navbar className="color-nav" expand="lg" data-bs-theme="dark">
-    
-        <Container>
-          <Navbar.Brand href="/">
-            
-            Polito Thesis Management
-          </Navbar.Brand>
-          {props.loggedIn && (
-            <Nav
-              className="justify-content-center"
-              
-            >
-              <Nav.Item className="mt-2">
-                <span
-                  style={{
-                    fontSize: "18px",
-                    color: "rgba(255, 255, 255, 0.7)",
-                  }}
-                >
-                  {virtualClock}
-                </span>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link>
+        {props.loggedIn && (
+            <Container  id="navbarClock">
+                  <p>{virtualClock}</p>
                   <i
-                    className="bi bi-pencil mx-2"
+                    className="bi bi-calendar"
                     onClick={handleEditClick}
                   ></i>
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
+            </Container>
           )}
-          <div className="d-flex justify-content-center align-items-center flex-grow-1"></div>
+        </Container>
+        
+        <Navbar className="color-nav" expand="lg" data-bs-theme="dark">
+        <Container>
+        
+        
           {props.loggedIn ? (
-            <Nav className="justify-content-end">
-              <Nav.Item className="mt-1" style={{ marginRight: "20px" }}>
-                <span
-                  style={{
-                    fontSize: "18px",
-                    color: "rgba(255, 255, 255, 0.7)",
-                  }}
-                >
-                  Logged in as:{" "}
-                  <u>
-                    {props.user.name} {props.user.surname}
-                  </u>
-                </span>
-              </Nav.Item>
-              <Nav.Item>
-                <Button className="mx-2" variant="light" onClick={props.logout}>
-                  <i className="bi bi-box-arrow-left"></i> LOGOUT
-                </Button>
-              </Nav.Item>
-            </Nav>
+            
+            <>
+            <div id="nav-links">
+              {props.user?.role==="teacher"?
+             
+              <>
+                <Nav.Link onClick={()=>navigate("/insert")}>Insert proposal</Nav.Link>
+                <Nav.Link onClick={()=>navigate("/proposals")}>Browse Proposals</Nav.Link>
+                <Nav.Link onClick={()=>navigate("/BrowseApp")}>Browse Applications</Nav.Link>
+              </>
+              :
+              <>
+                <Nav.Link onClick={()=>navigate("/")}>Browse Proposals</Nav.Link>
+                <Nav.Link onClick={()=>navigate("/BrowseAppDec")}>Browse Applications</Nav.Link>
+              </>
+              }
+            </div>
+
+              <NavDropdown title={props.user?.name + " " + props.user?.surname} id="basic-nav-dropdown">
+                  <NavDropdown.Item  onClick={props.logout}>
+                      <Link>Logout</Link>
+                  </NavDropdown.Item>
+              </NavDropdown>
+            </>
           ) : (
             <Nav className="justify-content-end ">
               <Link className="justify-content-center align-self-center" to="/login">

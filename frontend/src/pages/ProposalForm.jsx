@@ -7,6 +7,7 @@ import useNotification from '../hooks/useNotifcation';
 import { ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import dayjs from 'dayjs';
+import "/src/index.css";
 
 
 
@@ -135,7 +136,7 @@ const ProposalForm = (props) => {
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
 
             <div className="my-3 text-center fw-bold fs-1">
-              <p>{isEditing ? 'Update Proposal' : 'Insert a New Proposal'}</p>
+              <h1>{isEditing ? 'Update Proposal' : 'Insert a New Proposal'}</h1>
             </div>
 
             <Form className="block-example rounded mb-1 form-padding mt-5" onSubmit={handleSubmit}>

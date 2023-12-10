@@ -12,3 +12,8 @@
 	font-family: Wotfard-Regular;
 	src: url(../../assets/fonts/Wotfard/wotfard-regular-webfont.ttf);
 }
+
+@font-face {
+	font-family: Poppins-SemiBold;
+	src: url(../../assets/fonts/Poppins/Poppins-SemiBold.ttf);
+}

@@ -21,6 +21,7 @@
     
     align-items: center;
     padding: 1em;
+    width: 100%;
 }
 
 #navbarTitle h1 {
@@ -31,4 +32,126 @@
     display: block;
     width: 100%;
     text-align: center;
+    cursor: pointer;
 }
+
+#navbar p{
+    margin-bottom: 0;
+    color: var(--prussiaBlue);
+    font-family: Poppins-SemiBold;
+    width: max-content;
+}
+
+#navbar i {
+    margin-left: 0.5em;
+    cursor: pointer;
+}
+
+#navbarClock {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: var(--prussiaBlue);
+    width: fit-content;
+}
+
+#navbar{
+    margin-bottom: 2em;
+    top: 0;
+    position: sticky;
+    z-index: 1000;
+    backdrop-filter: blur(33px);
+}
+
+#navbarTitle > img {
+    width: 17em;
+    cursor: pointer;
+}
+
+#navbar .dropdown > a{
+    color: white;
+}
+
+.dropdown-menu{
+    background-color: rgb(240, 240, 240);
+    color: var(--prussiaBlue);
+}
+
+.dropdown-item:hover{
+    background-color: rgb(240, 240, 240);
+}
+
+.dropdown-item > a{
+    color: var(--prussiaBlue);
+    text-decoration: none !important;
+}
+
+#nav-links > a {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+a:hover, #nav-links > a:hover {
+    color: var(--orange) !important;
+}
+
+.dropdown-item:hover {
+    color: var(--orange) !important;
+}
+
+#nav-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+}
+
+#nav-links > a {
+    margin: 0 1em;
+}
+
+
+.color-nav {
+    height: 3em;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 768px) {
+    #navbarTitle {
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    #navbarTitle > h1 {
+        font-size: 2em;
+    }
+
+    #navbarTitle > img {
+        width: 10em;
+    }
+
+    #navbarClock {
+        margin-top: 1em;
+    }
+
+    #navbar {
+        margin-bottom: 1em;
+    }
+
+    #nav-links {
+        margin-top: 1em;
+    }
+
+    #nav-links > a {
+        margin: 0 0.5em;
+    }
+
+    #navbarTitle > img {
+        display: none;
+    }
+    
+}
+

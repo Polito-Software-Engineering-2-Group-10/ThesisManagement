@@ -125,8 +125,7 @@ function SearchForProposals(props) {
     },[props.user,dirty2])
 
     useEffect(() => {
-        console.log(studInfo);
-        console.log(filters);
+        
         if(props.user && studInfo && props.user.role==="student")
         {  
             if (Object.keys(filters).length === 0) {
@@ -263,45 +262,25 @@ function SearchForProposals(props) {
 
     return (
         <>
+         { !props.loggedIn ?
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user}/>
+            :
+            ''
+            
+        }
             { (professors && proposals) ? 
                 (
 
                     /*<div className="container mt-4">*/
                     <Container>
-                    <Row>
-                    
-                        <Container>
-                            <Row>
-                                <Col sm={3}>
-                                <img 
-                                width="260"
-                                height="115"
-                                className="d-inline-block align-center"
-                                align="center"
-                                src="/src/img/LogoBlu.svg" />
-                                </Col>
-                                <Col className="justify-content-center align-self-center"><h1 style={{color: "#002B49"}} className="text-center">Thesis Proposals</h1></Col>
-                                
-                            </Row>
-                        </Container>
-                    </Row>
-                        
+                       
                         <Row>
                             <Col sm={3}>
-                                { props.loggedIn ? 
-                                    <Container>
-                                        <Row>
-                                            <Col style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                                <Button variant='primary' onClick={() => navigate('/')}>Main Page</Button>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                : ''}
+                               
                                 <Card className="mb-4" style={{marginTop: '20px'}}>
                                     <Card.Body>
                                         <div className="mb-3">
-                                            <div display="inline-block ">Filter by: </div>
+                                            <h5 display="inline-block "> Filter by: </h5>
                                             <Button
                                                 
                                                 onClick={() => handleFilterClick('title')}
@@ -353,7 +332,7 @@ function SearchForProposals(props) {
                                             </Button>
                                         </div>
                                         <div className="mb-3">
-                                            Applied Filters:
+                                            <h6>Applied Filters:</h6>
                                             <span
                                                 style={{ marginRight: '10px'}}
                                             />

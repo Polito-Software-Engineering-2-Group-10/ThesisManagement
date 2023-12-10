@@ -133,17 +133,17 @@ function ProposalTable(props) {
                     <Button
                         onClick={handleBackToMainClick}
                         variant="outline-dark"
-                        className="d-flex align-items-center"
+                        className="d-flex align-items-center archived-btn"
                     >
-                        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" style={{ marginRight: '8px' }} />
+                        <FontAwesomeIcon icon={faArrowLeft} className="mr-2 " style={{ marginRight: '8px' }} />
                         <span>Back to main page</span>
                     </Button>
                     <Button
                         onClick={handleViewActiveClick}
                         variant="outline-dark"
-                        className="d-flex align-items-center"
+                        className="d-flex align-items-center archived-btn"
                     >
-                        <FontAwesomeIcon icon={faArrowRotateLeft} className="mr-2" style={{ marginRight: '8px' }} />
+                        <FontAwesomeIcon icon={faArrowRotateLeft} className="mr-2 " style={{ marginRight: '8px' }} />
                         <span>View Active Proposals</span>
                     </Button>
                 </div>

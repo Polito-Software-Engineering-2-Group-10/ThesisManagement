@@ -129,7 +129,7 @@ function ProposalTable(props) {
                 <Button
                     onClick={handleViewArchivedClick}
                     variant="outline-dark"
-                    className="d-flex align-items-center"
+                    className="d-flex align-items-center archived-btn"
                     id='view-archived-proposals'
                 >
                     <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />

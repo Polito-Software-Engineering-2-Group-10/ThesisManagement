@@ -1,5 +1,6 @@
 @import "colors.css";
-.btn:hover{
-    background-color: var(--prussiaBlue);
+.archived-btn:hover{
+    background-color: var(--prussiaBlue)!important;
     color:var(--orange) !important;
 }
+

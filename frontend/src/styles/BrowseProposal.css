@@ -45,3 +45,9 @@
 #view-archived-proposals {
     margin-left: auto;
 }
+
+.archived-btn:hover{
+    background-color: var(--prussiaBlue)!important;
+    color:var(--orange) !important;
+}
+

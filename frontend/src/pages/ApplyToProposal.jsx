@@ -167,11 +167,13 @@ function ApplyToProposal(props) {
 
               <Row style={{marginBottom: '30px'}}>
                 <Col style={{display: 'flex'}}>
+                  { props.loggedIn && props.user.role === "student" ?
                   <Button variant="primary" onClick={handleShow}>
                     { file ? "Change CV" : "Add CV"}
-                  </Button>
+                  </Button> 
+                  : null
+                  }
                   {file ? <p style={{marginLeft: '20px'}}> The selected CV is: <b>{file.name}</b>   <i style={{cursor: 'pointer'}} class="bi bi-x-lg" onClick={() => setFile(null)}></i> </p> : ''}
-
                   <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                       <Modal.Title>Select CV for this application</Modal.Title>

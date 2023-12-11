@@ -429,6 +429,18 @@ app.post('/api/student/applyProposal',
                 const proposalInfo = await thesisProposalTable.getById(Applyproposal.proposal_id);
                 await applicantCvTable.addApplicantCv(Applyproposal.proposal_id, Applyproposal.student_id, proposalInfo.teacher_id, applypropID.id, req.file.filename);
             }
+            const proposalDetail = await thesisProposalTable.getProposalDetailById(Applyproposal.proposal_id);
+            const teacherInfo = await thesisProposalTable.getTeacherInfoById(Applyproposal.proposal_id);
+            try {
+                const res = await sendEmail({
+                    recipient_mail: proposalDetail.supervisor,
+                    subject: `New Application - "${proposalDetail.title}"`,
+                    message: `Dear Professor ${teacherInfo.surname} ${teacherInfo.name},\nThere is a new application of your thesis topic "${proposalDetail.title}" to you.\nBest Regards,\nPolito Staff.`
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: `Server error during sending notification ${err}` });
+            }
             res.json(applypropID);
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of the application: ${err}` });

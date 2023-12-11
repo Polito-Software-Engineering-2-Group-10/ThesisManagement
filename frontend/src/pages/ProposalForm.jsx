@@ -29,7 +29,7 @@ const ProposalForm = (props) => {
     const [co_supervisor, setCoSupervisor]  = useState(location.state?.proposal ? location.state.proposal.co_supervisor.join(",") : '');
     const [type, setType]                   = useState(location.state?.proposal ? location.state.proposal.type : '');
     const [expiration, setExpirationDate]   = useState(location.state?.proposal ? dayjs(location.state.proposal.expiration).format("YYYY-MM-DD") : '');
-    const [level, setLevel]                 = useState(location.state?.proposal ? location.state.proposal.level : null);
+    const [level, setLevel]                 = useState(location.state?.proposal ? location.state.proposal.level : 0);
     const [groups, setGroups]               = useState(location.state?.proposal ? location.state.proposal.groups.join(",") : '');
     const [keywords, setKeywords]           = useState(location.state?.proposal ? location.state.proposal.keywords.join(",") : "");
     const [description, setDescription]     = useState(location.state?.proposal ? location.state.proposal.description : '');
@@ -94,7 +94,7 @@ const ProposalForm = (props) => {
       //chiamata API
       API.retrieveCoSupervisorsGroups(co_supervisor_array)
       .then((groups) => {
-        let groups_array = [...groups, props.teacherDetail.group_name];
+        let groups_array = [...groups, props.teacherDetail?.group_name];
         groups_array = groups_array.filter((item, index) => groups_array.indexOf(item) == index).filter((n) => n!="");
         const proposal = {
           "title":            title.trim(),
@@ -249,7 +249,7 @@ const ProposalForm = (props) => {
                           <Form.Label>Group</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={props.teacherDetail.group_name} disabled/>
+                          <Form.Control type="text" required={false} value={props.teacherDetail?.group_name} disabled/>
                         </Col>
                       </Row>
                     </Form.Group>

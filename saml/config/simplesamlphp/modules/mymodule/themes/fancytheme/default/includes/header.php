@@ -45,12 +45,14 @@ header('X-Frame-Options: SAMEORIGIN');
 <meta name="viewport" content="initial-scale=1.0" />
 <script type="text/javascript" src="/<?php echo $this->data['baseurlpath']; ?>resources/script.js"></script>
 <title><?php
+
+/*
 if (array_key_exists('header', $this->data)) {
     echo $this->data['header'];
 } else {
     echo 'SimpleSAMLphp';
 }
-?></title>
+*/?></title>
 
     <link rel="stylesheet" type="text/css" href="/<?php echo $this->data['baseurlpath']; ?>resources/default.css" />
     <link rel="icon" type="image/icon" href="/<?php echo $this->data['baseurlpath']; ?>resources/icons/favicon.ico" />
@@ -110,19 +112,13 @@ if (array_key_exists('autofocus', $this->data)) {
 }
 ?>
 <body<?php echo $onLoad; ?>>
-<div> Hello World </div>
 <div id="wrap">
 
-    <div id="header">
-        <h1><a href="/<?php echo $this->data['baseurlpath']; ?>"><?php
-            echo(isset($this->data['header']) ? $this->data['header'] : 'SimpleSAMLphp');
-        ?></a></h1>
-    </div>
 
 
     <?php
 
-    $includeLanguageBar = true;
+    $includeLanguageBar = false;
     if (!empty($_POST)) {
         $includeLanguageBar = false;
     }
@@ -198,6 +194,9 @@ if (array_key_exists('autofocus', $this->data)) {
     }
 
     ?>
+
+
+
     <div id="content">
 
 <?php

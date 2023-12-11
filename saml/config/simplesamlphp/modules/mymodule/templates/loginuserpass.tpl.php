@@ -6,6 +6,7 @@ if (strlen($this->data['username']) > 0) {
 } else {
     $this->data['autofocus'] = 'username';
 }
+
 $this->includeAtTemplateBase('includes/header.php');
 
 if ($this->data['errorcode'] !== null) {
@@ -43,8 +44,6 @@ if ($this->data['errorcode'] !== null) {
     <h2 style="break: both"><?php echo $this->t('{login:user_pass_header}'); ?></h2>
 
     <p class="logintext"><?php echo $this->t('{login:user_pass_text}'); ?></p>
-    <div>Vorresti loggarti eh?</div>
-    <?php echo $this->data['baseurlpath'] ?>
     <link rel="stylesheet" href="<?php echo SimpleSAML\Module::getModuleURL('mymodule/style.css'); ?>">
     <form action="?" method="post" name="f">
         <table>

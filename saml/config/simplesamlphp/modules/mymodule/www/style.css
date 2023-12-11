@@ -1,3 +1,28 @@
 div {
-    background-color: blueviolet;
+    background-color: white !important;
 }
+
+body{
+    background-color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#wrap
+{
+    border:1px solid #0000002d !important;
+}
+
+#wrap .btn{
+    background-image:  linear-gradient(#002B49,#002B49)  !important;
+    border-radius: 6px;
+    color: white !important;
+}
+#wrap .btn:hover{
+    background-image: linear-gradient(#002036,#002036) !important ;
+    border-radius: 6px;
+    color: white !important;
+}
+
+

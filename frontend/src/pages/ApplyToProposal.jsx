@@ -6,8 +6,9 @@ import { Button, Container, Row, Col, Alert, Modal, Form } from "react-bootstrap
 import { useNavigate, useParams } from "react-router-dom";
 import useNotification from "../hooks/useNotifcation";
 import { ToastContainer } from "react-toastify";
-
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import "react-toastify/dist/ReactToastify.css";
+
 function ApplyToProposal(props) {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ function ApplyToProposal(props) {
   const notify = useNotification();
   const [file, setFile] = useState(null);
   const [tempFile, setTempFile] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
 
   //modal for add CV
   const [show, setShow] = useState(false);
@@ -87,6 +90,11 @@ function ApplyToProposal(props) {
         navigate('/');
     }
 
+    const handleApplyClick = (proposal) => {
+        setShowModal(true);
+        setSelectedProposal(proposal);
+    }
+
   return (
     <>
       <ToastContainer />
@@ -95,6 +103,14 @@ function ApplyToProposal(props) {
         loggedIn={props.loggedIn}
         user={props.user}
       />
+      
+      <ConfirmModal 
+        title = {"Do you want to apply to the proposal?"}
+        text  = {"Your application will be submitted to the professor."}
+        show={showModal} setShow={setShowModal} 
+        onConfirm={()=>addApplication(selectedProposal)}
+      />
+
       {proposal && propId
         ? [proposal].map((p) => {
           return (
@@ -218,7 +234,7 @@ function ApplyToProposal(props) {
                     >
 
                       <Button
-                        onClick={() => addApplication(p.id)}
+                        onClick={() => handleApplyClick(p.id)}
                         variant="success"
                       >
                         Apply Now!

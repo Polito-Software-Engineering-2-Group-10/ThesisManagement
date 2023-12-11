@@ -6,7 +6,6 @@
     background-color: white;
     border-color:  var(--orange);
     color: black;
-    border-color: var(--orange);
 }
 
 .search-filter-btn:hover
@@ -14,7 +13,6 @@
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
     
 }
 
@@ -23,7 +21,6 @@
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
     
 }
 
@@ -32,7 +29,6 @@
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
 
 }
 
@@ -41,7 +37,6 @@
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
 
 }
 
@@ -50,7 +45,6 @@
     background-color:  var(--dark-yellow);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
 
 }
 

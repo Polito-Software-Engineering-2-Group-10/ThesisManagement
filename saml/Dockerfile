@@ -19,6 +19,7 @@ COPY config/simplesamlphp/authsources.php /var/www/simplesamlphp/config
 COPY config/simplesamlphp/saml20-sp-remote.php /var/www/simplesamlphp/metadata
 COPY config/simplesamlphp/server.crt /var/www/simplesamlphp/cert/
 COPY config/simplesamlphp/server.pem /var/www/simplesamlphp/cert/
+COPY config/simplesamlphp/modules/mymodule /var/www/simplesamlphp/modules/mymodule/
 
 RUN echo "<?php" > /var/www/simplesamlphp/metadata/shib13-sp-remote.php
 

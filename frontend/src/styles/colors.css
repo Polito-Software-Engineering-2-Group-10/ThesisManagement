@@ -7,14 +7,19 @@
     --danger: var(--red);
     --danger-hover: var(--darkred);
     --prussiaBlue: #002B49;
+    --light-prussiaBlue: #00355b;
     --samlButton: #0066CC;
     --light-prussia-blue:#2f5c7e;
     --cyan:#3f98bf;
-    --cancelButton: #B61601;
     --orange: #EF7B00;
+    --light-orange: #f38918;
     --dark-green:#1d5952;
     --dark-yellow:#f5c54d;
     --light-green:#34907e;
     --lime:#e3e052;
+    --cancelButton-hover: #B61601;
+    --cancelButton: #df1a00;
+    --confirmButton: var(--dark-green);
+    --confirmButton-hover: var(--light-green);
 
 }

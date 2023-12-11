@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "/src/index.css"
 import BrowseProposal from "./BrowseProposal";
 import SearchForProposals from "./SearchForProposals";
-function InfoBox(props){
 
+function InfoBox(props){
     const navigate = useNavigate();
 
     return(

@@ -19,3 +19,58 @@ h1{
 * {
     font-family: Poppins-Regular;
 }
+
+
+
+.btn-confirm, .btn-success{
+    background-color: var(--confirmButton);
+    color: white !important;
+    border-color: var(--confirmButton);
+}
+
+.btn-confirm:hover, .btn-success:hover{
+    background-color: var(--confirmButton-hover);
+    color: white !important;
+    border-color: var(--confirmButton-hover);
+}
+
+.btn-cancel, .btn-danger{
+    background-color: var(--cancelButton) !important;
+    color: white !important;
+    border-color: var(--cancelButton) !important;
+}
+
+.btn-cancel:hover, .btn-danger:hover{
+    background-color: var(--cancelButton-hover);
+    color: white !important;
+    border-color: var(--cancelButton-hover);
+}
+
+.modal-title{
+    font-family: Poppins-Bold !important;
+    color: var(--prussiaBlue);
+}
+
+.btn-primary{
+    background-color: var(--orange);
+    color: white !important;
+    border-color: var(--orange);
+}
+
+.btn-secondary{
+    background-color: var(--prussiaBlue);
+    color: white !important;
+    border-color: var(--prussiaBlue);
+}
+
+.btn-primary:hover{
+    background-color: var(--light-orange);
+    color: white !important;
+    border-color: var(--light-orange);
+}
+
+.btn-secondary:hover{
+    background-color: var(--light-prussiaBlue);
+    color: white !important;
+    border-color: var(--light-prussiaBlue);
+}

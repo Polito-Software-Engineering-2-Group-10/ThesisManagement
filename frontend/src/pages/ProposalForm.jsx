@@ -8,7 +8,7 @@ import { ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import dayjs from 'dayjs';
 import "/src/index.css";
-
+import ConfirmModal from '../components/ConfirmModal';
 
 
 const ProposalForm = (props) => {
@@ -40,12 +40,8 @@ const ProposalForm = (props) => {
 
     const addProposal = (proposal) => {
       API.addProposal(proposal)
-      .then(response => {
-        setProposalsDirty(true);
-      })
-        .catch(e => {
-          console.log(e);
-        })
+      .then(response => { setProposalsDirty(true);})
+      .catch(e => { console.log(e);})
     }
 
     useEffect(() => {
@@ -76,9 +72,15 @@ const ProposalForm = (props) => {
         });
     }};
 
-
-    const handleSubmit = (event) => {
+    // confirmation modal before the submission
+    const handleModalSubmit = (event)=>{
       event.preventDefault();
+      setShowModal(true);
+    }
+
+    // handles the confirmed submit
+    const handleSubmit = () => {
+        
       setSubmitted(true);
       const keywords_array = keywords.split(/[,;]/).map((k) => k.trim());
       const required_knowledge_array = required_knowledge.split(/[,;]/).map((k) => k.trim());
@@ -108,6 +110,7 @@ const ProposalForm = (props) => {
           "teacher_id": "1",
         };
            if (isEditing) {
+               console.log("sooos");
         updateProposal(proposal);
       } else {
           // copying the proposal with a new insert 
@@ -128,6 +131,11 @@ const ProposalForm = (props) => {
         setTimeoutHandle(null);
         navigate(nextpage);
     }
+    
+    const [showModal, setShowModal] = useState(false);
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
 
     return (
@@ -139,7 +147,14 @@ const ProposalForm = (props) => {
               <h1>{isEditing ? 'Update Proposal' : 'Insert a New Proposal'}</h1>
             </div>
 
-            <Form className="block-example rounded mb-1 form-padding mt-5" onSubmit={handleSubmit}>
+            <ConfirmModal 
+                title = {isEditing ? "Do you want to save changes?" : "Do you want to submit the proposal?"}
+                text  = {isEditing ? "The selected proposal will be updated with the new values." : "The proposal will be submitted and will be visible to the students."}
+                show={showModal} setShow={setShowModal} 
+                onConfirm={()=>handleSubmit()}
+            />
+
+            <Form className="block-example rounded mb-1 form-padding mt-5" onSubmit={handleModalSubmit}>
               <Row>
                 <Col xs={12} md={6}>
                     <Form.Group className="mb-3">
@@ -306,7 +321,7 @@ const ProposalForm = (props) => {
 
               <div className="d-flex justify-content-center">
                 <Button className="m-2" variant="success" type="submit" disabled={submitted}>{isEditing ? 'Update' : 'Insert'}</Button>&nbsp;  
-                <Button className="btn btn-danger m-2" onClick={handleGoBack}>Go Back</Button>
+                <Button className="btn-danger m-2" onClick={handleGoBack}>Go Back</Button>
               </div>
  
             </Form>

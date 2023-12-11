@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRotateRight, faBoxArchive} from "@fortawesome/free-solid-svg-icons";
 import {ToastContainer} from "react-toastify";
+import ConfirmModal from '../components/ConfirmModal';
 
 function BrowseProposal(props) {
     
@@ -42,6 +43,7 @@ function ProposalTable(props) {
     const notify = useNotification();
     const proposalList = props.proposalList;
     const [selectedProposal, setSelectedProposal] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     const handleProposalClick = (proposal) => {
         setSelectedProposal(proposal);
@@ -56,8 +58,13 @@ function ProposalTable(props) {
         // navigate to insert proposal page with the proposal as a parameter
         navigate(`/updateProposal/${proposal.id}`, {state: {proposal: proposal, action: "update"}});
     }
-
+    
     const handleDeleteClick = (proposal) => {
+        setShowModal(true);
+        setSelectedProposal(proposal);
+    }
+
+    const deleteProposal = (proposal) => {
         const mailInfo=
         {
             teacher_name:props.user.name,
@@ -65,6 +72,7 @@ function ProposalTable(props) {
             thesis_title:proposal.title
         }
         API.deleteProposal(proposal.id,mailInfo).then(({ data, status })=>{
+            console.log(props)
             props.setProposalDirty(true);
             if (status == 400)
             {
@@ -112,7 +120,7 @@ function ProposalTable(props) {
                  <Button className="btn-edit" title="Update proposal" onClick={() => handleUpdateClick(result)}>
                      <i className="bi bi-pencil-square"></i>
                  </Button>
-                 <Button onClick={() => handleCopyClick(result)} title="Create proposal starting from this one">
+                 <Button className="btn-copy" onClick={() => handleCopyClick(result)} title="Create proposal starting from this one">
                      <i className="bi bi-copy"></i>
                  </Button>
                  <Button className="btn-archive" onClick={() => handleArchiveClick(result)} title="Archive proposal">
@@ -128,6 +136,14 @@ function ProposalTable(props) {
 
     return (
         <Container className="proposal-table">
+        
+            <ConfirmModal 
+                title = {"Do you want to delete the proposal?"}
+                text  = {"The selected proposal will be permanently removed."}
+                show={showModal} setShow={setShowModal} 
+                onConfirm={()=>deleteProposal(selectedProposal)}
+            />
+        
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <Button
                     onClick={handleViewArchivedClick}

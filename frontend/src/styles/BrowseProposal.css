@@ -35,7 +35,15 @@
 .btn-archive:hover{
     background-color: rgb(128,128,128);
     border-color: rgba(0, 0, 0, 0.1);
+}
+.btn-copy{
+    background-color: rgb(52, 95, 212);
+    border-color: rgba(0, 0, 0, 0.1);
+}
 
+.btn-copy:hover{
+    background-color: rgb(91, 126, 243);
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
 .proposal-table {

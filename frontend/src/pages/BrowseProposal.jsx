@@ -13,6 +13,7 @@ import {faArrowLeft, faArrowRotateRight, faBoxArchive} from "@fortawesome/free-s
 import {ToastContainer} from "react-toastify";
 
 function BrowseProposal(props) {
+    
     const [activeProposals, setActiveProposals] = useState(null);
 
     useEffect(() => {
@@ -28,6 +29,7 @@ function BrowseProposal(props) {
                 <ProposalTable
                     proposalList={activeProposals}
                     user={props.user}
+                    
                     setProposalDirty={props.setProposalDirty}
                 />
             </Container>
@@ -83,6 +85,7 @@ function ProposalTable(props) {
 
     const handleArchiveClick = (proposal) => {
         API.archiveProposal(proposal.id).then(()=>{
+            
             props.setProposalDirty(true);
         })
         .catch((err)=>{console.log(err)});

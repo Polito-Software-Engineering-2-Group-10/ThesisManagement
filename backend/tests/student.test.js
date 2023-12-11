@@ -156,10 +156,10 @@ describe('POST /api/student/applyProposal', () => {
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'The student already applied to this proposal' });
+        expect(response.body).toEqual({ error: "You can't apply to the same proposal twice" });
     });
 
-    test('Should throw an error with 422 status code when the format of the parameters is invalid', async () => {
+    test('Should throw an error with 400 status code when the format of the parameters is invalid', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'student' };
@@ -171,7 +171,7 @@ describe('POST /api/student/applyProposal', () => {
         jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: 'invalid_date'});
-        expect(response.status).toBe(422);
+        expect(response.status).toBe(400);
         expect(response.body).toBeTruthy();
     });
 
@@ -182,13 +182,13 @@ describe('POST /api/student/applyProposal', () => {
             next();
         })
         const countMock = {
-            count: 0
+            count: 1
         };
         jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: `The student already applied to this proposal` });
+        expect(response.body).toEqual({ error: `You can't apply to the same proposal twice` });
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {

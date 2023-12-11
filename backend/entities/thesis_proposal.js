@@ -284,6 +284,20 @@ class ThesisProposalTable {
         const result = await this.db.executeQueryExpectAny(query);
         return result.map(row => row.group);
     }
+
+    async getProposalDetailById(id) {
+        const query = `SELECT * FROM thesis_proposal WHERE id = $1`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
+        return ThesisProposal.fromRow(result);
+        //return result;
+    
+}
+    async getTeacherInfoById(id) {
+        const query = `SELECT teacher.* FROM thesis_proposal, teacher WHERE thesis_proposal.teacher_id = teacher.id AND thesis_proposal.id=$1`;
+        const result = await this.db.executeQueryExpectOne(query, getNum(id), `ThesisProposal with id ${id} not found`);
+        return result;
+    }
+
     async getFilteredProposals(filterObject) {
         let query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname FROM thesis_proposal, teacher WHERE thesis_proposal.teacher_id = teacher.id`;
         let params = [];

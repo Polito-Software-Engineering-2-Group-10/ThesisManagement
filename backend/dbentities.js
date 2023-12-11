@@ -8,6 +8,7 @@ import { Career, CareerTable } from "./entities/career.js";
 import { Department, DepartmentTable } from "./entities/department.js";
 import { ThesisRequest, ThesisRequestTable } from "./entities/thesis_request.js";
 import { SecretaryClerk, SecretaryClerkTable } from "./entities/secretary_clerk.js";
+import { ApplicantCv, ApplicantCvTable } from "./entities/applicant_cv.js";
 
 
 const studentTable = await StudentTable.initialize();
@@ -20,6 +21,7 @@ const thesisProposalTable = await ThesisProposalTable.initialize();
 const applicationTable = await ApplicationTable.initialize();
 const thesisRequestTable = await ThesisRequestTable.initialize();
 const secretaryClerkTable = await SecretaryClerkTable.initialize();
+const applicantCvTable = await ApplicantCvTable.initialize();
 
 export {
     applicationTable,
@@ -31,5 +33,6 @@ export {
     careerTable,
     departmentTable,
     thesisRequestTable,
-    secretaryClerkTable
+    secretaryClerkTable,
+    applicantCvTable
 };

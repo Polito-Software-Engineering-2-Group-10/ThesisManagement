@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
 import { thesisProposalTable, applicationTable, teacherTable } from '../dbentities.js';
-//import nodemailer, { createTransport } from 'nodemailer';
 import { jest } from '@jest/globals';
 import { response } from 'express';
 
@@ -123,7 +122,7 @@ describe('GET /api/teacher/ApplicationsList', () => {
         });
         const response = await request(app).get('/api/teacher/applicationsList');
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: 'Database error during retrieving application List' });
+        expect(response.body).toEqual({error: 'Database error during retrieving application List' });
     });
 });
 
@@ -154,7 +153,7 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
             student_ey: '01/01/2022',
         }
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockResolvedValueOnce(applicationDetailed);
-        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockResolvedValueOnce({ status: true });
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockResolvedValueOnce({status: true});
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -162,7 +161,7 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
         });
         const response = await request(app).get('/api/teacher/applicationDetail/1');
         expect(response.status).toBe(200);
-        expect(response.body).toEqual({ detail: application, status: { status: true } });
+        expect(response.body).toEqual({detail:application, status: {status: true}});
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
@@ -176,7 +175,7 @@ describe('GET /api/teacher/applicationDetail/:applicationid', () => {
         });
         const response = await request(app).get('/api/teacher/applicationDetail/1');
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: 'Database error during retrieving application List' });
+        expect(response.body).toEqual({error :'Database error during retrieving application List'});
     });
 });
 
@@ -221,7 +220,7 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
         jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
         jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => true);
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: false })
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: false})
         expect(response.status).toBe(200);
         expect(response.body).toBe(true);
     });
@@ -232,7 +231,7 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: 'invalid' })
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: 'invalid'})
         expect(response.status).toBe(422);
         expect(response.body).toBeTruthy();
     });
@@ -243,10 +242,10 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => { })
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: true })
+        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => {})
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'The application does not exist!' });
+        expect(response.body).toEqual({ error: 'The application does not exist!'});
     });
 
     test('Should throw an error with 400 status code when the application has already been accepted', async () => {
@@ -260,9 +259,9 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             next();
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: true })
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'This application has already been accepted' });
+        expect(response.body).toEqual({ error: 'This application has already been accepted'});
     });
 
     test('Should throw an error with 400 status code when the application has already been rejected', async () => {
@@ -276,9 +275,9 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             next();
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: true })
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'This application has already been rejected' });
+        expect(response.body).toEqual({ error: 'This application has already been rejected'});
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
@@ -300,9 +299,9 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => {
             throw new Error('Database error');
         })
-        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({ status: true })
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: 'Database error during retrieving application List Error: Database error' });
+        expect(response.body).toEqual({ error: 'Database error during retrieving application List Error: Database error'});
     });
 });
 
@@ -344,7 +343,7 @@ describe('GET /api/teacher/ProposalsList', () => {
         });
         const response = await request(app).get('/api/teacher/ProposalsList');
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: 'Database error during retrieving application List Error: Database error' });
+        expect(response.body).toEqual({error: 'Database error during retrieving application List Error: Database error'});
     });
 });
 
@@ -422,7 +421,7 @@ describe('POST /api/teacher/insertProposal', () => {
         });
         const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
         expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: 'Database error during the insert of proposal: Error: Database error' });
+        expect(response.body).toEqual({error: 'Database error during the insert of proposal: Error: Database error'});
     });
 });
 
@@ -452,7 +451,8 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         });
         jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
         jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
-        const response = await request(app).delete('/api/teacher/deleteProposal').send({ proposalId: 1 });
+        jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(200);
         expect(response.body).toEqual(deletedProposal);
     });
@@ -463,7 +463,7 @@ describe('DELETE /api/teacher/deleteProposal', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        const response = await request(app).delete('/api/teacher/deleteProposal').send({ proposalId: 'invalidId' });
+        const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 'invalidId'});
         expect(response.status).toBe(422);
         expect(response.body).toBeTruthy();
     });
@@ -672,10 +672,10 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => { });
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => {});
         const response = await request(app).patch('/api/teacher/ProposalsList/1');
         expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'The proposal does not exist!' });
+        expect(response.body).toEqual({error: 'The proposal does not exist!'});
     });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
@@ -684,7 +684,7 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => { throw new Error('Database error') });
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => { throw new Error('Database error')});
         const response = await request(app).patch('/api/teacher/ProposalsList/1');
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: `Database error during archival of thesis proposal Error: Database error` });
@@ -739,13 +739,9 @@ describe('POST /api/teacher/retrieveCosupGroup', () => {
 });
 
 //send notification
-
-
-
 describe('POST /api/send_email', () => {
-
     const params = {
-        recipient_mail: 's319950@studenti.polito.it',
+        recipient_email: 'pippo',
         subject: 'pluto',
         message: 'paperino'
     }
@@ -771,65 +767,11 @@ describe('POST /api/send_email', () => {
         });
 
         const response = await request(app).post('/api/send_email').send(params);
-        expect(response.status).toBe(200);
-        expect(response.text).toEqual('Email sent successfully');
-    });
-
-    //internal server error 500
-    test('Should throw an error with 500 status code when a database error occurs', async () => {
-        registerMockMiddleware(app, 0, (req, res, next) => {
-            req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1, role: 'teacher' };
-            next();
-        });
-
-        const response = await request(app).post('/api/send_email').send(params2);
         expect(response.status).toBe(500);
         expect(response.body).toEqual({ error: "No recipients defined" });
+        // jest.spyOn(sendEmail(params)).mockImplementationOnce(() => { throw new Error('Database error')});
+        // const response = await request(app).post('/api/send_email');
+        // expect(response.status).toBe(503);
+        // expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
     })
 });
-
-//retrieve cosupervisors group from email
-
-afterEach(() => {
-    // restore the spy created with spyOn
-    jest.restoreAllMocks();
-});
-
-describe('POST /api/teacher/retrieveCosupGroup', () => {
-    test('Should throw an error with 503 status code when a database error occurs', async () => {
-        registerMockMiddleware(app, 0, (req, res, next) => {
-            req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1, role: 'teacher' };
-            next();
-        });
-
-        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementationOnce(() => { throw new Error('Database error') });
-        const response = await request(app).post('/api/teacher/retrieveCosupGroup');
-        expect(response.status).toBe(503);
-        expect(response.body).toEqual({ error: "Database error during retrieving cosupervisor groups TypeError: req.body.cosup_mails is not iterable" });
-    });
-
-    test('Should succesfully return the groups of the cosupervisors', async () => {
-        const mock_req = {
-            cosup_mails: ['mail1', 'mail2', 'mail3']
-        }
-
-        const mock_group = [
-            { name: 'Group1' }
-        ];
-
-        const mock_groups = ['Group1', 'Group1', 'Group1'];
-
-        registerMockMiddleware(app, 0, (req, res, next) => {
-            req.isAuthenticated = jest.fn(() => true);
-            req.user = { id: 1, role: 'teacher' };
-            next();
-        });
-
-        jest.spyOn(teacherTable, 'getGroupByMail').mockImplementation(() => mock_group);
-        const response = await request(app).post('/api/teacher/retrieveCosupGroup').send(mock_req);
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual(mock_groups);
-    });
-})

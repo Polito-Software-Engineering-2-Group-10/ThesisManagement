@@ -100,7 +100,17 @@
 ### Secretary clerk table
 | FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
 | -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
-| ID             | INTEGER | NO          | PRIMARY  | Id of the clerk                                       |
+| ID             | SERIAL  | NO          | PRIMARY  | Id of the clerk                                       |
 | SURNAME        | TEXT    | NO          |          | Surname of the clerk                                  |
 | NAME           | TEXT    | NO          |          | Name of the clerk                                     |
 | EMAIL          | TEXT    | NO          |          | Email of the clerk                                    |
+
+### Applicant CV table
+| FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
+| ID             | SERIAL  | NO          | PRIMARY  | Id of the applicant cv                                |
+| STUDENT_ID     | INTEGER | NO          | FOREIGN  | Id of the student that applied                        |
+| TEACHER_ID     | INTEGER | NO          | FOREIGN  | Id of the teacher that proposed the thesis            |
+| PROPOSAL_ID    | INTEGER | NO          | FOREIGN  | Id of the thesis that the student applied to          |
+| APPLICATION_ID | INTEGER | NO          | FOREIGN  | Id of the application                                 |
+| FILEPATH       | TEXT    | NO          |          | Filepath of the applicant cv                          |

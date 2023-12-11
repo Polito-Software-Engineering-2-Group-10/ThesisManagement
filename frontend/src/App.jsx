@@ -117,8 +117,8 @@ function App() {
       })
       .catch(
         (err) => 
-        error_callback()
-        );
+        error_callback(err)
+    );
   }
 
   const contextObject = {

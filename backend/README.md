@@ -431,12 +431,13 @@ The backend exposes the following APIs:
     ]
     ```
 - POST `/api/student/applyProposal`
-    - This API will accept a JSON object with the following structure:
+    - This API will accept a FORM-DATA object with the following structure:
     ```json
     {
         "student_id": <student id>,
         "proposal_id": <proposal id>,
-        "apply_date": <YYYY-MM-DD>
+        "apply_date": <YYYY-MM-DD>,
+        "file": <optional binary blob containing the submitted file by the student>
     }
     ```
     - It adds in the database the application of the student to the proposal.
@@ -545,7 +546,12 @@ The backend exposes the following APIs:
 - PATCH `/api/teacher/ProposalsList/<proposalid>`
     - No parameters, this api will archive or unarchive the proposal with the given id.
     - It returns the entire proposal object
-- 
+- GET `/api/teacher/getGeneratedCV/<applicationid>`
+    - This API will return the generated CV for the given application id.
+    - It returns a binary blob containing the CV as a PDF.
+- GET `/api/teacher/getSubmittedCV/<applicationid>`
+    - This API will return the submitted CV for the given application id, if any.
+    - It returns a binary blob containing the CV if it exists, returns 404 otherwise, the file can be of any type.
 - POST `/api/virtualclock`
     - This API will accept a JSON object with the following structure:
     ```json

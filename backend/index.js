@@ -9,6 +9,7 @@ import cors from 'cors';
 import baseconfig from './config/config.js';
 import passportconfig from './config/passport-config.js';
 import authrouteconfig from './auth-routes.js';
+import multer from 'multer';
 import {
     studentTable,
     teacherTable,
@@ -18,12 +19,16 @@ import {
     groupTable,
     thesisProposalTable,
     applicationTable,
-    thesisRequestTable
+    thesisRequestTable,
+    applicantCvTable
 } from './dbentities.js';
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
 import { check, validationResult } from "express-validator"; // validation middleware
 import dayjs from 'dayjs';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+
 const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const config = baseconfig[env][currentStrategy];
@@ -77,6 +82,17 @@ const isLoggedInAsClerk = (req, res, next) => {
         return next();
     res.status(401).json({ error: 'Not authenticated' });
 };
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      return cb(null, "./public/files")
+    },
+    filename: function (req, file, cb) {
+      return cb(null, `${Date.now()}_${file.originalname}`)
+    }
+})
+  
+const upload = multer({storage})
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {
@@ -334,13 +350,65 @@ app.post('/api/teacher/insertProposal',
     }
 );
 
+/*Get a CV based on an application to a thesis*/
+app.get('/api/teacher/getGeneratedCV/:applicationid', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        const application = await applicationTable.getById(req.params.applicationid);
+        const careerData = await careerTable.getByStudentId(application.student_id);
+        const studentData = await studentTable.getById(application.student_id);
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        })
+        doc.setFontSize(20);
+        doc.text('Curriculum Vitae', 105, 15, { align: 'center' });
+        doc.setFontSize(15);
+        doc.text('Student Information', 105, 30, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Name: ${studentData.name}`, 10, 40);
+        doc.text(`Surname: ${studentData.surname}`, 10, 50);
+        doc.text(`Email: ${studentData.email}`, 10, 60);
+        doc.text(`Cod degree: ${studentData.cod_degree}`, 10, 70);
+        doc.text(`Enrollment year: ${dayjs(studentData.enrollment_year).format('YYYY-MM-DD')}`, 10, 80);
+        doc.setFontSize(15);
+        doc.text('Career', 105, 100, { align: 'center' });
+        doc.setFontSize(12);
+        doc.autoTable( 
+            {
+                head: [['Cod Course', 'Title Course', 'CFU', 'Grade', 'Date']],
+                body: careerData.map(c => [c.cod_course, c.title_course, c.cfu, c.grade, dayjs(c.date).format('YYYY-MM-DD')]),
+                startY: 110
+            },
+        );
+        const blob = doc.output();
+        res.send(blob);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving CV ${err}` });
+    }
+});
+
+/*Get a CV based on an application to a thesis*/
+app.get('/api/teacher/getSubmittedCV/:applicationid', isLoggedInAsTeacher, async (req, res) => {
+    try {
+        const cvs = await applicantCvTable.getByApplicationId(req.params.applicationid);
+        if (cvs.length == 0) {
+            return res.status(404).json({ error: `No CV submitted for this application` });
+        } else {
+            const cv = cvs[0];
+            const filepath = `./public/files/${cv.filepath}`;
+            res.download(filepath);
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(503).json({ error: `Database error during retrieving CV ${err}` });
+    }
+});
+
 /*Apply for a thesis proposal*/
 app.post('/api/student/applyProposal',
     isLoggedInAsStudent,
-    [
-        check('proposal_id').isInt(),
-        check('apply_date').isDate({ format: 'YYYY-MM-DD', strictMode: true })
-    ],
+    upload.single('file'),
     async (req, res) => {
 
         const errors = validationResult(req);
@@ -355,9 +423,25 @@ app.post('/api/student/applyProposal',
         try {
             const existingApplication = await applicationTable.getCountByFK(Applyproposal.student_id, Applyproposal.proposal_id);
             if (existingApplication.count > 0) {
-                return res.status(400).json({ error: `The student already applied to this proposal` });
+                return res.status(400).json({ error: `You can't apply to the same proposal twice` });
             }
             const applypropID = await applicationTable.addApplicationWithDate(Applyproposal.student_id, Applyproposal.proposal_id, Applyproposal.apply_date);
+            if (req.file) {
+                const proposalInfo = await thesisProposalTable.getById(Applyproposal.proposal_id);
+                await applicantCvTable.addApplicantCv(Applyproposal.proposal_id, Applyproposal.student_id, proposalInfo.teacher_id, applypropID.id, req.file.filename);
+            }
+            const proposalDetail = await thesisProposalTable.getProposalDetailById(Applyproposal.proposal_id);
+            const teacherInfo = await thesisProposalTable.getTeacherInfoById(Applyproposal.proposal_id);
+            try {
+                const res = await sendEmail({
+                    recipient_mail: proposalDetail.supervisor,
+                    subject: `New Application - "${proposalDetail.title}"`,
+                    message: `Dear Professor ${teacherInfo.surname} ${teacherInfo.name},\nThere is a new application of your thesis topic "${proposalDetail.title}" to you.\nBest Regards,\nPolito Staff.`
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: `Server error during sending notification ${err}` });
+            }
             res.json(applypropID);
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
@@ -609,7 +693,7 @@ app.delete('/api/teacher/deleteProposal',
                     const app = await applicationTable.getById(s.app_id);
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
-                    try {
+                    try {                                             
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,
@@ -705,6 +789,11 @@ app.post("/api/send_email",
             .then((response) => res.send(response.message))
             .catch((error) => res.status(500).json({ error: error.message }));
     });
+
+/*UPLOAD FILE API*/
+app.post('/upload', upload.single('file'), (req, res) => {
+    return res.json({uploaded: true})
+})
 
 /*END API*/
 

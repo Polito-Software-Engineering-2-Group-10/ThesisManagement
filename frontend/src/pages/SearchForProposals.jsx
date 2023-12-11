@@ -146,7 +146,7 @@ function SearchForProposals(props) {
     const [sortOrder, setSortOrder] = useState('asc');
 
     
-    var [sortedProposals, setsortedProposals] = useState([]);
+    const [sortedProposals, setsortedProposals] = useState([]);
 
     useEffect(()=>{
         if (props.user && props.user.role==="student")
@@ -221,6 +221,22 @@ function SearchForProposals(props) {
             })
             .catch((err) => console.log(err));
     }, []);
+
+    useEffect(() => {
+        setsortedProposals((proposals || []).slice().sort((a, b) => {
+            if (sortColumn) {
+              const aValue = a[sortColumn];
+              const bValue = b[sortColumn];
+          
+              if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+              }
+          
+              return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+            }
+            return 0;
+        }));
+    }, [sortOrder, sortColumn, proposals])
 
     const handleFilterClick = (filter) => {
         if(activeFilter && activeFilter!=filter) {
@@ -309,39 +325,8 @@ function SearchForProposals(props) {
           setSortColumn(column);
           setSortOrder('asc');
         }
-        var tmp = (proposals || []).slice().sort((a, b) => {
-            if (sortColumn) {
-              const aValue = a[sortColumn];
-              const bValue = b[sortColumn];
-          
-              if (typeof aValue === 'string' && typeof bValue === 'string') {
-                // Adjust the comparison logic for string values
-                return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-              }
-          
-              // Adjust the comparison logic for other data types if needed
-              return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
-            }
-            return 0;
-        });
-        setsortedProposals(tmp);
     }; 
-
-    sortedProposals = (proposals || []).slice().sort((a, b) => {
-        if (sortColumn) {
-          const aValue = a[sortColumn];
-          const bValue = b[sortColumn];
-      
-          if (typeof aValue === 'string' && typeof bValue === 'string') {
-            return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-          }
-      
-          return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
-        }
-        return 0;
-    });
     
-    // console.log(sortedProposals);
     
     return (
         <>
@@ -598,7 +583,7 @@ function SearchForProposals(props) {
                             </Col>
                             <Col>
                                     <Card className="mb-4" style={{marginTop: '20px'}}>
-                                    <PaginatedProposals itemsPerPage={10} proposalList={proposals} getProfessorsInformation={getProfessorsInformation} professors={professors}/>
+                                    <PaginatedProposals itemsPerPage={10} proposalList={sortedProposals} getProfessorsInformation={getProfessorsInformation} professors={professors} handleSort={handleSort}/>
                                     </Card>
                             </Col>
                         </Row>

@@ -423,7 +423,7 @@ app.get('/api/clerk/Requestlist',
             res.json(requestList);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }
     }
 )
@@ -454,7 +454,7 @@ app.patch('/api/clerk/Requestlist/:requestid',
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
             res.json(requestResult);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }
     }
 );
@@ -708,4 +708,4 @@ app.post("/api/send_email",
 
 /*END API*/
 
-export { app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher, sendEmail };
+export { app, psqlDriver, isLoggedIn, isLoggedInAsStudent, isLoggedInAsTeacher, isLoggedInAsClerk, sendEmail };

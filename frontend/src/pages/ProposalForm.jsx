@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import dayjs from 'dayjs';
 import "/src/index.css";
 import ConfirmModal from '../components/ConfirmModal';
+import "../styles/form.css"
+
 
 
 const ProposalForm = (props) => {
@@ -160,10 +162,12 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-end align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Title</Form.Label>
+                          <Form.Label>Title <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={true} value={title} onChange={event => setTitle(event.target.value)} />
+                          <Form.Control type="text" required={true} value={title} onChange={event => setTitle(event.target.value)} 
+                            className={title ? 'has-value' : 'no-value'}
+                          />
                         </Col>
                       </Row>
                     </Form.Group>
@@ -172,10 +176,12 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-start align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Expiration Date</Form.Label>
+                          <Form.Label>Expiration Date <span style={{ color: '#EF7B00' }}>*</span></Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="date" required={true} value={expiration} onChange={event => setExpirationDate(event.target.value) } />
+                          <Form.Control type="date" required={true} value={expiration} onChange={event => setExpirationDate(event.target.value)} 
+                            className={expiration ? 'has-value' : 'no-value'}
+                          />
                         </Col>
                       </Row>
                     </Form.Group>
@@ -190,7 +196,7 @@ const ProposalForm = (props) => {
                           <Form.Label>Supervisor</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="email" readOnly required={true} defaultValue={supervisor} />
+                          <Form.Control type="email" readOnly required={true} defaultValue={supervisor} disabled/>
                         </Col>
                       </Row>
                     </Form.Group>
@@ -199,7 +205,7 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-start align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Level</Form.Label>
+                          <Form.Label>Level <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
                         <Form.Control
@@ -208,7 +214,7 @@ const ProposalForm = (props) => {
                             required={true}
                             value={level}
                             onChange={(event) => setLevel(parseInt(event.target.value, 10))}
-                            style={{ backgroundColor: level ? 'white' : 'azure' }}>
+                            className={level ? 'has-value' : 'no-value'}>
                             <option value="" style={{ fontSize: '12px', color: 'gray' }} >
                             Choose the Level of the proposal
                             </option>
@@ -229,7 +235,9 @@ const ProposalForm = (props) => {
                           <Form.Label>Co-Supervisors</Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={false} value={co_supervisor} onChange={event => setCoSupervisor(event.target.value)} /> 
+                          <Form.Control type="text" required={false} value={co_supervisor} onChange={event => setCoSupervisor(event.target.value)} 
+                            className={co_supervisor ? 'has-value' : 'no-value'}
+                          /> 
                         </Col>
                       </Row>
                     </Form.Group>
@@ -253,10 +261,12 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                       <Row className="d-flex justify-content-end align-items-center">
                         <Col xs={12} md={2} className="text-md-end">
-                          <Form.Label>Type</Form.Label>
+                          <Form.Label>Type <span style={{ color: '#EF7B00' }}>*</span></Form.Label>
                         </Col>
                         <Col xs={12} md={6}>
-                          <Form.Control type="text" required={true} value={type} onChange={event => setType(event.target.value)} />
+                          <Form.Control type="text" required={true} value={type} onChange={event => setType(event.target.value)} 
+                            className={type ? 'has-value' : 'no-value'}
+                          />
                         </Col>
                       </Row>
                     </Form.Group>
@@ -265,10 +275,12 @@ const ProposalForm = (props) => {
                     <Form.Group className="mb-3">
                      <Row className="d-flex justify-content-start align-items-center">
                       <Col xs={12} md={2} className="text-md-end">
-                        <Form.Label>Keywords</Form.Label>
+                        <Form.Label>Keywords <span style={{ color: '#EF7B00' }}>*</span></Form.Label>
                       </Col>
                       <Col xs={12} md={6}>
-                        <Form.Control type="text" required={true} value={keywords} onChange={event => setKeywords(event.target.value)} />
+                        <Form.Control type="text" required={true} value={keywords} onChange={event => setKeywords(event.target.value)} 
+                          className={keywords ? 'has-value' : 'no-value'}
+                        />
                       </Col>
                      </Row>
                     </Form.Group>
@@ -278,10 +290,12 @@ const ProposalForm = (props) => {
               <Form.Group className="mb-3">
                   <Row className="d-flex justify-content-start align-items-center">
                     <Col xs={12} md={3} className="text-md-end">
-                      <Form.Label>CdS/Programs</Form.Label>
+                      <Form.Label>CdS/Programs </Form.Label>
                     </Col>
                     <Col xs={12} md={7}>
-                      <Form.Control as="textarea" rows={2} required={false} value={programmes} onChange={event => setPrograms(event.target.value)} />
+                      <Form.Control as="textarea" rows={2} required={false} value={programmes} onChange={event => setPrograms(event.target.value)} 
+                        className={programmes ? 'has-value' : 'no-value'}
+                      />
                     </Col>
                   </Row>
               </Form.Group>
@@ -289,10 +303,12 @@ const ProposalForm = (props) => {
               <Form.Group className="mb-3">
                   <Row className="d-flex justify-content-start align-items-center">
                     <Col xs={12} md={3} className="text-md-end">
-                      <Form.Label>Description</Form.Label>
+                      <Form.Label>Description <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                     </Col>
                     <Col xs={12} md={7}>
-                      <Form.Control as="textarea" rows={3} required={true} value={description} onChange={(event) => setDescription(event.target.value)} />
+                      <Form.Control as="textarea" rows={3} required={true} value={description} onChange={(event) => setDescription(event.target.value)} 
+                        className={description ? 'has-value' : 'no-value'}
+                      />
                     </Col>
                   </Row>
               </Form.Group>
@@ -303,7 +319,9 @@ const ProposalForm = (props) => {
                      <Form.Label>Required Knowledge</Form.Label>
                     </Col>
                     <Col xs={12} md={7}>
-                     <Form.Control as="textarea" rows={3} value={required_knowledge} onChange={event => setRequiredKnowledge(event.target.value)} />
+                     <Form.Control as="textarea" rows={3} value={required_knowledge} onChange={event => setRequiredKnowledge(event.target.value)} 
+                      className={required_knowledge ? 'has-value' : 'no-value'}
+                     />
                     </Col>
                   </Row>
               </Form.Group>
@@ -314,7 +332,9 @@ const ProposalForm = (props) => {
                       <Form.Label>Notes</Form.Label>
                     </Col>
                     <Col xs={12} md={7}>
-                      <Form.Control as="textarea" rows={3} required={false} value={notes} onChange={event => setNotes(event.target.value)} />
+                      <Form.Control as="textarea" rows={3} required={false} value={notes} onChange={event => setNotes(event.target.value)} 
+                        className={notes ? 'has-value' : 'no-value'}
+                      />
                     </Col>
                   </Row>
               </Form.Group>

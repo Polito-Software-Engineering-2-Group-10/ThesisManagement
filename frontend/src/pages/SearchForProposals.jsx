@@ -9,18 +9,50 @@ import AppContext from '../AppContext.jsx';
 
 import ReactPaginate from 'react-paginate';
 
-function Proposals( { currentProposals, getProfessorsInformation, professors, perPage }) {
+
+function Proposals( { currentProposals, getProfessorsInformation, professors, perPage, sortColumn, sortOrder, handleSort }) {
+
     return (
     <Table  bordered hover responsive className="items" style={{
         height: currentProposals?.length === perPage ? '100vh' : `${currentProposals?.length * 100/perPage}vh`
     }}>                            
         <thead>
             <tr>
-                <th className="center-text">Title</th>
-                <th className="center-text">Professor</th>
-                <th className="center-text">Expiration Date</th>
-                <th className="center-text">Type</th>
-                <th className="center-text">Level</th>
+                {/* <th className="center-text">Title</th> */}
+                <th className="center-text" onClick={() => handleSort('title')}>
+                    {sortColumn === 'title' && sortOrder === 'asc' ? <>Title <i className="bi bi-arrow-up"></i></>
+                    : (sortOrder === 'desc' ? <>Title <i className="bi bi-arrow-down"></i></>
+                     : <>Title <i className="bi bi-arrow-down-up"></i></>)}
+                </th>
+                
+                {/* <th className="center-text">Professor</th> */}
+                <th className="center-text" onClick={() => handleSort('supervisor')}>
+                    {sortColumn === 'supervisor' && sortOrder === 'asc' ? <>Professor <i className="bi bi-arrow-up"></i></>
+                    : (sortOrder === 'desc' ? <>Professor <i className="bi bi-arrow-down"></i></>
+                     : <>Professor <i className="bi bi-arrow-down-up"></i></>)}
+                </th>
+
+                {/* <th className="center-text">Expiration Date</th> */}
+                <th className="center-text" onClick={() => handleSort('expiration')}>
+                    {sortColumn === 'expiration' && sortOrder === 'asc' ? <>Expiration Date <i className="bi bi-arrow-up"></i></>
+                    : (sortOrder === 'desc' ? <>Expiration Date <i className="bi bi-arrow-down"></i></>
+                     : <>Expiration Date <i className="bi bi-arrow-down-up"></i></>)}
+                </th>
+
+                {/* <th className="center-text">Type</th> */}
+                <th className="center-text" onClick={() => handleSort('type')}>
+                    {sortColumn === 'type' && sortOrder === 'asc' ? <>Type <i className="bi bi-arrow-up"></i></>
+                    : (sortOrder === 'desc' ? <>Type <i className="bi bi-arrow-down"></i></>
+                     : <>Type <i className="bi bi-arrow-down-up"></i></>)}
+                </th>
+
+                {/* <th className="center-text">Level</th> */}
+                <th className="center-text" onClick={() => handleSort('level')}>
+                    {sortColumn === 'level' && sortOrder === 'asc' ? <>Level <i className="bi bi-arrow-up"></i></>
+                    : (sortOrder === 'desc' ? <>Level <i className="bi bi-arrow-down"></i></>
+                     : <>Level <i className="bi bi-arrow-down-up"></i></>)}
+                </th>
+
             </tr>
         </thead>
         <tbody>
@@ -47,7 +79,7 @@ function Proposals( { currentProposals, getProfessorsInformation, professors, pe
     </Table>)
 }
 
-function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformation, professors }) {
+function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformation, professors, sortColumn, sortOrder, handleSort  }) {
     const [currentItems, setCurrentItems] = useState(null);
     const [pageCount, setPageCount] = useState(0);
     const [itemOffset, setItemOffset] = useState(0);
@@ -57,15 +89,18 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
         const newItems = proposalList.slice(itemOffset, endOffset);
         setCurrentItems(newItems);
         setPageCount(Math.ceil(proposalList.length / itemsPerPage));
-    }, [itemOffset, itemsPerPage, proposalList.length])
+    }, [itemOffset, itemsPerPage, proposalList.length, proposalList])
 
     const handlePageClick = (event) => {
         const newOffset = event.selected * itemsPerPage % proposalList.length;
         setItemOffset(newOffset);
     }
+
     return (
         <>
-            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} perPage={itemsPerPage}/>
+            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} perPage={itemsPerPage} sortColumn={sortColumn}
+                sortOrder={sortOrder}
+                handleSort={handleSort}/>
 
             <ReactPaginate 
                 nextLabel='next >'
@@ -107,6 +142,12 @@ function SearchForProposals(props) {
     const [studInfo,setStudInfo]=useState(null);
     const [dirty2,setDirty2]=useState(true);
     
+    const [sortColumn, setSortColumn] = useState(null);
+    const [sortOrder, setSortOrder] = useState('asc');
+
+    
+    var [sortedProposals, setsortedProposals] = useState([]);
+
     useEffect(()=>{
         if (props.user && props.user.role==="student")
         {
@@ -260,6 +301,48 @@ function SearchForProposals(props) {
         setActiveFilter(null);
     };
 
+    const handleSort = (column) => {
+        if (sortColumn === column) {
+           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+          // If a new column is clicked, It will be the sorting column with ascending order
+          setSortColumn(column);
+          setSortOrder('asc');
+        }
+        var tmp = (proposals || []).slice().sort((a, b) => {
+            if (sortColumn) {
+              const aValue = a[sortColumn];
+              const bValue = b[sortColumn];
+          
+              if (typeof aValue === 'string' && typeof bValue === 'string') {
+                // Adjust the comparison logic for string values
+                return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+              }
+          
+              // Adjust the comparison logic for other data types if needed
+              return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+            }
+            return 0;
+        });
+        setsortedProposals(tmp);
+    }; 
+
+    sortedProposals = (proposals || []).slice().sort((a, b) => {
+        if (sortColumn) {
+          const aValue = a[sortColumn];
+          const bValue = b[sortColumn];
+      
+          if (typeof aValue === 'string' && typeof bValue === 'string') {
+            return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+          }
+      
+          return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+        return 0;
+    });
+    
+    // console.log(sortedProposals);
+    
     return (
         <>
          { !props.loggedIn ?
@@ -268,8 +351,8 @@ function SearchForProposals(props) {
             ''
             
         }
-            { (professors && proposals) ? 
-                (
+            { (professors && sortedProposals) ? 
+                (   
 
                     /*<div className="container mt-4">*/
                     <Container>
@@ -527,4 +610,5 @@ function SearchForProposals(props) {
         </>
     );
 }
+
 export default SearchForProposals;

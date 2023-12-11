@@ -1,0 +1,10 @@
+.has-value {
+    background-color: white; /* Set the background color when there is a value */
+    border: 2px solid rgb(125, 215, 228);
+  }
+  
+  .no-value {
+    background-color: azure; /* Set the background color when there is no value */
+  }
+  
+  

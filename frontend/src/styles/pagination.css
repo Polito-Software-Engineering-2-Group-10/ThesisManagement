@@ -1,4 +1,4 @@
-@import "src/styles/colors.css";
+@import "colors.css";
 .pagination {
     display: flex;
     width: 100%;

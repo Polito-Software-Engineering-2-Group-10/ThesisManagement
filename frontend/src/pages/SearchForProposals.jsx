@@ -3,7 +3,7 @@ import {Link, useNavigate}   from 'react-router-dom';
 import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col } from 'react-bootstrap';
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
-import './pagination.css';
+import "../styles/pagination.css";
 import "../styles/SearchProposal.css";
 import AppContext from '../AppContext.jsx';
 
@@ -64,7 +64,7 @@ function Proposals( { currentProposals, getProfessorsInformation, professors, pe
                 <Link
                     to={`/applyToProp/${proposal.id}`}
                     className="text-primary"
-                    style={{"text-decoration" : "none"}}
+                    style={{textDecoration : "none"}}
                 >
                     {proposal.title}
                 </Link>

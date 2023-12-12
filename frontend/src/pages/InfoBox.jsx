@@ -7,8 +7,6 @@ import SearchForProposals from "./SearchForProposals";
 
 function InfoBox(props){
     const navigate = useNavigate();
-    console.log(props);
-   ;
     return(
         <>
         { (props.loggedIn && props.userDetail) ? 

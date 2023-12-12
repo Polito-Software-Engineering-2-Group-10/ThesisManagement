@@ -1,0 +1,19 @@
+@import "colors.css";
+
+.accordion-row-buttons {
+    margin-left: auto;
+    width: fit-content;
+}
+
+.accordion-row b {
+    color: var(--prussiaBlue);
+}
+
+.accordion-row p {
+    margin-bottom: 0.5rem !important;
+}
+
+.accordion {
+    padding-left: 3rem;
+    padding-right: 3rem;
+}

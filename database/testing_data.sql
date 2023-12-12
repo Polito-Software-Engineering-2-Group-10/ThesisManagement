@@ -6011,10 +6011,10 @@ COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin
 \.
 
 COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
-6	795	2023-11-30	\N
-6	1318	2023-11-30	\N
-6	1458	2023-11-30	\N
-6	1071	2023-11-30	\N
+6	1147	2023-11-30	\N
+6	944	2023-11-30	\N
+6	210	2023-11-30	\N
+6	333	2023-11-30	\N
 \.
 
 COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;

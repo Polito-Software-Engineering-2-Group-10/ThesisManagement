@@ -6,6 +6,8 @@ import '../styles/ClerkManagmentRequest.css';
 import API from '../API';
 import ConfirmModal from '../components/ConfirmModal';
 import useNotification from '../hooks/useNotifcation';
+import {ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ClerkManagmentRequest = (props) => {
     const [reqList, setReqList] = useState(props.reqList);
@@ -49,7 +51,8 @@ const ClerkManagmentRequest = (props) => {
     
 
     return (
-            
+        <>
+        <ToastContainer/>
         <div>
             <Navigation
                 logout={props.logout}
@@ -73,6 +76,7 @@ const ClerkManagmentRequest = (props) => {
                     <Accordion defaultActiveKey="0">
                     {
                         reqList.map((request, index) => {
+                            
                             return (
                                 <Accordion.Item key={index} eventKey={index} className='accordion-row'>
                                     <Accordion.Header>{request.title}</Accordion.Header>
@@ -109,6 +113,7 @@ const ClerkManagmentRequest = (props) => {
                 ''
             }
         </div>
+        </>
     )
 
 }

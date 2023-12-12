@@ -41,20 +41,15 @@ if ($this->data['errorcode'] !== null) {
 <?php
 }
 ?>
-    <h2 style="break: both"><?php echo $this->t('{login:user_pass_header}'); ?></h2>
-
-    <p class="logintext"><?php echo $this->t('{login:user_pass_text}'); ?></p>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link rel="stylesheet" href="<?php echo SimpleSAML\Module::getModuleURL('mymodule/style.css'); ?>">
+    <img alt="" src="<?php echo SimpleSAML\Module::getModuleURL('mymodule/LogoBlu.svg'); ?>" viewBox="0 0 300 135" width="300" height="135"/>
+    <div id="login-text">Login to <b>ThesisManagement</b></div>
     <form action="?" method="post" name="f">
         <table>
             <tr>
-                <td rowspan="2" class="loginicon">
-                    <img alt=""
-                        src="<?php echo SimpleSAML\Module::getModuleURL('mymodule/LogoBlu.svg'); ?>" viewBox="0 0 300 135" width="300" height="135"/>
-                </td>
-                <td><label for="username"><?php echo $this->t('{login:username}'); ?></label></td>
                 <td>
-                    <input id="username" <?php echo ($this->data['forceUsername']) ? 'disabled="disabled"' : ''; ?>
+                    <input id="username" placeholder="Username" <?php echo ($this->data['forceUsername']) ? 'disabled="disabled"' : ''; ?>
                         type="text" name="username"<?php echo $this->data['forceUsername'] ? '' : ' autocomplete="username" tabindex="1"'; ?>
                         value="<?php echo htmlspecialchars($this->data['username']); ?>" />
                 </td>
@@ -89,8 +84,7 @@ if ($this->data['errorcode'] !== null) {
             }
             ?>
             <tr>
-                <td><label for="password"><?php echo $this->t('{login:password}'); ?></label></td>
-                <td><input id="password" type="password" tabindex="2" name="password" autocomplete="current-password" /></td>
+                <td><input id="password" type="password" tabindex="2" name="password" autocomplete="current-password" placeholder="Password"/></td>
             <?php
             if ($this->data['rememberMeEnabled']) {
                 // display the remember me checkbox (keep me logged in)
@@ -167,10 +161,9 @@ if ($this->data['errorcode'] !== null) {
             }
             ?>
             <tr id="submit">
-                <td class="loginicon"></td><td></td>
                 <td>
                     <button id="submit_button" class="btn" tabindex="6" type="submit">
-                        <?php echo $this->t('{login:login_button}'); ?>
+                        Login with username and password
                     </button>
                 </td>
             </tr>
@@ -190,7 +183,7 @@ if (!empty($this->data['links'])) {
     }
     echo '</ul>';
 }
-echo '<h2 class="logintext">'.$this->t('{login:help_header}').'</h2>';
-echo '<p class="logintext">'.$this->t('{login:help_text}').'</p>';
+// echo '<h2 class="logintext">'.$this->t('{login:help_header}').'</h2>';
+// echo '<p class="logintext">'.$this->t('{login:help_text}').'</p>';
 
-$this->includeAtTemplateBase('includes/footer.php');
+// $this->includeAtTemplateBase('includes/footer.php');

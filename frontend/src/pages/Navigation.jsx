@@ -86,6 +86,7 @@ function Navigation(props) {
                   <>
                     <Nav.Link onClick={()=>navigate("/")}>Browse Proposals</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/BrowseAppDec")}>Browse Applications</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/thesisRequest")}>Thesis Request</Nav.Link>
                   </>
                   }
                 </div>

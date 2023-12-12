@@ -10,11 +10,21 @@ import Tabs from 'react-bootstrap/Tabs';
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
 
+// TO DO
+// - testare se l'api funziona
+// - accettare qualche application in modo da implementare il filtro sulle application
+// - aggiungere confirmationModal e popup
+// - controllare che mandando una request questa sparisca dalle selezionabili
+// - risolvere bug cosupervisor
+
 
 const ThesisRequest = (props) => {
 
     const [actualProp, setActualProp] = useState(undefined);
     const [propList, setPropList] = useState(undefined);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [cosupervisors, setCosupervisors] = useState('');
 
     useEffect(() => {
         if(props.studentDetail){
@@ -25,6 +35,35 @@ const ThesisRequest = (props) => {
             .catch((err) => console.log(err))
         }
     }, [props.studentDetail]);
+
+    useEffect(() => {
+        if(actualProp){
+            console.log(actualProp)
+            setTitle(actualProp[0].title);
+            setDescription(actualProp[0].description);
+            setCosupervisors(actualProp[0].co_supervisor);
+        }
+    }, [actualProp]);
+
+    const handleSendThesisRequest = (event) => {
+        event.preventDefault();
+        const cosupervisor_array = !Array.isArray(cosupervisors) ? 
+            cosupervisors.split(/[,;]/).map((k) => k.trim())
+            : cosupervisors;
+
+        const thesis_request = {
+            title: title,
+            supervisor: actualProp[0].supervisor,
+            co_supervisor: cosupervisor_array,
+            description: description,
+            apply_date: dayjs().format('YYYY-MM-DD')
+        }
+
+        API.applyRequest(thesis_request, actualProp.id)
+            .then(response => {console.log(response)}) // fare request dirty
+            .catch((err) => console.log(err));
+
+    }
 
     return (
         <>
@@ -49,22 +88,18 @@ const ThesisRequest = (props) => {
                                         <Row key={index}>
                                             <Col>
                                                 <Accordion.Item eventKey={index} onClick={() => {
-                                                    console.log(propList);
-                                                    console.log(app);
-                                                    return (
                                                         setActualProp(propList.filter((p) => p.id == app.proposal_id))
-                                                    )
                                                     }}>
                                                     <Accordion.Header>{app.thesis_title}</Accordion.Header>
                                                     <Accordion.Body>
                                                         <Form>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Title</Form.Label>
-                                                                <Form.Control type="text" defaultValue={app.thesis_title} />
+                                                                <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} />
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Description</Form.Label>
-                                                                <Form.Control as="textarea" rows={5} defaultValue={actualProp?actualProp[0].description: ''} />
+                                                                <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} />
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Supervisor</Form.Label>
@@ -73,9 +108,9 @@ const ThesisRequest = (props) => {
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Co-Supervisors</Form.Label>
                                                                 { actualProp ? (
-                                                                    actualProp[0].co_supervisor?.length !=0 ? 
-                                                                    <Form.Control type="text" value={`${actualProp[0].co_supervisor}`} />
-                                                                    : <Form.Control type="text" value='No co-supervisor for this proposal' />
+                                                                    cosupervisors?.length !=0 ? 
+                                                                    <Form.Control type="text" defaultValue={cosupervisors} onChange={event => setCosupervisors(event.target.value)} />
+                                                                    : <Form.Control type="text" placeholder="No co-supervisor for this proposal" onChange={event => setCosupervisors(event.target.value)} />
                                                                 ) : ''}
                                                                 
                                                             </Form.Group>
@@ -88,7 +123,7 @@ const ThesisRequest = (props) => {
                                                             </Form.Group>
                                                         </Form>
 
-                                                        <Button className="m-2" variant="success" type="submit">Send Request</Button>&nbsp;
+                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequest}>Send Request</Button>&nbsp;
 
                                                     </Accordion.Body>
                                                 </Accordion.Item>
@@ -112,21 +147,21 @@ const ThesisRequest = (props) => {
                                     return (
                                         <Row key={index}>
                                             <Col>
-                                                <Accordion.Item eventKey={index} onClick={() => {
+                                                <Accordion.Item eventKey={index}>
+                                                    <Accordion.Header onClick={() => {
                                                     return (
                                                         setActualProp(propList.filter((p) => p.id == prop.id))
                                                     )
-                                                    }}>
-                                                    <Accordion.Header>{prop.title}</Accordion.Header>
+                                                    }}>{prop.title}</Accordion.Header>
                                                     <Accordion.Body>
                                                         <Form>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Title</Form.Label>
-                                                                <Form.Control type="text" defaultValue={prop.title} />
+                                                                <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)}/>
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Description</Form.Label>
-                                                                <Form.Control as="textarea" rows={5} defaultValue={prop.description} />
+                                                                <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)}/>
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Supervisor</Form.Label>
@@ -134,11 +169,11 @@ const ThesisRequest = (props) => {
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
                                                                 <Form.Label>Co-Supervisors</Form.Label>
-                                                                {
-                                                                    prop.co_supervisor?.length !=0 ? 
-                                                                    <Form.Control type="text" value={`${prop.co_supervisor}`} />
-                                                                    : <Form.Control type="text" value='No co-supervisor for this proposal' />
-                                                                }
+                                                                { actualProp ? (
+                                                                    cosupervisors?.length !=0 ? 
+                                                                    <Form.Control type="text" defaultValue={cosupervisors} onChange={event => setCosupervisors(event.target.value)} />
+                                                                    : <Form.Control type="text" placeholder="No co-supervisor for this proposal" onChange={event => setCosupervisors(event.target.value)} />
+                                                                ) : ''}
                                                                 
                                                             </Form.Group>
                                                             <Form.Group className="mb-3">
@@ -150,7 +185,7 @@ const ThesisRequest = (props) => {
                                                             </Form.Group>
                                                         </Form>
 
-                                                        <Button className="m-2" variant="success" type="submit">Send Request</Button>&nbsp;
+                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequest}>Send Request</Button>&nbsp;
 
                                                     </Accordion.Body>
                                                 </Accordion.Item>

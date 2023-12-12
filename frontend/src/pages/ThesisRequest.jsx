@@ -17,11 +17,12 @@ const ThesisRequest = (props) => {
     const [actualProp, setActualProp] = useState(undefined);
     const [propList, setPropList] = useState(undefined);
 
+    //va passato il cod degree e usare la getAllStudentProposals per ricevere le proposal solo del corso dello studente
     useEffect(() => {
         API.getAllProposals()
             .then((list) => setPropList(list))
             .catch((err) => console.log(err))
-    }, [props.appList]);
+    }, []);
 
     return (
         <>
@@ -42,6 +43,7 @@ const ThesisRequest = (props) => {
                         <Container style={{ width: '70%' }}>
                             {
 
+                                //manca il filter sulle accepted applications
                                 (props.appList && propList) ? props.appList.map((app, index) => {
                                     return (
                                         <Row key={index}>

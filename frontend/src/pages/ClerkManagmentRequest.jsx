@@ -40,6 +40,7 @@ const ClerkManagmentRequest = (props) => {
                 <p>There are no requests to accept</p>
                 :
                 <>
+                    <h1 style={{textAlign: 'center', marginBottom: '40px'}}>Thesis Requests List</h1>
                     <Accordion defaultActiveKey="0">
                     {
                         reqList.map((request, index) => {

@@ -41,8 +41,8 @@ function BrowseAppDecision(props){
                     </Table>
                     <Container style={{marginTop: "30px"}}>
                         <Row>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="success" onClick={() => navigate('/search')}>New Apply</Button></Col>
-                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="danger"  onClick={() => navigate('/')}>Back</Button></Col>
+                            <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="success" onClick={() => navigate('/')}>New Apply</Button></Col>
+                            {/* <Col style={{display: "flex", alignItems: "center", justifyContent: "center"}}><Button variant="danger"  onClick={() => navigate('/')}>Back</Button></Col> */}
                         </Row>
                     </Container>                    
                 </>

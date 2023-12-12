@@ -98,8 +98,8 @@ const ClerkManagmentRequest = (props) => {
                                         <p><b>Apply Date: </b> {dayjs(request.apply_date).format('YYYY-MM-DD')}</p>
 
                                         <div className="accordion-row-buttons">
-                                            <Button variant="success" onClick={() => handleClick(request.id, true)}>Accept</Button>
-                                            <Button variant="danger"  onClick={() => handleClick(request.id, false)}>Reject</Button>
+                                            <Button variant="success" className="clerkBtn" onClick={() => handleClick(request.id, true)}>Accept</Button>
+                                            <Button variant="danger"  className="clerkBtn" onClick={() => handleClick(request.id, false)}>Reject</Button>
                                         </div>
                                     </Accordion.Body>
                                 </Accordion.Item>

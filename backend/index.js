@@ -636,7 +636,8 @@ app.get('/api/student/list', async (req, res) => {
             return {
                 name: t.name,
                 surname: t.surname,
-                id: t.id
+                id: t.id,
+                email: t.email
             }
         }));
     } catch (err) {

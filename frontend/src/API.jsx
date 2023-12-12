@@ -148,6 +148,24 @@ async function getAllThesisRequests() {
     }
 }
 
+async function AcceptOrRejectThesisRequestClerk(request_id, status) {
+    const response = await fetch(`${URL}/clerk/Requestlist/${request_id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({status_clerk: status}), 
+    });
+
+    const thesis_request = await response.json();
+    if (response.ok) {
+        return thesis_request;
+    } else {
+        throw thesis_request;
+    }
+}
+
 async function getAllProposals() {
     const response = await fetch(URL + '/ProposalsList', {
         credentials: 'include'
@@ -472,7 +490,8 @@ const API = {
     getStudentGeneratedCv,
     getStudentSubmittedCv,
     getAllThesisRequests,
-    getAllStudents
+    getAllStudents,
+    AcceptOrRejectThesisRequestClerk
 };
 
 export default API;

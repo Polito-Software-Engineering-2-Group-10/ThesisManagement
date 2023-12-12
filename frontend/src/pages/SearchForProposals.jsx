@@ -127,7 +127,6 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
 }
 
 function SearchForProposals(props) {
-    //console.log(props.user);
     const navigate = useNavigate();
 
     const { proposalsDirty } = useContext(AppContext);
@@ -350,51 +349,50 @@ function SearchForProposals(props) {
                                         <div className="mb-3">
                                             <h5 display="inline-block "> Filter by: </h5>
                                             <Button
-                                                
                                                 onClick={() => handleFilterClick('title')}
-                                                className={activeFilter === 'title' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'title' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Title
                                             </Button>
+
                                             <Button
-                                                
                                                 onClick={() => handleFilterClick('professor')}
-                                                className={activeFilter === 'professor' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'professor' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Professor
                                             </Button>
+
                                             <Button
-                                                
                                                 onClick={() => handleFilterClick('expirationDate')}
-                                                className={activeFilter === 'expirationDate' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'expirationDate' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Expiration Date
                                             </Button>
                                             <Button
                                                
                                                 onClick={() => handleFilterClick('type')}
-                                                className={activeFilter === 'type' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'type' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Type
                                             </Button>
                                             <Button
                                                 
                                                 onClick={() => handleFilterClick('level')}
-                                                className={activeFilter === 'level' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'level' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Level
                                             </Button>
                                             <Button
                                                 
                                                 onClick={() => handleFilterClick('keywords')}
-                                                className={activeFilter === 'keywords' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'keywords' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Keywords
                                             </Button>
                                             <Button
                                                 
                                                 onClick={() => handleFilterClick('groups')}
-                                                className={activeFilter === 'groups' ? 'selected-search-filter-btn' : 'search-filter-btn'}
+                                                className={activeFilter === 'groups' ? 'selected search-filter-btn' : 'search-filter-btn'}
                                             >
                                                 Groups
                                             </Button>

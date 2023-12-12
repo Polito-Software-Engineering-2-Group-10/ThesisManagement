@@ -7,24 +7,33 @@ import SearchForProposals from "./SearchForProposals";
 
 function InfoBox(props){
     const navigate = useNavigate();
-
+    console.log(props);
+   ;
     return(
         <>
         { (props.loggedIn && props.userDetail) ? 
                     ( props.user.role == 'teacher' ?
                     <Container >
                         
-                    <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
+                        <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
 
 
                     </Container>
-                    :
+                    : (props.user.role=="student")?
                     // student
                     <Container>
 
                         <SearchForProposals loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
 
                     </Container>
+                    :
+                     <Container>
+                       {
+                       
+                        navigate('/clerk')
+                   
+                       }
+                     </Container>
                     /*
                     <Container style={{width: "50%", marginTop: "30px"}}>
 

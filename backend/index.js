@@ -757,6 +757,11 @@ app.post('/api/virtualclock', [
     res.json({ date: new_date });
 })
 
+app.get('/api/virtualclock', (req, res) => {
+    let date = virtualClock.getSqlDate();
+    res.json({ date: date });
+});
+
 app.delete('/api/virtualclock', (req, res) => {
     virtualClock.resetOffset();
     res.json({ date: dayjs() });

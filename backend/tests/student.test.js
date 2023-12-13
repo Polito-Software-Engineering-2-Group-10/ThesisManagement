@@ -125,8 +125,17 @@ describe('GET /api/student/ApplicationsList', () => {
 });
 
 describe('POST /api/student/applyProposal', () => {
+
+    jest.mock('nodemailer', () => ({
+        createTransport: jest.fn().mockReturnValue({
+            sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
+        })
+    }));
+
     test('Should successfully apply for a thesis proposal', async () => {
-        const valid_id = "validID"
+        const valid_id = {
+            id: 1
+        };
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'student' };
@@ -137,6 +146,18 @@ describe('POST /api/student/applyProposal', () => {
         };
         jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         jest.spyOn(applicationTable, 'addApplicationWithDate').mockImplementationOnce(() => valid_id);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => {
+            return {
+                supervisor: 'test@test.com',
+                title: 'test'
+            };
+        });
+        jest.spyOn(thesisProposalTable, 'getTeacherInfoById').mockImplementationOnce(() => {
+            return {
+                surname: 'test',
+                name: 'test',
+            }
+        });
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(200);

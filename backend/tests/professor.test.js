@@ -738,10 +738,10 @@ describe('POST /api/teacher/retrieveCosupGroup', () => {
     });
 });
 
-//send notification
 describe('POST /api/send_email', () => {
+
     const params = {
-        recipient_email: 'pippo',
+        recipient_mail: 's319950@studenti.polito.it',
         subject: 'pluto',
         message: 'paperino'
     }
@@ -767,11 +767,20 @@ describe('POST /api/send_email', () => {
         });
 
         const response = await request(app).post('/api/send_email').send(params);
+        expect(response.status).toBe(200);
+        expect(response.text).toEqual('Email sent successfully');
+    });
+
+    //internal server error 500
+    test('Should throw an error with 500 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        const response = await request(app).post('/api/send_email').send(params2);
         expect(response.status).toBe(500);
         expect(response.body).toEqual({ error: "No recipients defined" });
-        // jest.spyOn(sendEmail(params)).mockImplementationOnce(() => { throw new Error('Database error')});
-        // const response = await request(app).post('/api/send_email');
-        // expect(response.status).toBe(503);
-        // expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
     })
 });

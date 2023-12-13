@@ -192,3 +192,12 @@ CREATE TABLE IF NOT EXISTS public.applicant_cv
         ON DELETE NO ACTION
 );
 ALTER TABLE IF EXISTS public.applicant_cv OWNER TO thesismanager;
+
+-- virtual clock
+CREATE TABLE IF NOT EXISTS public.virtual_clock
+(
+    onerow_id boolean PRIMARY KEY DEFAULT true,
+    virtual_time timestamp with time zone NOT NULL,
+    CONSTRAINT virtual_clock_onerow_id_check CHECK (onerow_id)
+);
+ALTER TABLE IF EXISTS public.virtual_clock OWNER TO thesismanager;

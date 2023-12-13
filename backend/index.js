@@ -726,12 +726,12 @@ app.post('/api/virtualclock', [
     };
     let now = dayjs();
     let new_date = dayjs(req.body.date);
-    virtualClock.setOffset(new_date.unix() - now.unix());
+    await virtualClock.setOffset(new_date.unix() - now.unix());
     res.json({ date: new_date });
 })
 
-app.delete('/api/virtualclock', (req, res) => {
-    virtualClock.resetOffset();
+app.delete('/api/virtualclock', async (req, res) => {
+    await virtualClock.resetOffset();
     res.json({ date: dayjs() });
 })
 

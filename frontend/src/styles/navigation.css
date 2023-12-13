@@ -17,7 +17,7 @@
 
 .btn {
     font-size: .75em;
-    font-family: Poppins-Bold;
+    font-family: Poppins-Bold, sans-serif;
     padding: 0.5em;
 }
 
@@ -45,7 +45,7 @@
 #navbar p{
     margin-bottom: 0;
     color: var(--prussiaBlue);
-    font-family: Poppins-SemiBold;
+    font-family: Poppins-SemiBold, sans-serif;
     width: max-content;
 }
 

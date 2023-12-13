@@ -22,7 +22,6 @@
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
 }
 
 .selected:active:focus {
@@ -47,7 +46,7 @@
 
 .text-primary {
     color: var(--prussiaBlue) !important;
-    font-family: Poppins-SemiBold;
+    font-family: Poppins-SemiBold, sans-serif;
 }
 
 button{

@@ -68,7 +68,7 @@ function Navigation(props) {
       <div id="navbar">
         
         <Container id="navbarTitle" >
-            <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')}/>
+            <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
 
             <h1 className="title" onClick={()=>navigate('/')}>{title}</h1>  
         
@@ -78,6 +78,7 @@ function Navigation(props) {
                   <i
                     className="bi bi-calendar"
                     onClick={handleEditClick}
+                    onKeyDown={handleEditClick}
                   ></i>
             </Container>
           )}

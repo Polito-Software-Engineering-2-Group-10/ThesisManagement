@@ -285,10 +285,11 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
                 return res.status(400).json({ error: 'The proposal does not exist!' });
             }
 
-            if (proposalDetail.archived === false) {
+            if (proposalDetail.archived === 0) {
                 const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
-            } if (proposalDetail.archived === true) {
+            } 
+            if (proposalDetail.archived > 0) {
                 const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
             }

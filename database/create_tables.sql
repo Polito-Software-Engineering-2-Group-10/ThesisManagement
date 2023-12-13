@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS public.thesis_proposal
     expiration date NOT NULL,
     level integer NOT NULL,
     programmes text[],
-    archived boolean NOT NULL DEFAULT false,
+    archived integer NOT NULL DEFAULT 0, -- 0 = not archived, 1 = archived (expiration), 2 = archived (manually by teacher)
     CONSTRAINT thesis_proposal_pk PRIMARY KEY (id),
     CONSTRAINT thesis_proposal_teacher_id_fkey FOREIGN KEY (teacher_id)
         REFERENCES public.teacher (id)

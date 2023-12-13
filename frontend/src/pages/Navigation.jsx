@@ -70,7 +70,7 @@ function Navigation(props) {
         <Container id="navbarTitle" >
             <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
 
-            <h1 className="title" onClick={()=>navigate('/')}>{title}</h1>  
+            <h1 className="title" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}>{title}</h1>  
         
         {props.loggedIn && (
             <Container  id="navbarClock">

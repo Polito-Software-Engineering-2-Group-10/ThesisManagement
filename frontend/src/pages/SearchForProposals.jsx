@@ -420,6 +420,7 @@ function SearchForProposals(props) {
                                                         <span
                                                             className="badge-close"
                                                             onClick={() => handleRemoveFilter(filter)}
+                                                            onKeyDown={() => handleRemoveFilter(filter)}
                                                             style={{ cursor: 'pointer' }}
                                                         >
                                                             &times;

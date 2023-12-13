@@ -193,7 +193,7 @@ function ApplyToProposal(props) {
                       }
                       {file ?
                           <p style={{ marginLeft: '5px', marginTop: '15px' }}>
-                              <b>{file.name}</b> <i style={{ cursor: 'pointer' }} className="bi bi-x-lg" onClick={() => setFile(null)}></i>
+                              <b>{file.name}</b> <i style={{ cursor: 'pointer' }} className="bi bi-x-lg" onClick={() => setFile(null)} onKeyDown={() => setFile(null)}></i>
                           </p> :
                           <p style={{ marginLeft: '5px', marginTop: '15px' }}>
                               <b>&nbsp;</b>

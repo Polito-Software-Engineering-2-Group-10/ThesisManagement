@@ -75,19 +75,25 @@ function Navigation(props) {
               <Nav>
                 
                 <div id="nav-links">
-                  {props.user?.role==="teacher"?
-                
+                  {props.user?.role==="teacher" ? // teacher case
                   <>
                     <Nav.Link onClick={()=>navigate("/insert")}>Insert proposal</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/proposals")}>Browse Proposals</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/BrowseApp")}>Browse Applications</Nav.Link>
                   </>
-                  :
+
+                  : (
+                    props.user?.role==="student" ? // student case
                   <>
                     <Nav.Link onClick={()=>navigate("/")}>Browse Proposals</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/BrowseAppDec")}>Browse Applications</Nav.Link>
                     <Nav.Link onClick={() => navigate("/thesisRequest")}>Thesis Request</Nav.Link>
                   </>
+                  :                                // clerk case
+                  <>
+                    <Nav.Link onClick={()=>navigate("/")}>Accept requests</Nav.Link>
+                  </>
+                  )
                   }
                 </div>
 

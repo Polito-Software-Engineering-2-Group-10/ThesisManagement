@@ -143,6 +143,48 @@ async function getStudentDetail() {
     }
 }
 
+async function getClerkDetail() {
+    const response = await fetch(URL + '/clerk/details', {
+        credentials: 'include'
+    });
+    const clerkDetails = await response.json();
+    if (response.ok) {
+        return clerkDetails;
+    } else {
+        throw clerkDetails;
+    }
+}
+
+async function getAllThesisRequests() {
+    const response = await fetch(URL + '/clerk/Requestlist', {
+        credentials: 'include'
+    });
+    const requestsList = await response.json();
+    if (response.ok) {
+        return requestsList;
+    } else {
+        throw requestsList;
+    }
+}
+
+async function AcceptOrRejectThesisRequestClerk(request_id, status) {
+    const response = await fetch(`${URL}/clerk/Requestlist/${request_id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({status_clerk: status}), 
+    });
+
+    const thesis_request = await response.json();
+    if (response.ok) {
+        return thesis_request;
+    } else {
+        throw thesis_request;
+    }
+}
+
 async function getAllProposals() {
     const response = await fetch(URL + '/ProposalsList', {
         credentials: 'include'
@@ -232,6 +274,12 @@ async function addApplication(application) {
 
 async function getAllTeachers() {
     const response = await fetch(`${URL}/teacher/list`);
+    const data = await response.json();
+    return data;
+}
+
+async function getAllStudents() {
+    const response = await fetch(`${URL}/student/list`);
     const data = await response.json();
     return data;
 }
@@ -438,6 +486,7 @@ const API = {
     getTeacherProposals,
     getTeacherDetail,
     getStudentDetail,
+    getClerkDetail,
     getAllProposals,
     addApplication,
     getAllTeachers,
@@ -459,7 +508,10 @@ const API = {
     uploadFile,
     getStudentGeneratedCv,
     getStudentSubmittedCv,
-    applyRequest
+    applyRequest,
+    getAllThesisRequests,
+    getAllStudents,
+    AcceptOrRejectThesisRequestClerk
 };
 
 export default API;

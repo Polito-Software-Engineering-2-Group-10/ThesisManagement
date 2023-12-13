@@ -133,7 +133,7 @@ a:hover, #nav-links > a:hover {
     flex-wrap: wrap;
 }
 
-@media screen and (max-width: 981px)
+@media screen and (max-width: 992px)
 {
     .color-nav {
         height: 4em;
@@ -141,7 +141,7 @@ a:hover, #nav-links > a:hover {
     }
 }
 
-@media screen and (max-width: 695px) {
+@media screen and (max-width: 992px) {
     .color-nav {
         height: 4em;
         flex-wrap: wrap;

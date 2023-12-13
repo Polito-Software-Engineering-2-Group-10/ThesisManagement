@@ -17,6 +17,7 @@ import AppContext from './AppContext.jsx';
 import BrowseProposal from './pages/BrowseProposal';
 import BrowseArchivedProposals from './pages/BrowseArchivedProposals';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
+import ClerkManagmentRequest from './pages/ClerkManagmentRequest.jsx';
 
 function App() {
   const notify =useNotification();
@@ -26,6 +27,7 @@ function App() {
   const [dirty, setDirty] = useState(false);
   const [proposalsDirty, setProposalsDirty] = useState(true);
   const [appList, setAppList] = useState(undefined);
+  const [reqList, setReqList] = useState(undefined);
 
   const [proposalList, setProposalList] = useState(null);
   const fetchData = async () =>{
@@ -85,9 +87,18 @@ function App() {
                 .catch((err) => console.log(err));
               })
               .catch((err) => console.log(err));
-      } else {
-        // FIXME: handle 'clerk' role
-        console.log(`User role ${user.role} not supported`)
+      } else if (user.role === 'clerk'){
+        API.getClerkDetail()
+              .then((clerk) => {
+                  setUserDetail(clerk);
+                  API.getAllThesisRequests()
+                    .then((list) => {
+                        setReqList(list);
+                        setDirty(false);
+                    })
+                .catch((err) => console.log(err));
+              })
+              .catch((err) => console.log(err));
       }
     }
   }, [dirty]);
@@ -144,6 +155,7 @@ function App() {
             <Route path='/browseApp' element={loggedIn ? <BrowseAndAcceptApplication appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} updateAppList={fetchTeacherAppsList}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>
             <Route path='/updateProposal/:thesisId' element={loggedIn ? <ProposalForm teacherDetail={userDetail} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
             <Route path='/thesisRequest' element={loggedIn ? <ThesisRequest studentDetail={userDetail} appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
+            <Route path='/clerk' element={loggedIn ? <ClerkManagmentRequest clerk={userDetail} reqList={reqList} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

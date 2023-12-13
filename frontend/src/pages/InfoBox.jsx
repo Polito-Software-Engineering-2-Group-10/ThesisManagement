@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "/src/index.css"
 import BrowseProposal from "./BrowseProposal";
 import SearchForProposals from "./SearchForProposals";
-
+import ClerkManagmentRequest from "./ClerkManagmentRequest";
 function InfoBox(props){
     const navigate = useNavigate();
     return(
@@ -28,7 +28,7 @@ function InfoBox(props){
                      <Container>
                        {
                        
-                        navigate('/clerk')
+                        <ClerkManagmentRequest/>
                    
                        }
                      </Container>

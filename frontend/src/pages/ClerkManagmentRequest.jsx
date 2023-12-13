@@ -54,11 +54,7 @@ const ClerkManagmentRequest = (props) => {
         <>
         <ToastContainer/>
         <div>
-            <Navigation
-                logout={props.logout}
-                loggedIn={props.loggedIn}
-                user={props.user}
-            />
+      
             {/* This modal prevent the clerk to directly accept a proposal */}
             <ConfirmModal 
                 title = {status ? "Do you want to accept the request?" : "Do you want to reject the request?"}

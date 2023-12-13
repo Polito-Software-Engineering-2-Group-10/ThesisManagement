@@ -12,5 +12,4 @@ function PushDockerImage {
 PushDockerImage "backend"
 PushDockerImage "frontend"
 PushDockerImage "database"
-PushDockerImage "authsources"
 PushDockerImage "saml"

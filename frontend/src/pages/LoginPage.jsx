@@ -3,6 +3,7 @@ import { Button, Col, Container, Form, Row,Alert,Card } from "react-bootstrap";
 import { useNavigate} from "react-router-dom";
 import API from "../API";
 import "../styles/LoginPage.css";
+import logoBlu from "../img/LogoBlu.svg";
 
 function LoginPage(props){
     const [email, setEmail] = useState('ferrero.renato@polito.it');
@@ -63,7 +64,7 @@ function LoginPage(props){
                     height="115"
                     className="d-inline-block align-center"
                     align="center"
-                    src="/src/img/LogoBlu.svg" />
+                    src={logoBlu} />
                     </div>
                     
                     

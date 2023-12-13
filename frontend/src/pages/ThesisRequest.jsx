@@ -9,12 +9,14 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import useNotification from '../hooks/useNotifcation';
+import { ToastContainer} from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import ConfirmModal from '../components/ConfirmModal';
+
 
 // TO DO
-// - accettare qualche application in modo da implementare il filtro sulle application
 // - aggiungere confirmationModal e popup
-// - controllare che mandando una request questa sparisca dalle selezionabili
-
 
 const ThesisRequest = (props) => {
 
@@ -25,7 +27,10 @@ const ThesisRequest = (props) => {
     const [cosupervisors, setCosupervisors] = useState('');
     const [dirty, setDirty] = useState(false);
     const [acceptedPropId, setAcceptedPropId] = useState(undefined);
+    const [showModal, setShowModal] = useState(false);
 
+    const notify=useNotification();
+    
     useEffect(() => {
         if (props.studentDetail) {
             API.getAllProposalsForStudent(props.studentDetail.cod_degree)
@@ -39,35 +44,36 @@ const ThesisRequest = (props) => {
     useEffect(() => {
         if (acceptedPropId) {
             API.getProposal(acceptedPropId)
-                .then((p) => setActualProp(p))
+                .then((p) => {
+                    setActualProp(p);
+                })
                 .catch((err) => console.log(err));
         }
     }, [acceptedPropId]);
 
     useEffect(() => {
-        if (actualProp) {
-            setDirty(true);
-        }
-    }, [actualProp]);
-
-    useEffect(() => {
-        if (dirty) {
+        if (dirty && actualProp) {
             if (Array.isArray(actualProp)) {
                 setTitle(actualProp[0].title);
                 setDescription(actualProp[0].description);
                 setCosupervisors(actualProp[0].co_supervisor.join(', '));
             }
-            else{
+            else {
                 setTitle(actualProp.title);
                 setDescription(actualProp.description);
                 setCosupervisors(actualProp.co_supervisor.join(', '));
             }
             setDirty(false);
         }
-    }, [dirty]);
+    }, [dirty, actualProp]);
 
-    const handleSendThesisRequest = (event) => {
+    const handleSendThesisRequestClick = (event) => {
         event.preventDefault();
+        setShowModal(true);
+    }
+    
+    const handleSendThesisRequest = () => {
+        //event.preventDefault();
         const cosupervisor_array = cosupervisors == '' ? [] : cosupervisors.split(/[,;]/).map((k) => k.trim());
 
         const thesis_request = {
@@ -77,16 +83,26 @@ const ThesisRequest = (props) => {
             description: description,
             apply_date: dayjs().format('YYYY-MM-DD')
         }
-
-        console.log(thesis_request);
-        /* API.applyRequest(thesis_request, actualProp[0].id)
-            .then(response => {console.log(response)})
-            .catch((err) => console.log(err)); */
+        API.applyRequest(thesis_request, Array.isArray(actualProp) ? actualProp[0].id : actualProp.id)
+            .then(response => {
+                notify.success("Thesis request successfully sent")
+            })
+            .catch((err) => 
+            notify.error(err.error));
 
     }
 
     return (
         <>
+            <ToastContainer/>
+
+            <ConfirmModal 
+                title = {"Do you want to send a thesis request for this proposal?"}
+                text  = {"The selected thesis request will be sent to the secretary."}
+                show={showModal} setShow={setShowModal} 
+                onConfirm={()=>handleSendThesisRequest()}
+            />
+
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user} />
 
             <div className="my-3 text-center fw-bold fs-1" style={{ paddingTop: '20px', paddingBottom: '20px' }}>
@@ -109,6 +125,7 @@ const ThesisRequest = (props) => {
                                                 <Accordion.Item eventKey={index}>
                                                     <Accordion.Header onClick={() => {
                                                         setAcceptedPropId(app.proposal_id);
+                                                        setDirty(true);
                                                     }}>{app.thesis_title}</Accordion.Header>
                                                     <Accordion.Body>
                                                         <Form>
@@ -151,7 +168,7 @@ const ThesisRequest = (props) => {
                                                             </Form.Group>
                                                         </Form>
 
-                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequest}>Send Request</Button>&nbsp;
+                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
 
                                                     </Accordion.Body>
                                                 </Accordion.Item>
@@ -159,7 +176,7 @@ const ThesisRequest = (props) => {
                                         </Row>
                                     )
 
-                                }) : ''
+                                }) : <h3>There are no accepted applications</h3>
                             }
                         </Container>
                     </Accordion>
@@ -169,7 +186,7 @@ const ThesisRequest = (props) => {
                         <Container style={{ width: '70%' }}>
                             {
                                 (propList && props.appList) ? propList.filter((p) => {
-                                    const acceptedPropIds = props.appList.map((a) => a.proposal_id);
+                                    const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
                                     return !acceptedPropIds.includes(p.id)
                                 }).map((prop, index) => {
                                     return (
@@ -177,9 +194,8 @@ const ThesisRequest = (props) => {
                                             <Col>
                                                 <Accordion.Item eventKey={index}>
                                                     <Accordion.Header onClick={() => {
-                                                        return (
-                                                            setActualProp(propList.filter((p) => p.id == prop.id))
-                                                        )
+                                                        setActualProp(propList.filter((p) => p.id == prop.id));
+                                                        setDirty(true);
                                                     }}>{prop.title}</Accordion.Header>
                                                     <Accordion.Body>
                                                         <Form>
@@ -222,7 +238,7 @@ const ThesisRequest = (props) => {
                                                             </Form.Group>
                                                         </Form>
 
-                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequest}>Send Request</Button>&nbsp;
+                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
 
                                                     </Accordion.Body>
                                                 </Accordion.Item>

@@ -1,8 +1,9 @@
 import { Navbar, Nav, Container, Button, Form, Modal, NavDropdown, NavbarCollapse } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
+import dayjs from 'dayjs';
 
 
 import "../styles/navigation.css";
@@ -15,9 +16,24 @@ function Navigation(props) {
     const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
-    const [virtualClock, setVirtualClock] = useState(new Date().toISOString().substring(0, 10));
-    const [temporaryClock, setTemporaryClock] = useState(new Date().toISOString().substring(0, 10));
+    const [virtualClock, setVirtualClock] = useState('');
+    const [temporaryClock, setTemporaryClock] = useState('');
+    const [dateChanged, setDateChanged] = useState(true);
     
+    useEffect(() => {
+        if (dateChanged) {
+            API.getVirtualClock()
+            .then((date) => {
+                let dateObj = dayjs(date.date).format('YYYY-MM-DD');
+                setVirtualClock(dateObj);
+                setTemporaryClock(dateObj);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+            setDateChanged(false);
+        }
+    }, [dateChanged])
 
     const location = useLocation();
     // const [title, setTitle] = useState(location.state?.pageTitle ? location.state.pageTitle : 'Thesis proposals');
@@ -25,13 +41,14 @@ function Navigation(props) {
 
     const handleVirtualClockClick = (set) => {
         if(set){
-            setVirtualClock(temporaryClock);
-            API.setVirtualClock(temporaryClock);
+            API.setVirtualClock(temporaryClock).then(() => {
+                setDateChanged(true);
+            });
         }
         else{
-            setVirtualClock(new Date().toISOString().substring(0, 10))
-            setTemporaryClock(new Date().toISOString().substring(0, 10));
-            API.resetVirtualClock();
+            API.resetVirtualClock().then(() => {
+                setDateChanged(true);
+            });
         }
         setProposalsDirty(true);
         handleCloseModal();

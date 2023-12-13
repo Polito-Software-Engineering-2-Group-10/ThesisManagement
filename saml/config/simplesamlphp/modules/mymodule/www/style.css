@@ -1,0 +1,125 @@
+:root {
+    --hover-orange: #ff6400;
+    --button-red: #b61601;
+    --background-card: #f7f7f7;
+}
+
+body {
+    background-color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#wrap {
+    width: 20%;
+    height: 50%;
+    background-color: var(--background-card);
+    border: 1px solid #0000001e !important;
+
+}
+
+
+#wrap .btn {
+    background-image: linear-gradient(var(--button-red), var(--button-red)) !important;
+    border-radius: 6px;
+    color: white !important;
+    width: 100%;
+    height: 40px;
+    font-size: small;
+    font-size: medium;
+    font-family: 'Poppins' !important;
+}
+
+#wrap .btn:hover {
+    background-image: linear-gradient(var(--hover-orange), var(--hover-orange)) !important;
+    border-radius: 6px;
+    color: white !important;
+    cursor: pointer;
+
+}
+
+#content {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    flex-grow: 1;
+    font-family: 'Poppins' !important;
+    background-color: var(--background-card);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 2px;
+    padding: 20px 40px;
+}
+
+form {
+    width: 100%;
+}
+
+tbody {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    height: 2.2em;
+    font-size: medium;
+    font-family: 'Poppins' !important;
+}
+
+td {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0 10px 0;
+
+}
+
+img {
+    width: 70%;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+#login-text {
+    font-size: large;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 695px) {
+
+    #wrap {
+        width: 100%;
+    }
+
+    img {
+        width: 70%;
+        max-width: 400px;
+    }
+
+    #wrap .btn {
+        font-size: small;
+    }
+
+}
+
+@media screen and (max-width: 1545px) and (min-width: 696px) {
+
+    #wrap {
+        width: 40%;
+    }
+
+    img {
+        width: 70%;
+        max-width: 400px;
+    }
+
+    #wrap .btn {
+        font-size: small;
+    }
+
+}

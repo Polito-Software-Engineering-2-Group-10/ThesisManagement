@@ -181,15 +181,25 @@ function ApplyToProposal(props) {
                 </Col>
               </Row>
 
-              <Row style={{marginBottom: '30px'}}>
-                <Col style={{display: 'flex'}}>
-                  { props.loggedIn && props.user.role === "student" ?
-                  <Button variant="primary" onClick={handleShow}>
-                    { file ? "Change CV" : "Add CV"}
-                  </Button> 
-                  : null
-                  }
-                  {file ? <p style={{marginLeft: '20px'}}> The selected CV is: <b>{file.name}</b>   <i style={{cursor: 'pointer'}} class="bi bi-x-lg" onClick={() => setFile(null)}></i> </p> : ''}
+              <Row style={{marginBottom: '10px'}}>
+                  <Col style={{ display: 'flex', alignItems: 'center' }}>
+                      {props.loggedIn && props.user.role === "student" ?
+                          <div style={{ marginRight: '10px' }}>
+                              <Button variant="primary" onClick={handleShow}>
+                                  {file ? "Change CV" : "Add CV"}
+                              </Button>
+                          </div>
+                          : null
+                      }
+                      {file ?
+                          <p style={{ marginLeft: '5px', marginTop: '15px' }}>
+                              <b>{file.name}</b> <i style={{ cursor: 'pointer' }} className="bi bi-x-lg" onClick={() => setFile(null)}></i>
+                          </p> :
+                          <p style={{ marginLeft: '5px', marginTop: '15px' }}>
+                              <b>&nbsp;</b>
+                          </p>
+                      }
+                  </Col>
                   <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                       <Modal.Title>Select CV for this application</Modal.Title>
@@ -199,16 +209,16 @@ function ApplyToProposal(props) {
                         <Form.Control type="file" onChange={handleSelectFile} />
                       </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer>
+                    <Modal.Footer className="d-flex justify-content-between">
                       <Button variant="secondary" onClick={handleClose}>
                         Close
                       </Button>
                       <Button variant="primary" onClick={handleSaveFile}>
-                        Save Changes
+                        Save
                       </Button>
                     </Modal.Footer>
                   </Modal>
-                </Col>
+
               </Row>
 
               {errorMessage ? (
@@ -222,7 +232,7 @@ function ApplyToProposal(props) {
               ) : (
                 ""
               )}
-              <Row style={{ marginTop: "15px", marginBottom: "30px" }}>
+              <Row style={{ marginTop: "15px", marginBottom: "30px" }} >
                 {props.loggedIn && props.user.role === "student" ? (
                   <>
                     <Col

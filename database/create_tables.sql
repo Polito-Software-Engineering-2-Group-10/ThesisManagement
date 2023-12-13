@@ -1,3 +1,6 @@
+CREATE EXTENSION pg_cron;
+
+GRANT USAGE ON SCHEMA public TO thesismanager;
 -- Create tables
 
 -- degree

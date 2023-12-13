@@ -5,6 +5,7 @@ services:
     build:
       context: ../database
       dockerfile: ./Dockerfile
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     expose:
       - 5432
     ports:

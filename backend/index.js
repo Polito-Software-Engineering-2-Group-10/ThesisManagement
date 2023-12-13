@@ -91,7 +91,27 @@ const storage = multer.diskStorage({
       return cb(null, `${Date.now()}_${file.originalname}`)
     }
 })
-  
+
+await psqlDriver.listen(
+    'thesismanagement',
+    'application_status',
+    async (msg) => {
+        if (msg.channel === 'application_status') {
+            const canceled_app_ids = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
+            if (canceled_app_ids.length === 0) return;
+            const info = await applicationTable.getRejectedAppInfo(canceled_app_ids);
+            for (const s of info) {
+                // const res = await sendEmail(
+                console.log(JSON.stringify({
+                    recipient_mail: s.email,
+                    subject: `Info about your application about ${s.title}`,
+                    message: `Hello dear student,\n Unfortunately your thesis application for the ${s.title} proposal, supervised by professor ${s.surname}, has been cancelled because the thesis proposal expired.\nBest Regards, Polito Staff.`
+                }));
+            }
+        }
+    }
+);
+
 const upload = multer({storage})
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {

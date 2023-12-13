@@ -106,3 +106,63 @@ VALUES
 (8, 4, 'Group 2 - DIATI'),
 (9, 5, 'Group 1 - DIMEAS'),
 (10, 5, 'Group 2 - DIMEAS');
+
+-- procedure to archive thesis proposals
+CREATE PROCEDURE public.archive_thesis_proposals()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+updated_app_ids text := '';
+updated_app record;
+BEGIN
+    IF EXISTS(SELECT FROM public.virtual_clock) THEN
+        -- after archiving the expired thesis proposals, we need to reject all applications
+        FOR updated_app IN
+            UPDATE public.application SET status = false 
+            WHERE status IS NULL AND public.application.proposal_id IN (
+                SELECT id FROM public.thesis_proposal
+                WHERE expiration < (SELECT virtual_time FROM public.virtual_clock) AND archived = 0
+            )
+            RETURNING id
+        LOOP
+            updated_app_ids := updated_app_ids || updated_app.id || ',';
+        END LOOP;
+		
+		UPDATE public.thesis_proposal
+		SET archived = 1
+		WHERE expiration < (SELECT virtual_time FROM public.virtual_clock) AND archived = 0;
+        
+        PERFORM pg_notify('application_status', updated_app_ids);
+
+        UPDATE public.thesis_proposal
+        SET archived = 0
+        WHERE expiration > (SELECT virtual_time FROM public.virtual_clock) AND archived = 1;
+
+    ELSE
+        -- after archiving the expired thesis proposals, we need to reject all applications
+        FOR updated_app IN
+            UPDATE public.application SET status = false 
+            WHERE status IS NULL AND public.application.proposal_id IN (
+                SELECT id from public.thesis_proposal
+                WHERE expiration < now() AND archived = 0
+            )
+            RETURNING id
+        LOOP
+            updated_app_ids := updated_app_ids || updated_app.id || ',';
+        END LOOP;
+		
+		UPDATE public.thesis_proposal
+		SET archived = 1
+		WHERE expiration < now() AND archived = 0;
+
+        PERFORM pg_notify('application_status', updated_app_ids);
+
+        UPDATE public.thesis_proposal
+        SET archived = 0
+        WHERE expiration > now() AND archived = 1;
+    END IF;
+END
+$$;
+
+-- cron job to archive thesis proposals
+SELECT cron.schedule('Auto-archive thesis proposals', '*/1 * * * *', 'CALL public.archive_thesis_proposals()')

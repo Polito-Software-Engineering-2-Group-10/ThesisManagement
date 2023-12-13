@@ -67,6 +67,12 @@ class PsqlDb {
     async connect() {
         await this.dbObject.connect();
     }
+
+    async listen(channel, callback) {
+        await this.executeQuery(`LISTEN ${channel}`);
+        this.dbObject.on('notification', callback);
+    }
+
     async close() {
         await this.dbObject.end();
     }
@@ -96,6 +102,9 @@ class PsqlDriver {
         for (const dbName in this.openDatabases) {
             await this.openDatabases[dbName].close();
         }
+    }
+    async listen(dbName, channel, callback) {
+        await this.openDatabases[dbName].listen(channel, callback);
     }
 }
 

@@ -90,7 +90,7 @@ function Navigation(props) {
                   </>
                   :                                // clerk case
                   <>
-                    <Nav.Link onClick={()=>navigate("/clerk")}>Accept requests</Nav.Link>
+                    <Nav.Link onClick={()=>navigate("/")}>Accept requests</Nav.Link>
                   </>
                   )
                   }

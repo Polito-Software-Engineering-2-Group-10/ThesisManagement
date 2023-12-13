@@ -8,7 +8,7 @@
 }
 
 .btn {
-    color: var(--prussiaBlue) !important;
+    color: var(--prussiaBlue);
 }
 
 .selected {

@@ -41,9 +41,9 @@ h1{
 }
 
 .btn-cancel:hover, .btn-danger:hover{
-    background-color: var(--cancelButton-hover);
+    background-color: var(--cancelButton-hover) !important;
     color: white !important;
-    border-color: var(--cancelButton-hover);
+    border-color: var(--cancelButton-hover) !important;
 }
 
 .modal-title{

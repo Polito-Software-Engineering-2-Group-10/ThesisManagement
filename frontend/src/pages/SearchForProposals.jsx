@@ -429,6 +429,19 @@ function SearchForProposals(props) {
                                                 )
                                             )))}
                                         </div>
+                                        <hr />
+                                        <Button className='search-filter-btn' onClick={
+                                            () => {
+                                                setFilters({});
+                                                API.getFilteredProposals({}, studInfo?.cod_degree)
+                                                .then((data) => {
+                                                    setProposals(data);
+                                                })
+                                                .catch((err) => console.log(err));
+                                            }
+                                        }>
+                                                Clear all filters
+                                        </Button>
                                         {activeFilter && (
                                             <Form className="mt-3" onSubmit={(ev) => { ev.preventDefault(); handleApplyFilter(); }}>
                                                 {activeFilter === 'title' && (

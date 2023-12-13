@@ -92,6 +92,14 @@
     color: var(--prussiaBlue);
     text-decoration: none !important;
 }
+.dropdown-item > div {
+    color: var(--prussiaBlue);
+    text-decoration: none !important;
+}
+.dropdown-item > div:hover {
+    color: var(--orange);
+    text-decoration: none !important;
+}
 
 #nav-links > a {
     color: white !important;

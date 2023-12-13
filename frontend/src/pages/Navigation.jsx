@@ -92,7 +92,7 @@ function Navigation(props) {
 
                   <NavDropdown title={props.user?.name + " " + props.user?.surname} id="basic-nav-dropdown">
                       <NavDropdown.Item  onClick={props.logout}>
-                          <Link>Logout</Link>
+                          <div>Logout</div>
                       </NavDropdown.Item>
                   </NavDropdown>
               </Nav>

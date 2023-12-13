@@ -53,6 +53,25 @@ async function addProposal(proposal) {
         throw errDetail;
     }
 }
+
+async function applyRequest(thesis_request, thesis_id) {
+    let response = await fetch(URL + `/student/applyRequest/${thesis_id}`, {
+        credentials: 'include',
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(thesis_request)
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
+}
 // login,logout,session
 
 async function logInWithSaml() {
@@ -440,6 +459,7 @@ const API = {
     uploadFile,
     getStudentGeneratedCv,
     getStudentSubmittedCv,
+    applyRequest
 };
 
 export default API;

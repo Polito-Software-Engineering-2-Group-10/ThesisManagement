@@ -642,7 +642,7 @@ app.get('/api/student/list', async (req, res) => {
             }
         }));
     } catch (err) {
-        res.status(503).json({ error: `Database error during retrieving teacher list ${err}` });
+        res.status(503).json({ error: `Database error during retrieving students list ${err}` });
     }
 })
 

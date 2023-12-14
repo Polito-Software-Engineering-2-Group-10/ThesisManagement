@@ -16,6 +16,12 @@ afterAll(async () => {
     await psqlDriver.closeAll();
 });
 
+jest.mock('nodemailer', () => ({
+    createTransport: jest.fn().mockReturnValue({
+        sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
+    })
+}));
+
 function registerMockMiddleware(app, index, middleware) {
     function mockWare(req, res, next) {
         middleware(req, res, next)
@@ -491,7 +497,7 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         expect(response.body).toEqual({ error: `The proposal has been accepted by a student, so it cannot be deleted` });
     });
 
-    /*test('Should throw an error with 500 status code when it fails to send a notification to the relative students', async () => {
+    test('Should throw an error with 500 status code when it fails to send a notification to the relative students', async () => {
         const application = {
             id: 1,
         }
@@ -500,27 +506,23 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         }
         const teacherInfo = {
             name: 'Professor1',
+            surname: 'surname'
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.mock('nodemailer', () => ({
-            createTransport: jest.fn().mockReturnValue({
-                sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
-            })
-        }));
 
         jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() =>
-            [{mail: 'mail'}]);
+            [{email: 'mail'}]);
         jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => application);
         jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposalInfo);
         jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => teacherInfo);
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(500);
         expect(response.body).toBeTruthy();
-    });*/
+    });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
@@ -753,11 +755,11 @@ describe('POST /api/send_email', () => {
         message: 'paperino'
     }
 
-    jest.mock('nodemailer', () => ({
+    /*jest.mock('nodemailer', () => ({
         createTransport: jest.fn().mockReturnValue({
             sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
         })
-    }));
+    }));*/
 
     //correct email sending
     test('Should successfully send an email to notify a student when his or her application has been accepted or rejected', async () => {

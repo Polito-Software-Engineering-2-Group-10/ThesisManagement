@@ -441,6 +441,7 @@ app.post('/api/student/applyProposal',
             }
             catch (err) {
                 res.status(500).json({ error: `Server error during sending notification ${err}` });
+                return;
             }
             res.json(applypropID);
         } catch (err) {
@@ -719,7 +720,8 @@ app.delete('/api/teacher/deleteProposal',
                     const app = await applicationTable.getById(s.app_id);
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
-                    try {                                             
+                    try {
+                        console.log('arrived');                                          
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,
@@ -728,6 +730,7 @@ app.delete('/api/teacher/deleteProposal',
                     }
                     catch (err) {
                         res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
                     }
                 }
             }

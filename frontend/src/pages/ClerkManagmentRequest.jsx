@@ -82,12 +82,12 @@ const ClerkManagmentRequest = (props) => {
                                         <p><b>Co-Supervisors: </b> {request.co_supervisor.length == 0 ? 'No cosupervisor': `${request.co_supervisor}`}</p>
                                         {
                                             studList ? studList.filter((s) =>  s.id == request.student_id)
-                                            .map((s) => {
+                                            .map((s, studentIndex) => {
                                                 return (
-                                                    <>
+                                                    <div key={studentIndex}>
                                                         <p><b>Student: </b> {s.name} {s.surname}</p> 
                                                         <p><b>Student Mail: </b> {s.email}</p>
-                                                    </> 
+                                                    </div> 
                                                 ) 
                                             }) : ''
                                         }

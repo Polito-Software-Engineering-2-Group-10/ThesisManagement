@@ -1,8 +1,10 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
-import { thesisProposalTable, applicationTable, teacherTable } from '../dbentities.js';
+import { thesisProposalTable, applicationTable, teacherTable, careerTable, studentTable, applicantCvTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
 import { response } from 'express';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 afterAll(async () => {
     await psqlDriver.closeAll();
@@ -741,7 +743,7 @@ describe('POST /api/teacher/retrieveCosupGroup', () => {
 describe('POST /api/send_email', () => {
 
     const params = {
-        recipient_mail: 's319950@studenti.polito.it',
+        recipient_mail: 'test@polito.it',
         subject: 'pluto',
         message: 'paperino'
     }
@@ -782,5 +784,131 @@ describe('POST /api/send_email', () => {
         const response = await request(app).post('/api/send_email').send(params2);
         expect(response.status).toBe(500);
         expect(response.body).toEqual({ error: "No recipients defined" });
+    })
+});
+
+//GET /api/teacher/getGeneratedCV/:applicationid
+describe('GET /api/teacher/getGeneratedCV/:applicationid', ()=>{
+    test('Should successfully retrieve the cv based on an application the student has made', async () => {
+        
+        const careerData = [
+            {
+                cod_course: 1,
+                title_course: 'title',
+                cfu: 13,
+                grade: 19,
+                date: '2023-12-13'
+            },
+            {
+                cod_course: 2,
+                title_course: 'title2',
+                cfu: 13,
+                grade: 19,
+                date: '2023-12-14'
+            }
+        ]
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => {
+            return{
+                student_id: 1
+            }
+        });
+        jest.spyOn(careerTable, 'getByStudentId').mockImplementationOnce(() => careerData);
+        jest.spyOn(studentTable, 'getById').mockImplementationOnce(() => {
+            return{
+                name: 'nome',
+                surname: 'cognome',
+                email: 'test@polito.it',
+                cod_degree: 'test',
+                enrollment_year: '2022-01-01'
+            }
+        });
+
+        const response = await request(app).get(`/api/teacher/getGeneratedCV/${applicationId}`);
+        expect(response.status).toBe(200);
+        expect(response.text).toBeTruthy();
+    })
+
+    test('Should return a 503 when a database error occurs', async () => {
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+
+        const response = await request(app).get(`/api/teacher/getGeneratedCV/${applicationId}`);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving CV Error: Database error'});
+    
+    })
+});
+
+//GET /api/teacher/getSubmittedCV/:applicationid
+describe('GET /api/teacher/getSubmittedCV/:applicationid', ()=>{
+    test('Should successfully retrieve the submitted cv based on an application the student has made', async () => {
+        const applicationId = 1;
+
+        const cvs = [
+            { filepath: 'test.txt' },
+            { filepath: 'prova.txt' }
+        ]
+        
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => cvs);
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(200);
+    })
+
+    test('Should return a 404 if there is no CV for this application', async () => {
+        const applicationId = 1;
+        
+        const cvs = [];
+        
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => cvs);
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({error: 'No CV submitted for this application'});
+    })
+
+    test('Should return a 503 when a database error occurs', async () => {
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving CV Error: Database error'});
+    
     })
 });

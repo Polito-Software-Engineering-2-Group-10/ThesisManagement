@@ -5,6 +5,12 @@ import { jest } from '@jest/globals';
 import { response } from 'express';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import fs from 'fs';
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 afterAll(async () => {
     await psqlDriver.closeAll();
@@ -866,9 +872,13 @@ describe('GET /api/teacher/getSubmittedCV/:applicationid', ()=>{
             next();
         })
 
+        fs.writeFileSync(path.resolve(__dirname, '..', 'public', 'files', 'test.txt'), 'test');
+
         jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => cvs);
         const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
         expect(response.status).toBe(200);
+
+        fs.rmSync(path.resolve(__dirname, '..', 'public', 'files', 'test.txt'));
     })
 
     test('Should return a 404 if there is no CV for this application', async () => {

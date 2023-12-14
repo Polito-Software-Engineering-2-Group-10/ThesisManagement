@@ -1,7 +1,7 @@
 import request from 'supertest';
 import dayjs from 'dayjs';
 import { psqlDriver, app, isLoggedIn } from '../index.js';
-import { thesisProposalTable, teacherTable } from '../dbentities.js';
+import {thesisProposalTable, teacherTable, studentTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 import virtualClock from "../VirtualClock.js";
 
@@ -180,6 +180,45 @@ describe('GET /api/teacher/list', () => {
     });
 });
 
+describe('GET /api/student/list', () => {
+    test('Should successfully retrieve the list of students', async () => {
+        const studentsList = [
+            {
+                id: 1,
+                surname: 'surname1',
+                name: 'name1',
+                email: 'email1@test.it',
+            },
+            {
+                id: 2,
+                name: 'surname2',
+                surname: 'name2',
+                email: 'email2@test.it',
+            },
+        ];
+        jest.spyOn(studentTable, 'getAllStudents').mockImplementationOnce(() => studentsList);
+        const response = await request(app).get('/api/student/list');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(studentsList.map((p) => (
+            {
+                name: p.name,
+                surname: p.surname,
+                id: p.id,
+                email: p.email,
+            }
+        )));
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        jest.spyOn(studentTable, 'getAllStudents').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+        const response = await request(app).get('/api/student/list');
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: 'Database error during retrieving students list Error: Database error' });
+    });
+});
+
 describe('GET /api/thesis/types', () => {
     test('Should successfully retrieve the list of thesis types', async () => {
         const types = ['Type1', 'Type2'];
@@ -272,6 +311,16 @@ describe('GET /api/proposal/:proposalid', () => {
     });
 });
 
+describe('GET /api/virtualclock', () => {
+    test('Should successfully get the value of virtual clock', async () => {
+        const date = '2023-12-12';
+        jest.spyOn(virtualClock, 'getSqlDate').mockImplementationOnce(() => date);
+        const response = await request(app).get('/api/virtualclock')
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({date: date});
+    });
+});
+
 describe('POST /api/virtualclock', () => {
     test('Should successfully modify the virtual clock', async () => {
         const date = '2023-12-12'
@@ -295,6 +344,14 @@ describe('DELETE /api/virtualclock', () => {
     test('Should successfully reset the virtual clock', async () => {
         jest.spyOn(virtualClock, 'resetOffset').mockImplementationOnce(() => true);
         const response = await request(app).delete('/api/virtualclock')
+        expect(response.status).toBe(200);
+        expect(response.body).toBeTruthy();
+    });
+});
+
+describe('POST /upload', () => {
+    test('Should successfully upload a file in the DB', async () => {
+        const response = await request(app).post('/upload')
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
     });

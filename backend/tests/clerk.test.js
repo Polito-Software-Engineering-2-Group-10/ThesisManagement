@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsClerk } from '../index.js';
-import {applicationTable, thesisRequestTable} from '../dbentities.js';
+import {secretaryClerkTable, thesisRequestTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
@@ -39,6 +39,41 @@ describe('isLoggedInAsClerk middleware', () => {
         expect(next).not.toHaveBeenCalled();
     });
 });
+
+describe('GET /api/clerk/details', () => {
+    test('Should successfully return the logged in clerk details', async () => {
+        const clerkDetails = {
+            id: 1,
+            surname: "Surname",
+            name: "Name",
+            email: "test@email.it",
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'clerk' };
+            next();
+        })
+        jest.spyOn(secretaryClerkTable, 'getById').mockImplementationOnce(() => clerkDetails);
+        const response = await request(app).get('/api/clerk/details');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(clerkDetails);
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'clerk' };
+            next();
+        })
+        jest.spyOn(secretaryClerkTable, 'getById').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).get('/api/clerk/details');
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving clerk details Error: Database error'});
+    });
+});
+
 
 describe('GET /api/clerk/Requestlist', () => {
     test('Should successfully return the list of thesis requests yet to be approved', async () => {

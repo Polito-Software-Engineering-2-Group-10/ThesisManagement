@@ -10,3 +10,4 @@ coverage
 .git
 .DS_Store
 .env
+public

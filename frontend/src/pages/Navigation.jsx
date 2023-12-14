@@ -4,6 +4,7 @@ import { useState, useContext, useEffect } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
 import dayjs from 'dayjs';
+import logoBlu from '../img/LogoBlu.svg';
 
 
 import "../styles/navigation.css";
@@ -68,7 +69,7 @@ function Navigation(props) {
       <div id="navbar">
         
         <Container id="navbarTitle" >
-            <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
+            <img src={logoBlu} onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
 
             <h1 className="title" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}>{title}</h1>  
         

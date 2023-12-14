@@ -15,8 +15,63 @@ import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
 
 
-// TO DO
-// - aggiungere confirmationModal e popup
+const ThesisRequestRow = ({ 
+    app, onClickCallback, realTitle, index, actualProp, title, description, 
+    cosupervisors, handleSendThesisRequestClick, dirty, setTitle, setDescription, 
+    setCosupervisors
+}) => (
+    <Row>
+        <Col>
+            <Accordion.Item eventKey={index}>
+                <Accordion.Header onClick={onClickCallback}>{realTitle}</Accordion.Header>
+                <Accordion.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Title</Form.Label>
+                            {
+                                (actualProp && !dirty) ? (
+                                    <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} />
+                                )
+                                    : ''
+                            }
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Description</Form.Label>
+                            {
+                                (actualProp && !dirty) ? (
+                                    <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} />)
+                                    : ''
+                            }
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Supervisor</Form.Label>
+                            <Form.Control type="text" disabled defaultValue={`${app.teacher_surname} ${app.teacher_name}`} />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Co-Supervisors</Form.Label>
+                            {(actualProp && !dirty) ? (
+                                cosupervisors?.length != 0 ?
+                                    <Form.Control type="text" defaultValue={cosupervisors} onChange={event => setCosupervisors(event.target.value)} />
+                                    : <Form.Control type="text" placeholder="No co-supervisor for this proposal" onChange={event => setCosupervisors(event.target.value)} />
+                            ) : ''}
+
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Thesis Request Date</Form.Label>
+                            <Form.Control disabled type="text" defaultValue={dayjs().format('YYYY-MM-DD')} />
+                            <Form.Text id="passwordHelpBlock" muted>
+                                The request date will be set to today&apos;s date.
+                            </Form.Text>
+                        </Form.Group>
+                    </Form>
+
+                    <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
+
+                </Accordion.Body>
+            </Accordion.Item>
+        </Col>
+    </Row>
+);
 
 const ThesisRequest = (props) => {
 
@@ -84,7 +139,7 @@ const ThesisRequest = (props) => {
             apply_date: dayjs().format('YYYY-MM-DD')
         }
         API.applyRequest(thesis_request, Array.isArray(actualProp) ? actualProp[0].id : actualProp.id)
-            .then(response => {
+            .then(() => {
                 notify.success("Thesis request successfully sent")
             })
             .catch((err) => 
@@ -119,63 +174,17 @@ const ThesisRequest = (props) => {
                         <Container style={{ width: '70%' }}>
                             {
                                 (props.appList && propList) ? props.appList.filter((a) => a.status == true).map((app, index) => {
-                                    return (
-                                        <Row key={index}>
-                                            <Col>
-                                                <Accordion.Item eventKey={index}>
-                                                    <Accordion.Header onClick={() => {
-                                                        setAcceptedPropId(app.proposal_id);
-                                                        setDirty(true);
-                                                    }}>{app.thesis_title}</Accordion.Header>
-                                                    <Accordion.Body>
-                                                        <Form>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Title</Form.Label>
-                                                                {
-                                                                    (actualProp && !dirty) ? (
-                                                                        <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} />
-                                                                    )
-                                                                        : ''
-                                                                }
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Description</Form.Label>
-                                                                {
-                                                                    (actualProp && !dirty) ? (
-                                                                        <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} />)
-                                                                        : ''
-                                                                }
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Supervisor</Form.Label>
-                                                                <Form.Control type="text" disabled defaultValue={`${app.teacher_surname} ${app.teacher_name}`} />
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Co-Supervisors</Form.Label>
-                                                                {(actualProp && !dirty) ? (
-                                                                    cosupervisors?.length != 0 ?
-                                                                        <Form.Control type="text" defaultValue={cosupervisors} onChange={event => setCosupervisors(event.target.value)} />
-                                                                        : <Form.Control type="text" placeholder="No co-supervisor for this proposal" onChange={event => setCosupervisors(event.target.value)} />
-                                                                ) : ''}
-
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Thesis Request Date</Form.Label>
-                                                                <Form.Control disabled type="text" defaultValue={dayjs().format('YYYY-MM-DD')} />
-                                                                <Form.Text id="passwordHelpBlock" muted>
-                                                                    The request date will be set to today's date.
-                                                                </Form.Text>
-                                                            </Form.Group>
-                                                        </Form>
-
-                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
-
-                                                    </Accordion.Body>
-                                                </Accordion.Item>
-                                            </Col>
-                                        </Row>
-                                    )
-
+                                    return <ThesisRequestRow 
+                                        onClickCallback={() => {
+                                            setAcceptedPropId(app.proposal_id);
+                                            setDirty(true);
+                                        }}
+                                        realTitle={app.thesis_title}
+                                        app={app}
+                                        key={index} index={index} actualProp={actualProp} title={title} description={description} 
+                                        handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
+                                        setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
+                                    />
                                 }) : <h3>There are no accepted applications</h3>
                             }
                         </Container>
@@ -189,63 +198,17 @@ const ThesisRequest = (props) => {
                                     const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
                                     return !acceptedPropIds.includes(p.id)
                                 }).map((prop, index) => {
-                                    return (
-                                        <Row key={index}>
-                                            <Col>
-                                                <Accordion.Item eventKey={index}>
-                                                    <Accordion.Header onClick={() => {
-                                                        setActualProp(propList.filter((p) => p.id == prop.id));
-                                                        setDirty(true);
-                                                    }}>{prop.title}</Accordion.Header>
-                                                    <Accordion.Body>
-                                                        <Form>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Title</Form.Label>
-                                                                {
-                                                                    (actualProp && !dirty) ? (
-                                                                        <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} />
-                                                                    )
-                                                                        : ''
-                                                                }
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Description</Form.Label>
-                                                                {
-                                                                    (actualProp && !dirty) ? (
-                                                                        <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} />)
-                                                                        : ''
-                                                                }
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Supervisor</Form.Label>
-                                                                <Form.Control type="text" disabled defaultValue={`${prop.teacher_surname} ${prop.teacher_name}`} />
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Co-Supervisors</Form.Label>
-                                                                {(actualProp && !dirty) ? (
-                                                                    cosupervisors?.length != 0 ?
-                                                                        <Form.Control type="text" defaultValue={cosupervisors} onChange={event => setCosupervisors(event.target.value)} />
-                                                                        : <Form.Control type="text" placeholder="No co-supervisor for this proposal" onChange={event => setCosupervisors(event.target.value)} />
-                                                                ) : ''}
-
-                                                            </Form.Group>
-                                                            <Form.Group className="mb-3">
-                                                                <Form.Label>Thesis Request Date</Form.Label>
-                                                                <Form.Control disabled type="text" defaultValue={dayjs().format('YYYY-MM-DD')} />
-                                                                <Form.Text id="passwordHelpBlock" muted>
-                                                                    The request date will be set to today's date.
-                                                                </Form.Text>
-                                                            </Form.Group>
-                                                        </Form>
-
-                                                        <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
-
-                                                    </Accordion.Body>
-                                                </Accordion.Item>
-                                            </Col>
-                                        </Row>
-                                    )
-
+                                    return <ThesisRequestRow 
+                                        onClickCallback={() => {
+                                            setActualProp(propList.filter((p) => p.id == prop.id));
+                                            setDirty(true);
+                                        }}
+                                        realTitle={prop.title}
+                                        app={prop}
+                                        key={index} index={index} actualProp={actualProp} title={title} description={description} 
+                                        handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
+                                        setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
+                                    />
                                 }) : ''
                             }
                         </Container>

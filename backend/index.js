@@ -398,11 +398,9 @@ app.get('/api/teacher/getSubmittedCV/:applicationid', isLoggedInAsTeacher, async
         } else {
             const cv = cvs[0];
             const filepath = `./public/files/${cv.filepath}`;
-            console.log(filepath);
             res.download(filepath);
         }
     } catch (err) {
-        //console.log(err)
         res.status(503).json({ error: `Database error during retrieving CV ${err}` });
     }
 });

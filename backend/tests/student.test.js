@@ -164,7 +164,7 @@ describe('POST /api/student/applyProposal', () => {
         expect(response.body).toEqual(valid_id);
     });
 
-    /*test('Should successfully apply for a thesis proposal when a file is also provided', async () => {
+    test('Should successfully apply for a thesis proposal when a file is also provided', async () => {
         const valid_id = {
             id: 1
         };
@@ -201,7 +201,7 @@ describe('POST /api/student/applyProposal', () => {
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(200);
         expect(response.body).toEqual(valid_id);
-    });*/
+    });
 
     test('Should throw a 400 error when the student already applied for a proposal', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {

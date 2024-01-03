@@ -1,6 +1,5 @@
 'use strict';
 import { psqlDriver } from '../dbdriver.js';
-import { getNum } from './utils.js';
 
 class SQLVirtualClock {
     constructor(onerow_id, virtual_time) {
@@ -36,14 +35,12 @@ class SQLVirtualClockTable {
     }
     async set(virtual_time) {
         console.log(virtual_time);
-        const query = `INSERT INTO virtual_clock (virtual_time) VALUES ($1)`;
+        const query = `INSERT INTO virtual_clock (virtual_time) VALUES ($1) ON CONFLICT (onerow_id) DO UPDATE SET virtual_time = $1 RETURNING *`;
         await this.db.executeQueryExpectAny(query, virtual_time);
-        await this.db.executeQueryExpectAny(`CALL public.archive_thesis_proposals()`);
     }
     async delete() {
         const query = `DELETE FROM virtual_clock`;
         await this.db.executeQueryExpectAny(query);
-        await this.db.executeQueryExpectAny(`CALL public.archive_thesis_proposals()`);
     }
 }
 

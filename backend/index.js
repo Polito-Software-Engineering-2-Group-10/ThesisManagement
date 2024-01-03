@@ -102,16 +102,40 @@ await psqlDriver.listen(
             if (canceled_app_ids.length === 0) return;
             const info = await applicationTable.getRejectedAppInfo(canceled_app_ids);
             for (const s of info) {
-                // const res = await sendEmail(
-                console.log(JSON.stringify({
+                const res = await sendEmail({
                     recipient_mail: s.email,
                     subject: `Info about your application about ${s.title}`,
                     message: `Hello dear student,\n Unfortunately your thesis application for the ${s.title} proposal, supervised by professor ${s.surname}, has been cancelled because the thesis proposal expired.\nBest Regards, Polito Staff.`
-                }));
+                });
             }
         }
     }
 );
+
+await psqlDriver.listen(
+    'thesismanagement',
+    'notify_professors',
+    async (msg) => {
+        if (msg.channel === 'notify_professors') {
+            const thesisIds = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
+            if (thesisIds.length === 0) return;
+            const info = await thesisProposalTable.getThesisProposalByIds(thesisIds);
+            const result = Object.entries(Object.groupBy(info, ({ supervisor }) => supervisor)).map(([ email, proposals ]) => {
+                return {
+                    email,
+                    proposals: proposals.map(p => p.title)
+                }
+            });
+            for (const s of result) {
+                const res = await sendEmail({
+                    recipient_mail: s.email,
+                    subject: `Notification about soon-to-expire proposals`,
+                    message: `Hello dear professor,\n There are some proposals that are going to expire soon (1 week from today). The titles are: ${s.proposals.join(', ')}.\nBest Regards, Polito Staff.`
+                });  
+            }
+        }
+    }
+)
 
 const upload = multer({storage})
 
@@ -782,7 +806,7 @@ app.post('/api/virtualclock', [
 
 app.delete('/api/virtualclock', async (req, res) => {
     await virtualClock.resetOffset();
-    res.json({ });
+    res.json({ ok: true });
 });
 app.get('/api/virtualclock', (req, res) => {
     let date = virtualClock.getSqlDate();

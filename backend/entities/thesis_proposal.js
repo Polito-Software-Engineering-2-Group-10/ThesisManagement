@@ -377,6 +377,12 @@ WHERE NOT EXISTS (
         return ThesisProposal.fromRow(result);
     }
 
+    async getThesisProposalByIds(ids) {
+        const query = `SELECT * FROM thesis_proposal WHERE id = ANY($1)`;
+        const result = await this.db.executeQueryExpectAny(query, ids);
+        return result.map(ThesisProposal.fromRow);
+    }
+
 }
 
 

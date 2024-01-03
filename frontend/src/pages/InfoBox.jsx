@@ -4,27 +4,34 @@ import { useNavigate } from "react-router-dom";
 import "/src/index.css"
 import BrowseProposal from "./BrowseProposal";
 import SearchForProposals from "./SearchForProposals";
-
+import ClerkManagmentRequest from "./ClerkManagmentRequest";
 function InfoBox(props){
     const navigate = useNavigate();
-
     return(
         <>
         { (props.loggedIn && props.userDetail) ? 
                     ( props.user.role == 'teacher' ?
                     <Container >
                         
-                    <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
+                        <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
 
 
                     </Container>
-                    :
+                    : (props.user.role=="student")?
                     // student
                     <Container>
 
                         <SearchForProposals loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
 
                     </Container>
+                    :
+                     <Container>
+                       {
+                       
+                        <ClerkManagmentRequest/>
+                   
+                       }
+                     </Container>
                     /*
                     <Container style={{width: "50%", marginTop: "30px"}}>
 

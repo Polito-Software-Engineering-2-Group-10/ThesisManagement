@@ -115,20 +115,31 @@ function BrowseAndAcceptApplication(props) {
                 }             
                 {
                     selectedApplication.status === null ?
-                    
-                <Row style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: '20px',
-                    marginBottom: '50px'
-                }} md={'auto'}>
-                    <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)} >Accept</Button>
-                    <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)}>Decline</Button>
-                    <Button variant="secondary" onClick={() => handleDownloadGeneratedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download generated CV</Button>
-                    <Button variant="secondary" onClick={() => handleDownloadSubmittedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download submitted CV</Button>
-                </Row>
-                    : ""
+                <>
+                    <Row style={{
+                        display: "flex",
+                        justifyContent: "left",
+                        alignItems: "center",
+                        gap: '20px',
+                        marginBottom: '20px',
+                        marginTop: '20px'
+                    }} md={'auto'}>
+                        <Button variant="secondary" onClick={() => handleDownloadGeneratedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download generated CV</Button>
+                        <Button variant="secondary" onClick={() => handleDownloadSubmittedCVButtonClick(selectedApplication.id, selectedApplication.student_id)}>Download submitted CV</Button>
+                    </Row>
+                        <Row style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: '20px',
+                            marginBottom: '50px'
+                        }} md={'auto'}>
+                        <Button variant="success" onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, true,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)} >Accept</Button>
+                        <Button variant="danger"  onClick={() => handleAcceptRejectButtonClick(selectedApplication.id, false,props.user.name,props.user.surname,selectedApplication.thesis_title,selectedApplication.student_name,selectedApplication.student_surname,selectedApplication.student_gender, selectedApplication.student_email)}>Decline</Button>
+
+                    </Row>
+                </>
+                        : ""
                 }
             </Container>
             : ""}

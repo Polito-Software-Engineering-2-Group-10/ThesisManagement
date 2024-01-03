@@ -188,11 +188,11 @@ CREATE TABLE IF NOT EXISTS public.applicant_cv
     CONSTRAINT applicant_cv_fkey FOREIGN KEY (application_id, student_id, proposal_id)
         REFERENCES public.application(id, student_id, proposal_id)
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON DELETE CASCADE,
     CONSTRAINT applicant_cv_teacher_id_fkey FOREIGN KEY (teacher_id)
         REFERENCES public.teacher(id)
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
 );
 ALTER TABLE IF EXISTS public.applicant_cv OWNER TO thesismanager;
 

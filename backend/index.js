@@ -20,7 +20,8 @@ import {
     thesisProposalTable,
     applicationTable,
     thesisRequestTable,
-    applicantCvTable
+    applicantCvTable,
+    secretaryClerkTable
 } from './dbentities.js';
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
@@ -421,7 +422,6 @@ app.get('/api/teacher/getSubmittedCV/:applicationid', isLoggedInAsTeacher, async
             res.download(filepath);
         }
     } catch (err) {
-        console.log(err)
         res.status(503).json({ error: `Database error during retrieving CV ${err}` });
     }
 });
@@ -462,6 +462,7 @@ app.post('/api/student/applyProposal',
             }
             catch (err) {
                 res.status(500).json({ error: `Server error during sending notification ${err}` });
+                return;
             }
             res.json(applypropID);
         } catch (err) {
@@ -519,6 +520,16 @@ app.post('/api/student/applyRequest/:thesisid',
 /*Get thesis request list - clerk */
 
 //GET /api/clerk/Requestlist
+//get clerk info
+app.get('/api/clerk/details', isLoggedInAsClerk, async (req, res) => {
+    try {
+        const clerk = await secretaryClerkTable.getById(req.user.id);
+        res.json(clerk);
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving clerk details ${err}` });
+    }
+});
+
 //Get thesis request
 app.get('/api/clerk/Requestlist',
     isLoggedInAsClerk,
@@ -639,6 +650,22 @@ app.post('/api/ProposalsList/filter',
     }
 );
 
+app.get('/api/student/list', async (req, res) => {
+    try {
+        const studentList = await studentTable.getAllStudents();
+        res.json(studentList.map(t => {
+            return {
+                name: t.name,
+                surname: t.surname,
+                id: t.id,
+                email: t.email
+            }
+        }));
+    } catch (err) {
+        res.status(503).json({ error: `Database error during retrieving students list ${err}` });
+    }
+})
+
 app.get('/api/teacher/list', async (req, res) => {
     try {
         const teacherList = await teacherTable.getAll();
@@ -714,7 +741,8 @@ app.delete('/api/teacher/deleteProposal',
                     const app = await applicationTable.getById(s.app_id);
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
-                    try {                                             
+                    try {
+                        console.log('arrived');                                          
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,
@@ -723,6 +751,7 @@ app.delete('/api/teacher/deleteProposal',
                     }
                     catch (err) {
                         res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
                     }
                 }
             }
@@ -753,8 +782,12 @@ app.post('/api/virtualclock', [
 
 app.delete('/api/virtualclock', async (req, res) => {
     await virtualClock.resetOffset();
-    res.json({ date: dayjs() });
-})
+    res.json({ });
+});
+app.get('/api/virtualclock', (req, res) => {
+    let date = virtualClock.getSqlDate();
+    res.json({ date: date });
+});
 
 app.put('/api/teacher/updateProposal/:thesisid',
     isLoggedInAsTeacher,

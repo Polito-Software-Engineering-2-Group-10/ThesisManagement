@@ -55,7 +55,7 @@
 }
 
 .archived-btn:hover{
-    background-color: var(--prussiaBlue)!important;
+    background-color: var(--prussiaBlue) !important;
     color:var(--orange) !important;
 }
 

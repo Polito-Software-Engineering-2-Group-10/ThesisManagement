@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsStudent } from '../index.js';
-import {applicationTable, studentTable, thesisProposalTable, thesisRequestTable} from '../dbentities.js';
+import {applicantCvTable, applicationTable, careerTable, studentTable, thesisProposalTable, thesisRequestTable} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
@@ -125,8 +125,17 @@ describe('GET /api/student/ApplicationsList', () => {
 });
 
 describe('POST /api/student/applyProposal', () => {
+
+    jest.mock('nodemailer', () => ({
+        createTransport: jest.fn().mockReturnValue({
+            sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
+        })
+    }));
+
     test('Should successfully apply for a thesis proposal', async () => {
-        const valid_id = "validID"
+        const valid_id = {
+            id: 1
+        };
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'student' };
@@ -137,6 +146,57 @@ describe('POST /api/student/applyProposal', () => {
         };
         jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
         jest.spyOn(applicationTable, 'addApplicationWithDate').mockImplementationOnce(() => valid_id);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => {
+            return {
+                supervisor: 'test@test.com',
+                title: 'test'
+            };
+        });
+        jest.spyOn(thesisProposalTable, 'getTeacherInfoById').mockImplementationOnce(() => {
+            return {
+                surname: 'test',
+                name: 'test',
+            }
+        });
+        const response = await request(app).post('/api/student/applyProposal')
+            .send({proposal_id: 1, apply_date: '2023-12-31'});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(valid_id);
+    });
+
+    test('Should successfully apply for a thesis proposal when a file is also provided', async () => {
+        const valid_id = {
+            id: 1
+        };
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            req.file = { filename: 'test.txt' }
+            next();
+        })
+        const countMock = {
+            count: 0
+        };
+        jest.spyOn(applicationTable, 'getCountByFK').mockImplementationOnce(() => countMock);
+        jest.spyOn(applicationTable, 'addApplicationWithDate').mockImplementationOnce(() => valid_id);
+        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => {
+            return{
+                teacher_id: 1
+            }
+        })
+        jest.spyOn(applicantCvTable, 'addApplicantCv').mockImplementationOnce(()=>true);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => {
+            return {
+                supervisor: 'test@test.com',
+                title: 'test'
+            };
+        });
+        jest.spyOn(thesisProposalTable, 'getTeacherInfoById').mockImplementationOnce(() => {
+            return {
+                surname: 'test',
+                name: 'test',
+            }
+        });
         const response = await request(app).post('/api/student/applyProposal')
             .send({proposal_id: 1, apply_date: '2023-12-31'});
         expect(response.status).toBe(200);

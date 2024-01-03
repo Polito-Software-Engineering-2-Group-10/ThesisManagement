@@ -6,8 +6,9 @@ import { Button, Container, Row, Col, Alert, Modal, Form } from "react-bootstrap
 import { useNavigate, useParams } from "react-router-dom";
 import useNotification from "../hooks/useNotifcation";
 import { ToastContainer } from "react-toastify";
-
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import "react-toastify/dist/ReactToastify.css";
+
 function ApplyToProposal(props) {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ function ApplyToProposal(props) {
   const notify = useNotification();
   const [file, setFile] = useState(null);
   const [tempFile, setTempFile] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
 
   //modal for add CV
   const [show, setShow] = useState(false);
@@ -87,6 +90,11 @@ function ApplyToProposal(props) {
         navigate('/');
     }
 
+    const handleApplyClick = (proposal) => {
+        setShowModal(true);
+        setSelectedProposal(proposal);
+    }
+
   return (
     <>
       <ToastContainer />
@@ -95,6 +103,14 @@ function ApplyToProposal(props) {
         loggedIn={props.loggedIn}
         user={props.user}
       />
+      
+      <ConfirmModal 
+        title = {"Do you want to apply to the proposal?"}
+        text  = {"Your application will be submitted to the professor."}
+        show={showModal} setShow={setShowModal} 
+        onConfirm={()=>addApplication(selectedProposal)}
+      />
+
       {proposal && propId
         ? [proposal].map((p) => {
           return (
@@ -165,15 +181,25 @@ function ApplyToProposal(props) {
                 </Col>
               </Row>
 
-              <Row style={{marginBottom: '30px'}}>
-                <Col style={{display: 'flex'}}>
-                  { props.loggedIn && props.user.role === "student" ?
-                  <Button variant="primary" onClick={handleShow}>
-                    { file ? "Change CV" : "Add CV"}
-                  </Button> 
-                  : null
-                  }
-                  {file ? <p style={{marginLeft: '20px'}}> The selected CV is: <b>{file.name}</b>   <i style={{cursor: 'pointer'}} class="bi bi-x-lg" onClick={() => setFile(null)}></i> </p> : ''}
+              <Row style={{marginBottom: '10px'}}>
+                  <Col style={{ display: 'flex', alignItems: 'center' }}>
+                      {props.loggedIn && props.user.role === "student" ?
+                          <div style={{ marginRight: '10px' }}>
+                              <Button variant="primary" onClick={handleShow}>
+                                  {file ? "Change CV" : "Add CV"}
+                              </Button>
+                          </div>
+                          : null
+                      }
+                      {file ?
+                          <p style={{ marginLeft: '5px', marginTop: '15px' }}>
+                              <b>{file.name}</b> <i style={{ cursor: 'pointer' }} className="bi bi-x-lg" onClick={() => setFile(null)} onKeyDown={() => setFile(null)}></i>
+                          </p> :
+                          <p style={{ marginLeft: '5px', marginTop: '15px' }}>
+                              <b>&nbsp;</b>
+                          </p>
+                      }
+                  </Col>
                   <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
                       <Modal.Title>Select CV for this application</Modal.Title>
@@ -183,16 +209,16 @@ function ApplyToProposal(props) {
                         <Form.Control type="file" onChange={handleSelectFile} />
                       </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer>
+                    <Modal.Footer className="d-flex justify-content-between">
                       <Button variant="secondary" onClick={handleClose}>
                         Close
                       </Button>
                       <Button variant="primary" onClick={handleSaveFile}>
-                        Save Changes
+                        Save
                       </Button>
                     </Modal.Footer>
                   </Modal>
-                </Col>
+
               </Row>
 
               {errorMessage ? (
@@ -206,7 +232,7 @@ function ApplyToProposal(props) {
               ) : (
                 ""
               )}
-              <Row style={{ marginTop: "15px", marginBottom: "30px" }}>
+              <Row style={{ marginTop: "15px", marginBottom: "30px" }} >
                 {props.loggedIn && props.user.role === "student" ? (
                   <>
                     <Col
@@ -218,7 +244,7 @@ function ApplyToProposal(props) {
                     >
 
                       <Button
-                        onClick={() => addApplication(p.id)}
+                        onClick={() => handleApplyClick(p.id)}
                         variant="success"
                       >
                         Apply Now!

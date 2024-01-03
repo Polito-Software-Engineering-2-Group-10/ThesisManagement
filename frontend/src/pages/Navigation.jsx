@@ -1,8 +1,10 @@
 import { Navbar, Nav, Container, Button, Form, Modal, NavDropdown, NavbarCollapse } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import AppContext from '../AppContext';
 import API from '../API'
+import dayjs from 'dayjs';
+import logoBlu from '../img/LogoBlu.svg';
 
 
 import "../styles/navigation.css";
@@ -15,9 +17,24 @@ function Navigation(props) {
     const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
-    const [virtualClock, setVirtualClock] = useState(new Date().toISOString().substring(0, 10));
-    const [temporaryClock, setTemporaryClock] = useState(new Date().toISOString().substring(0, 10));
+    const [virtualClock, setVirtualClock] = useState('');
+    const [temporaryClock, setTemporaryClock] = useState('');
+    const [dateChanged, setDateChanged] = useState(true);
     
+    useEffect(() => {
+        if (dateChanged) {
+            API.getVirtualClock()
+            .then((date) => {
+                let dateObj = dayjs(date.date).format('YYYY-MM-DD');
+                setVirtualClock(dateObj);
+                setTemporaryClock(dateObj);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+            setDateChanged(false);
+        }
+    }, [dateChanged])
 
     const location = useLocation();
     // const [title, setTitle] = useState(location.state?.pageTitle ? location.state.pageTitle : 'Thesis proposals');
@@ -25,13 +42,14 @@ function Navigation(props) {
 
     const handleVirtualClockClick = (set) => {
         if(set){
-            setVirtualClock(temporaryClock);
-            API.setVirtualClock(temporaryClock);
+            API.setVirtualClock(temporaryClock).then(() => {
+                setDateChanged(true);
+            });
         }
         else{
-            setVirtualClock(new Date().toISOString().substring(0, 10))
-            setTemporaryClock(new Date().toISOString().substring(0, 10));
-            API.resetVirtualClock();
+            API.resetVirtualClock().then(() => {
+                setDateChanged(true);
+            });
         }
         setProposalsDirty(true);
         handleCloseModal();
@@ -51,9 +69,9 @@ function Navigation(props) {
       <div id="navbar">
         
         <Container id="navbarTitle" >
-            <img src="/src/img/LogoBlu.svg" onClick={()=>navigate('/')}/>
+            <img src={logoBlu} onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
 
-            <h1 className="title" onClick={()=>navigate('/')}>{title}</h1>  
+            <h1 className="title" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}>{title}</h1>  
         
         {props.loggedIn && (
             <Container  id="navbarClock">
@@ -61,6 +79,7 @@ function Navigation(props) {
                   <i
                     className="bi bi-calendar"
                     onClick={handleEditClick}
+                    onKeyDown={handleEditClick}
                   ></i>
             </Container>
           )}
@@ -75,24 +94,31 @@ function Navigation(props) {
               <Nav>
                 
                 <div id="nav-links">
-                  {props.user?.role==="teacher"?
-                
+                  {props.user?.role==="teacher" ? // teacher case
                   <>
                     <Nav.Link onClick={()=>navigate("/insert")}>Insert proposal</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/proposals")}>Browse Proposals</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/BrowseApp")}>Browse Applications</Nav.Link>
                   </>
-                  :
+
+                  : (
+                    props.user?.role==="student" ? // student case
                   <>
                     <Nav.Link onClick={()=>navigate("/")}>Browse Proposals</Nav.Link>
                     <Nav.Link onClick={()=>navigate("/BrowseAppDec")}>Browse Applications</Nav.Link>
+                    <Nav.Link onClick={() => navigate("/thesisRequest")}>Thesis Request</Nav.Link>
                   </>
+                  :                                // clerk case
+                  <>
+                    <Nav.Link onClick={()=>navigate("/")}>Manage requests</Nav.Link>
+                  </>
+                  )
                   }
                 </div>
 
                   <NavDropdown title={props.user?.name + " " + props.user?.surname} id="basic-nav-dropdown">
                       <NavDropdown.Item  onClick={props.logout}>
-                          <Link>Logout</Link>
+                          <div>Logout</div>
                       </NavDropdown.Item>
                   </NavDropdown>
               </Nav>

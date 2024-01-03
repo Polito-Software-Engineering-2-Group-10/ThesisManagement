@@ -21,6 +21,21 @@ async function setVirtualClock(date) {
     }
 }
 
+async function getVirtualClock() {
+    let response = await fetch(URL + '/virtualclock', {
+        credentials: 'include',
+        method: 'GET',
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
+
+}
+
 async function resetVirtualClock() {
     let response = await fetch(URL + '/virtualclock', {
         credentials: 'include',
@@ -44,6 +59,25 @@ async function addProposal(proposal) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(proposal)
+    });
+    if (response.ok) {
+        const respDetail = await response.json();
+        return respDetail;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail;
+    }
+}
+
+async function applyRequest(thesis_request, thesis_id) {
+    let response = await fetch(URL + `/student/applyRequest/${thesis_id}`, {
+        credentials: 'include',
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(thesis_request)
     });
     if (response.ok) {
         const respDetail = await response.json();
@@ -121,6 +155,48 @@ async function getStudentDetail() {
         return studentDetail;
     } else {
         throw studentDetail;
+    }
+}
+
+async function getClerkDetail() {
+    const response = await fetch(URL + '/clerk/details', {
+        credentials: 'include'
+    });
+    const clerkDetails = await response.json();
+    if (response.ok) {
+        return clerkDetails;
+    } else {
+        throw clerkDetails;
+    }
+}
+
+async function getAllThesisRequests() {
+    const response = await fetch(URL + '/clerk/Requestlist', {
+        credentials: 'include'
+    });
+    const requestsList = await response.json();
+    if (response.ok) {
+        return requestsList;
+    } else {
+        throw requestsList;
+    }
+}
+
+async function AcceptOrRejectThesisRequestClerk(request_id, status) {
+    const response = await fetch(`${URL}/clerk/Requestlist/${request_id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({status_clerk: status}), 
+    });
+
+    const thesis_request = await response.json();
+    if (response.ok) {
+        return thesis_request;
+    } else {
+        throw thesis_request;
     }
 }
 
@@ -213,6 +289,12 @@ async function addApplication(application) {
 
 async function getAllTeachers() {
     const response = await fetch(`${URL}/teacher/list`);
+    const data = await response.json();
+    return data;
+}
+
+async function getAllStudents() {
+    const response = await fetch(`${URL}/student/list`);
     const data = await response.json();
     return data;
 }
@@ -419,6 +501,7 @@ const API = {
     getTeacherProposals,
     getTeacherDetail,
     getStudentDetail,
+    getClerkDetail,
     getAllProposals,
     addApplication,
     getAllTeachers,
@@ -432,6 +515,7 @@ const API = {
     acceptDeclineApplication,
     updateProposal,
     setVirtualClock,
+    getVirtualClock,
     resetVirtualClock,
     getAllProposalsForStudent,
     deleteProposal,
@@ -440,6 +524,10 @@ const API = {
     uploadFile,
     getStudentGeneratedCv,
     getStudentSubmittedCv,
+    applyRequest,
+    getAllThesisRequests,
+    getAllStudents,
+    AcceptOrRejectThesisRequestClerk
 };
 
 export default API;

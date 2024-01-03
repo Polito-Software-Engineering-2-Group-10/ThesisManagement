@@ -27,21 +27,15 @@ services:
       interval: 10s
       timeout: 30s
       retries: 5
-  authsources:
-    image: atari2/thesismanagement:authsources
-    volumes:
-      - saml_config:/var/www/simplesamlphp/config:rw
+  saml:
+    image: atari2/thesismanagement:saml
     depends_on:
       db:
         condition: service_healthy
-  saml:
-    image: kenchan0130/simplesamlphp
-    depends_on:
-      - authsources
     environment:
       SIMPLESAMLPHP_SP_ENTITY_ID: thesismanagement-saml
-      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://server:3001/login/callback
-      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://server:3001/logout/callback
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: http://localhost:3001/api/saml/login/callback
+      SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE: http://localhost:3001/api/saml/logout/callback
     expose:
       - 8080
     ports:

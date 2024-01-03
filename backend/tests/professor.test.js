@@ -1,12 +1,26 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
-import { thesisProposalTable, applicationTable, teacherTable } from '../dbentities.js';
+import { thesisProposalTable, applicationTable, teacherTable, careerTable, studentTable, applicantCvTable } from '../dbentities.js';
 import { jest } from '@jest/globals';
 import { response } from 'express';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import fs from 'fs';
+import path from 'path';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 afterAll(async () => {
     await psqlDriver.closeAll();
 });
+
+jest.mock('nodemailer', () => ({
+    createTransport: jest.fn().mockReturnValue({
+        sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
+    })
+}));
 
 function registerMockMiddleware(app, index, middleware) {
     function mockWare(req, res, next) {
@@ -426,6 +440,7 @@ describe('POST /api/teacher/insertProposal', () => {
 });
 
 describe('DELETE /api/teacher/deleteProposal', () => {
+
     test('Should successfully delete a proposal of the logged professor given the ID', async () => {
         const deletedProposal = {
             id: 1,
@@ -449,6 +464,7 @@ describe('DELETE /api/teacher/deleteProposal', () => {
             req.user = { id: 1, role: 'teacher' };
             next();
         });
+
         jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
         jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
         jest.spyOn(thesisProposalTable, 'deleteById').mockImplementationOnce(() => deletedProposal);
@@ -481,10 +497,7 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         expect(response.body).toEqual({ error: `The proposal has been accepted by a student, so it cannot be deleted` });
     });
 
-    /*test('Should throw an error with 500 status code when it fails to send a notification to the relative students', async () => {
-        const deletedProposal = {
-            id: 1,
-        }
+    test('Should throw an error with 500 status code when it fails to send a notification to the relative students', async () => {
         const application = {
             id: 1,
         }
@@ -493,43 +506,33 @@ describe('DELETE /api/teacher/deleteProposal', () => {
         }
         const teacherInfo = {
             name: 'Professor1',
+            surname: 'surname'
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal')
-            .mockImplementationOnce(() => ['mail1']);
+
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() =>
+            [{email: 'mail'}]);
         jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => application);
         jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposalInfo);
         jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => teacherInfo);
         const response = await request(app).delete('/api/teacher/deleteProposal').send({proposalId: 1});
         expect(response.status).toBe(500);
         expect(response.body).toBeTruthy();
-    });*/
+    });
 
     test('Should throw an error with 503 status code when a database error occurs', async () => {
-        const application = {
-            id: 1,
-        }
-        const proposalInfo = {
-            title: "Proposal1",
-        }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
             next();
         });
-        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => ['mail1'])
-        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => application);
-        jest.spyOn(thesisProposalTable, 'getById').mockImplementationOnce(() => proposalInfo);
-        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => {
-            throw new Error('Database error')
-        });
-        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => []);
-        jest.spyOn(applicationTable, 'countAcceptedApplicationForAProposal').mockImplementationOnce(() => 0);
-
+        jest.spyOn(applicationTable, 'getStudentInfoPendingApplicationForAProposal').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        })
         const response = await request(app).delete('/api/teacher/deleteProposal').send({ proposalId: 1 });
         expect(response.status).toBe(503);
         expect(response.body).toEqual({ error: 'Database error during the deletion of the thesis proposal: Error: Database error' });
@@ -738,10 +741,10 @@ describe('POST /api/teacher/retrieveCosupGroup', () => {
     });
 });
 
-//send notification
 describe('POST /api/send_email', () => {
+
     const params = {
-        recipient_email: 'pippo',
+        recipient_mail: 'test@polito.it',
         subject: 'pluto',
         message: 'paperino'
     }
@@ -752,14 +755,14 @@ describe('POST /api/send_email', () => {
         message: 'paperino'
     }
 
-    jest.mock('nodemailer', () => ({
+    /*jest.mock('nodemailer', () => ({
         createTransport: jest.fn().mockReturnValue({
             sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
         })
-    }));
+    }));*/
 
     //correct email sending
-    test('Should succesfully send an email to notify a student when his or her application has been accepted or rejected', async () => {
+    test('Should successfully send an email to notify a student when his or her application has been accepted or rejected', async () => {
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -767,11 +770,151 @@ describe('POST /api/send_email', () => {
         });
 
         const response = await request(app).post('/api/send_email').send(params);
+        expect(response.status).toBe(200);
+        expect(response.text).toEqual('Email sent successfully');
+    });
+
+    //internal server error 500
+    test('Should throw an error with 500 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        const response = await request(app).post('/api/send_email').send(params2);
         expect(response.status).toBe(500);
         expect(response.body).toEqual({ error: "No recipients defined" });
-        // jest.spyOn(sendEmail(params)).mockImplementationOnce(() => { throw new Error('Database error')});
-        // const response = await request(app).post('/api/send_email');
-        // expect(response.status).toBe(503);
-        // expect(response.body).toEqual({ error: `Database error during sending notification Error: Database error` });
+    })
+    jest.clearAllMocks()
+});
+
+//GET /api/teacher/getGeneratedCV/:applicationid
+describe('GET /api/teacher/getGeneratedCV/:applicationid', ()=>{
+    test('Should successfully retrieve the cv based on an application the student has made', async () => {
+        
+        const careerData = [
+            {
+                cod_course: 1,
+                title_course: 'title',
+                cfu: 13,
+                grade: 19,
+                date: '2023-12-13'
+            },
+            {
+                cod_course: 2,
+                title_course: 'title2',
+                cfu: 13,
+                grade: 19,
+                date: '2023-12-14'
+            }
+        ]
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => {
+            return{
+                student_id: 1
+            }
+        });
+        jest.spyOn(careerTable, 'getByStudentId').mockImplementationOnce(() => careerData);
+        jest.spyOn(studentTable, 'getById').mockImplementationOnce(() => {
+            return{
+                name: 'nome',
+                surname: 'cognome',
+                email: 'test@polito.it',
+                cod_degree: 'test',
+                enrollment_year: '2022-01-01'
+            }
+        });
+
+        const response = await request(app).get(`/api/teacher/getGeneratedCV/${applicationId}`);
+        expect(response.status).toBe(200);
+        expect(response.text).toBeTruthy();
+    })
+
+    test('Should return a 503 when a database error occurs', async () => {
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicationTable, 'getById').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+
+        const response = await request(app).get(`/api/teacher/getGeneratedCV/${applicationId}`);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving CV Error: Database error'});
+    
+    })
+});
+
+//GET /api/teacher/getSubmittedCV/:applicationid
+describe('GET /api/teacher/getSubmittedCV/:applicationid', ()=>{
+    test('Should successfully retrieve the submitted cv based on an application the student has made', async () => {
+        const applicationId = 1;
+
+        const cvs = [
+            { filepath: 'test.txt' },
+            { filepath: 'prova.txt' }
+        ]
+        
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+
+        fs.writeFileSync(path.resolve(__dirname, '..', 'public', 'files', 'test.txt'), 'test');
+
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => cvs);
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(200);
+
+        fs.rmSync(path.resolve(__dirname, '..', 'public', 'files', 'test.txt'));
+    })
+
+    test('Should return a 404 if there is no CV for this application', async () => {
+        const applicationId = 1;
+        
+        const cvs = [];
+        
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => cvs);
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({error: 'No CV submitted for this application'});
+    })
+
+    test('Should return a 503 when a database error occurs', async () => {
+        
+        const applicationId = 1;
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(applicantCvTable, 'getByApplicationId').mockImplementationOnce(() => {
+            throw new Error('Database error')
+        });
+
+        const response = await request(app).get(`/api/teacher/getSubmittedCV/${applicationId}`);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving CV Error: Database error'});
+    
     })
 });

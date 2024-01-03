@@ -1,68 +1,42 @@
 @import "colors.css";
 
 
-.search-filter-btn
-{
+.search-filter-btn{
     background-color: white;
     border-color:  var(--orange);
     color: black;
-    border-color: var(--orange);
 }
 
-.search-filter-btn:hover
-{
+.btn {
+    color: var(--prussiaBlue);
+}
+
+.selected {
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
-    
 }
 
-.search-filter-btn:active:focus
-{
+.selected:hover {
     background-color:  var(--orange);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
-    
 }
 
-.selected-search-filter-btn
-{
-    background-color:  var(--orange);
-    border-color:  var(--orange);
-    color:white;
-    border-color: var(--orange);
-
-}
-
-.selected-search-filter-btn:hover
-{
-    background-color:  var(--orange);
-    border-color:  var(--orange);
-    color:white;
-    border-color: var(--orange);
-
-}
-
-.selected-search-filter-btn:active:focus
-{
+.selected:active:focus {
     background-color:  var(--dark-yellow);
     border-color:  var(--orange);
     color:white;
-    border-color: var(--orange);
 
 }
 
-.apply-btn
-{
+.apply-btn {
     margin-top:10px;
     background-color: var(--dark-green);
     color:white !important;
 }
 
-.cancel-btn
-{
+.cancel-btn {
     margin-top: 10px;
     background-color: var(--cancelButton);
     color:white !important;
@@ -71,7 +45,7 @@
 
 .text-primary {
     color: var(--prussiaBlue) !important;
-    font-family: Poppins-SemiBold;
+    font-family: Poppins-SemiBold, sans-serif;
 }
 
 button{

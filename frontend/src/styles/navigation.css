@@ -17,7 +17,7 @@
 
 .btn {
     font-size: .75em;
-    font-family: Poppins-Bold;
+    font-family: Poppins-Bold, sans-serif;
     padding: 0.5em;
 }
 
@@ -28,10 +28,11 @@
     align-items: center;
     padding: 1em;
     width: 100%;
+    height: 6em;
 }
 
 #navbarTitle h1 {
-    font-size: 3em;
+    font-size: 2.3em;
 }
 
 #navbarTitle > h1 {
@@ -44,7 +45,7 @@
 #navbar p{
     margin-bottom: 0;
     color: var(--prussiaBlue);
-    font-family: Poppins-SemiBold;
+    font-family: Poppins-SemiBold, sans-serif;
     width: max-content;
 }
 
@@ -71,7 +72,7 @@
 }
 
 #navbarTitle > img {
-    width: 17em;
+    width: 13em;
     cursor: pointer;
 }
 
@@ -90,6 +91,14 @@
 
 .dropdown-item > a{
     color: var(--prussiaBlue);
+    text-decoration: none !important;
+}
+.dropdown-item > div {
+    color: var(--prussiaBlue);
+    text-decoration: none !important;
+}
+.dropdown-item > div:hover {
+    color: var(--orange);
     text-decoration: none !important;
 }
 
@@ -124,7 +133,7 @@ a:hover, #nav-links > a:hover {
     flex-wrap: wrap;
 }
 
-@media screen and (max-width: 981px)
+@media screen and (max-width: 992px)
 {
     .color-nav {
         height: 4em;
@@ -132,7 +141,7 @@ a:hover, #nav-links > a:hover {
     }
 }
 
-@media screen and (max-width: 695px) {
+@media screen and (max-width: 992px) {
     .color-nav {
         height: 4em;
         flex-wrap: wrap;

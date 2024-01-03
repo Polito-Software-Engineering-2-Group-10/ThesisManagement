@@ -552,6 +552,13 @@ The backend exposes the following APIs:
 - GET `/api/teacher/getSubmittedCV/<applicationid>`
     - This API will return the submitted CV for the given application id, if any.
     - It returns a binary blob containing the CV if it exists, returns 404 otherwise, the file can be of any type.
+- GET `/api/virtualclock`
+    - This API will return the timestamp (with time zone) of the virtual clock:
+    ```json
+    {
+        "date": <YYYY-MM-DD HH:mm::ss TZ>
+    }
+    ```
 - POST `/api/virtualclock`
     - This API will accept a JSON object with the following structure:
     ```json

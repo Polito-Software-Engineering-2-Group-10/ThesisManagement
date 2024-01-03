@@ -547,7 +547,27 @@ app.patch('/api/clerk/Requestlist/:requestid',
                 return res.status(400).json({ error: `This request has already been ${requestDetail.status_clerk ? 'accepted' : 'rejected'}` });
             }
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
+            const teacherInfo= await teacherTable.getByEmail(requestDetail.supervisor);
+            console.log("detail supervisor: ",requestDetail.supervisor);
+            console.log("info", teacherInfo);
             res.json(requestResult);
+           if(requestResult && requestResult.status_clerk===true)
+           {
+
+            try {
+                const res = await sendEmail({
+                    recipient_mail: "salvo.cav96@gmail.com",//requestDetail.supervisor,
+                    subject: `New Thesis Request - "${requestDetail.title}"`,
+                    message: `Dear Professor ${teacherInfo[0].surname} ${teacherInfo[0].name},\nThere is a new thesis request of your thesis topic "${requestDetail.title}" to you.\nBest Regards,\nPolito Staff.`
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: `Server error during sending notification ${err}` });
+                return;
+            }
+           
+            
+           }
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }

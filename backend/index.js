@@ -556,6 +556,79 @@ app.patch('/api/clerk/Requestlist/:requestid',
 
 /*End*/
 
+//Get thesis request - Professor
+app.get('/api/teacher/Requestlist',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllNotApprovedRequestByTeacher(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+/*Approve thesis request - Professor */
+
+//Approve a thesis request
+//PATCH /api/teacher/Requestlist/:requestid
+app.patch('/api/teacher/Requestlist/:requestid',
+      isLoggedInAsTeacher,
+    [
+       check('status_teacher').isInt()
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array()});
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            if (requestDetail.status_teacher !== null) {
+                return res.status(400).json({ error: `This request has already been evaluated` });
+            }
+            //const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher, req.body.comment);
+            const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher);
+            res.json(requestResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+);
+
+//Add a comment of request
+//PATCH /api/teacher/Requestlist/:requestid/comment
+app.patch('/api/teacher/Requestlist/:requestid/comment',
+      isLoggedInAsTeacher,
+    [
+        check('comment').isString().isLength({ min: 1 })
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array()});
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            const requestComment = await thesisRequestTable.updateRequestCommentById(req.params.requestid, req.body.comment);
+            res.json(requestComment);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+);
+
+/*End*/
+
 app.get('/api/proposal/:proposalid', async (req, res) => {
     try {
         const proposal = await thesisProposalTable.getById(req.params.proposalid);

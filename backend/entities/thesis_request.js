@@ -86,6 +86,17 @@ class ThesisRequestTable {
         return ThesisRequest.fromRow(result);
     }
 
+    async updateThesisRequest(student_id, request_id, new_request) {
+        // set comment to NULL when updating request because this means that allegedly the student has satisfied the teacher's comment
+        const PENDING_STATUS = 0; // if this is changed, also change the corresponding value in the frontend
+        /// ASSUMED STATUSES: 0 = pending, 1 = approved, 2 = request for change, 3 = rejected
+        const query = `UPDATE thesis_request SET title = $3, description = $4, co_supervisor = $6, comment = NULL, status_teacher = ${PENDING_STATUS} WHERE student_id = $1 AND id = $2 RETURNING *`;
+        const sid = getNum(student_id);
+        const rid = getNum(request_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, rid, new_request.title, new_request.description, new_request.co_supervisor, `Failed to update Request`);
+        return ThesisRequest.fromRow(result);
+    }
+
     async getCountByFK(student_id, proposal_id) {
         const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND proposal_id = $2`;
         const sid = getNum(student_id);
@@ -127,6 +138,13 @@ class ThesisRequestTable {
         const aid = getNum(id);
         const result = await this.db.executeQueryExpectOne(query, aid, comment, `Request with id ${id} not found`);
         return ThesisRequest.fromRow(result);
+    }
+
+    async getAllRequestByStudent(student_id) {
+        const query = `SELECT * FROM thesis_request WHERE student_id = $1`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectAny(query, sid);
+        return result.map(ThesisRequest.fromRow);
     }
 
 }

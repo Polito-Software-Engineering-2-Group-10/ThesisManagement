@@ -495,6 +495,54 @@ app.post('/api/student/applyRequest/:thesisid',
 
 /*End*/
 
+//Get thesis request - Student
+// GET /api/student/Requestlist
+// get the list of requests as a student to browse them and see their status
+app.get('/api/student/Requestlist',
+    isLoggedInAsStudent,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllRequestByStudent(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+//Update thesis request - Student
+// PATCH /api/student/Requestlist/:requestid
+// update a thesis request
+app.patch('/api/student/Requestlist/:requestid',
+    isLoggedInAsStudent,
+    [
+        check('title').isString().isLength({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('co_supervisor').isArray().optional(),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const request = {
+            title: req.body.title,
+            description: req.body.description,
+            co_supervisor: req.body.co_supervisor
+        }
+        try {
+            const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
+            res.json(requestInfo);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+        }
+    }
+);
+/*End*/
+
 
 /*Get thesis request list - clerk */
 

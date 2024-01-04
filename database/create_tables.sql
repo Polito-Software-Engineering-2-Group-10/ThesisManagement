@@ -148,7 +148,8 @@ CREATE TABLE IF NOT EXISTS public.thesis_request
     co_supervisor text[],
     apply_date date NOT NULL,
     status_clerk boolean,
-    status_teacher boolean,
+    status_teacher integer,
+    comment text,
     approval_date date,
     CONSTRAINT thesis_request_pk PRIMARY KEY (id),
     CONSTRAINT thesis_request_student_id_fkey FOREIGN KEY (student_id)

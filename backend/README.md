@@ -262,6 +262,7 @@ The backend exposes the following APIs:
         "apply_date": "2024-08-25T23:00:00.000Z",
         "status_clerk": null,
         "status_teacher": null,
+        "comment": null,
         "approval_date": null
     }
     ```
@@ -279,6 +280,7 @@ The backend exposes the following APIs:
         "apply_date": "<apply request date>", // date of the request applied
         "status_clerk": null,  //status evaluated by clerk
         "status_teacher": null, //status evaluated by teacher
+        "comment": null,  // Professor's comment for asking students to change their requests
         "approval_date": null //approval date of a request, it can be true only with 'status_teacher' and 'status_clerk' are both true.
     },
     ```
@@ -304,6 +306,78 @@ The backend exposes the following APIs:
         "apply_date": "2024-08-25T23:00:00.000Z",
         "status_clerk": true,
         "status_teacher": null,
+        "comment": null,
+        "approval_date": null
+    }
+    ```
+
+- GET `/api/teacher/Requestlist`
+    - This API will return all the requests that have been accepted by clerk and need to be evaluated by corresponding professor in the database, it expects no parameters. It returns a list of thesis requests of a specific professor in the form:
+    ```json
+        {
+        "id": <id of the request>,
+        "student_id": <id of a student>,
+        "proposal_id": <id of a proposal>,
+        "title": "<title of the thesis>",
+        "description": "<explanation of the thesis>",
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": "<email of the co-supervisor>", //could be empty
+        "apply_date": "<apply request date>", // date of the request applied
+        "status_clerk": true,  //status evaluated by clerk
+        "status_teacher": null, //status evaluated by teacher
+        "comment": null,  // Professor's comment for asking students to change their requests
+        "approval_date": null //approval date of a request, it can be true only with 'status_teacher' and 'status_clerk' are both true.
+    },
+    ```
+
+- PATCH `/api/teacher/Requestlist/:requestid`
+    - This API will update the status of a request by professor. When it successes, it will return all the details of the request in the database.
+    Example request:
+    ```json
+    {
+        "status_teacher" : 3
+    }
+    ```
+   Example response:
+    ```json
+    {
+        "id": 17,
+        "student_id": 7,
+        "proposal_id": 22,
+        "title": "test title",
+        "description": "test description",
+        "supervisor": "morisio.maurizio@polito.it",
+        "co_supervisor": [],
+        "apply_date": "2024-08-25T23:00:00.000Z",
+        "status_clerk": true,
+        "status_teacher": 3,
+        "comment": null,
+        "approval_date": null
+    }
+    ```
+
+- PATCH `/api/teacher/Requestlist/:requestid/comment`
+    - This API will update the comment of a request by professor. When it successes, it will return all the details of the request in the database.
+    Example request:
+    ```json
+    {
+        "comment" : "Your description need to have more details."
+    }
+    ```
+   Example response:
+    ```json
+    {
+        "id": 17,
+        "student_id": 7,
+        "proposal_id": 22,
+        "title": "test title",
+        "description": "test description",
+        "supervisor": "morisio.maurizio@polito.it",
+        "co_supervisor": [],
+        "apply_date": "2024-08-25T23:00:00.000Z",
+        "status_clerk": true,
+        "status_teacher": 3,
+        "comment": "Your description need to have more details.",
         "approval_date": null
     }
     ```

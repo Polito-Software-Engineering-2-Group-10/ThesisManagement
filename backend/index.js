@@ -556,7 +556,7 @@ app.patch('/api/clerk/Requestlist/:requestid',
 
             try {
                 const res = await sendEmail({
-                    recipient_mail: "salvo.cav96@gmail.com",//requestDetail.supervisor,
+                    recipient_mail: requestDetail.supervisor,
                     subject: `New Thesis Request - "${requestDetail.title}"`,
                     message: `Dear Professor ${teacherInfo[0].surname} ${teacherInfo[0].name},\nThere is a new thesis request of your thesis topic "${requestDetail.title}" to you.\nBest Regards,\nPolito Staff.`
                 });

@@ -212,6 +212,18 @@ async function getAllProposals() {
     }
 }
 
+async function getCosupProposals() {
+    const response = await fetch(URL + '/cosup/ProposalsList', {
+        credentials: 'include'
+    });
+    const propList = await response.json();
+    if (response.ok) {
+        return propList;
+    } else {
+        throw propList;
+    }
+}
+
 async function getProposal(id) {
     const response = await fetch(URL + '/proposal/' + id, {
         credentials: 'include'

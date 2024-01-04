@@ -266,6 +266,31 @@ app.get('/api/teacher/ProposalsList',
             // AND COMMENT THIS OUT INSTEAD
             //const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
+            console.log(req.user);
+            res.json(proposalList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+);
+
+/*Browse Cosupervised (Active) Proposals */
+
+//GET /api/cosup/ProposalsList
+// get the list of all cosupervised active proposals
+
+app.get('/api/cosup/ProposalsList',
+    isLoggedInAsTeacher,
+    
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            
+            const proposalList = await thesisProposalTable.getByCosupervisor(req.user.email);
             res.json(proposalList);
         }
         catch (err) {

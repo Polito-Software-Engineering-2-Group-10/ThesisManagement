@@ -6054,7 +6054,7 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  null,
  null,
  null,
- '2023-10-8'),
+ null),
  (2,3, 
  'Analysis and Correlation of Behaviour on Online Social Networks',
  'Online social networks, such as Instagram and Facebook, allow users to interact and debate with each other. In this research, the candidate will collect large quantities of data from social networks and from public repositories such as Wikidata. The data will be organized and analyzed using big data techniques (such as Pyspark). Then, the student will characterize the behaviour of different classes of users on the social network (e.g., nationality, activity,  language, age, etc.). The student will analyze possible bias in the categories and the dynamic of the changes. The student will possibly use machine learning techniques, forecasting methods and graphs.', 
@@ -6139,7 +6139,33 @@ In the present thesis, the student shall develop a novel static analysis based o
  true,
  3,
  'Need some details',
+ null),
+ (7,1138, 
+ 'Conceptual design of SMR',
+ 'Application of innovative design tools to design SMR. Main aspects to be investigated are: reactor operations (neutronics, fuel management and burnup), thermal-hydraulics and thermo-mechanics. Optimization codes may be used during the analysis to improve reactor performance. All the tools are written in python. Prior knowledge of python or object-oriented programming is suggested, but not mandatory.', 
+ 'testoni.raffaella@tmtest.polito.it', 
+ ARRAY[]::text[],
+ '2023-12-06', 
+ true,
+ null,
+ null,
+ null),
+  (7,1193, 
+ 'The Stored Energy Fingerprints of Radiation Damage',
+ 'The current unit of radiation damage, the displacements per atom (DPA), is a calculated exposure parameter that does not directly yield the defect populations responsible for irradiation-induced material properties. Were an a posteriori measure of radiation damage to exist, it would help to answer numerous, lingering questions about the nature and effects of irradiation. We propose the use of stored energy fingerprints as this new, more descriptive unit of radiation damage. They can be measured after irradiation, and they are hypothesized to yield information about the resulting defect populations. We present a combination of timeaccelerated molecular dynamics (MD) simulations and nanoscale differential scanning calorimetry (nanoDSC) measurements, which together paint a more measurable picture of the multiscale nature of radiation damage. Potential applications range from settling the question of neutron/ion irradiation equivalency, to quantitatively understanding dose rate effects, to verification of historical uranium enrichment [1]
+A first part of the project will simply collect previous work done at MIT [e.g. 2], analyzing the defects that were formed during simulated irradiation in fusion-relevant materials, finding the average energies of each type of defect that forms in the materials. Previous work found out that, as the PKA energy increased, the average energy of each defect remained constant, but the amount of clustering and the number of dislocations increased. Defect clusters and dislocations each had their own energies associated with them, allowing for some differentiation in defects solely based on the stored energy. 
+Calorimetry heating was also simulated on the irradiated materials, showing the effect that the heating rate has on the process. The simulations allow for extrapolation to experimental heating rates. 
+Further work at the Mesoscale Nuclear Materials Laboratory, in which the proponent would like to be involved, deals with irradiating single crystal metals and performing nanocalorimetry on the obtained samples, thus working to obtain the energy stored in each material due to irradiation. The long-term goal is to determine if this metric, the Wigner energy, is a viable way of measuring radiation damage, and if so, it will allow for a better, more universal understanding of how irradiation affects materials.
+ [1] http://ne.unm.edu/events/michael-short-abstract.pdf 
+[2] https://dspace.mit.edu/bitstream/handle/1721.1/112369/1011355070-MIT.pdf?sequence=1', 
+ 'testoni.raffaella@tmtest.polito.it', 
+ ARRAY[]::text[],
+ '2024-1-02', 
+ true,
+ null,
+ null,
  null);
+ 
 INSERT INTO public.career (id, cod_course, title_course, cfu, grade, date)
 VALUES
 (1, '03IOYOA', 'Elementi di fisica nucleare', 6, 19, '2023-04-04'),

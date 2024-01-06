@@ -96,8 +96,8 @@ const storage = multer.diskStorage({
 const upload = multer({storage})
 
 function checkEmail(str){
-    var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-    return reg.test(str);
+    const valid = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return valid.test(str);
 }
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {

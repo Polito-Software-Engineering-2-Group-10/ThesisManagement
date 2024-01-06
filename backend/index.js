@@ -95,6 +95,11 @@ const storage = multer.diskStorage({
   
 const upload = multer({storage})
 
+function checkEmail(str){
+    var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+    return reg.test(str);
+}
+
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {
         const teacher = await teacherTable.getDetailsById(req.user.id);
@@ -196,6 +201,21 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             }
             const newStatus = Boolean(req.body.status);
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
+
+            /*const proposalDetail = await thesisProposalTable.getProposalDetailById(Applyproposal.proposal_id);
+            const teacherInfo = await thesisProposalTable.getTeacherInfoById(Applyproposal.proposal_id);
+            try {
+                const res = await sendEmail({
+                    recipient_mail: proposalDetail.supervisor,
+                    subject: `New Application - "${proposalDetail.title}"`,
+                    message: `Dear Professor ${teacherInfo.surname} ${teacherInfo.name},\nThere is a new application of your thesis topic "${proposalDetail.title}" to you.\nBest Regards,\nPolito Staff.`
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: `Server error during sending notification ${err}` });
+                return;
+            }*/
+            
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus == true) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
@@ -547,6 +567,28 @@ app.patch('/api/clerk/Requestlist/:requestid',
                 return res.status(400).json({ error: `This request has already been ${requestDetail.status_clerk ? 'accepted' : 'rejected'}` });
             }
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
+            const co_supervisorMails = requestResult.co_supervisor;
+            //when request is approved, send email to co-supervisor
+            if(requestResult.status_clerk === true)
+            {
+                for(const csm of co_supervisorMails)
+            {
+                if(checkEmail(csm))
+                {
+                    try {
+                    const res = await sendEmail({
+                        recipient_mail: csm,
+                        subject: `New Request Approved - "${requestResult.title}"`,
+                        message: `Dear Co-Supervisor,\nThe thesis request "${requestResult.title}" related to you has been APPROVED by clerk.\nBest Regards,\nPolito Staff.`
+                    });
+                }
+                catch (err) {
+                    res.status(500).json({ error: `Server error during sending notification ${err}` });
+                    return;
+                }
+                }
+            }
+            }
             res.json(requestResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });

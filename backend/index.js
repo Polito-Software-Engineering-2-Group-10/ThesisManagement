@@ -201,21 +201,30 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             }
             const newStatus = Boolean(req.body.status);
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
-
-            /*const proposalDetail = await thesisProposalTable.getProposalDetailById(Applyproposal.proposal_id);
-            const teacherInfo = await thesisProposalTable.getTeacherInfoById(Applyproposal.proposal_id);
-            try {
-                const res = await sendEmail({
-                    recipient_mail: proposalDetail.supervisor,
-                    subject: `New Application - "${proposalDetail.title}"`,
-                    message: `Dear Professor ${teacherInfo.surname} ${teacherInfo.name},\nThere is a new application of your thesis topic "${proposalDetail.title}" to you.\nBest Regards,\nPolito Staff.`
-                });
+            //send email to co-supervisor
+            const proposalDetail = await thesisProposalTable.getProposalDetailById(applicationResult.proposal_id);
+            const studentInfo = await studentTable.getById(applicationResult.student_id);
+            const teacherInfo = await teacherTable.getById(proposalDetail.teacher_id);
+            const co_supervisorMails = proposalDetail.co_supervisor;
+            for(const csm of co_supervisorMails)
+            {
+                if(checkEmail(csm))
+                {
+                    try {
+                    const res = await sendEmail({
+                        recipient_mail: csm,
+                        subject: `Application Status Updated - "${proposalDetail.title}"`,
+                        message: `Dear Co-Supervisor,
+                        \nOne application of thesis "${proposalDetail.title}" by Student ${studentInfo.surname} ${studentInfo.name} related to you has been ${applicationResult.status ? 'ACCEPTED' : 'REJECTED'} by Main Supervisor ${teacherInfo.surname} ${teacherInfo.name}.
+                        \nBest Regards,\nPolito Staff.`
+                    });
+                }
+                catch (err) {
+                    res.status(500).json({ error: `Server error during sending notification ${err}` });
+                    return;
+                }
+                }
             }
-            catch (err) {
-                res.status(500).json({ error: `Server error during sending notification ${err}` });
-                return;
-            }*/
-            
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus == true) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);

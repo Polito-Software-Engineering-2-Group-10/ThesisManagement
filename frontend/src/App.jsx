@@ -29,13 +29,24 @@ function App() {
   const [appList, setAppList] = useState(undefined);
   const [reqList, setReqList] = useState(undefined);
 
+  // proposal lists
   const [proposalList, setProposalList] = useState(null);
+  const [cosupervisorProposalList, setCosupervisorProposalList] = useState(null);
+
+
+  // fetching data from the server
   const fetchData = async () =>{
     if (user !== null && user.role === 'teacher') {
+        // get the list of proposals for which the teacher is a supervisor
         const result = await API.getTeacherProposals();
         setProposalList(result);
+        
+        // get the list of proposals for which the teacher is a cosupervisor
+        const cosupervisorResult = await API.getCosupProposals();
+        setCosupervisorProposalList(cosupervisorResult);
     }
   }
+
   useEffect(() => {
     if (proposalsDirty) {
         fetchData();
@@ -144,7 +155,7 @@ function App() {
     <BrowserRouter>
       <AppContext.Provider value={contextObject}>
         <Routes>
-            <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail} setProposalDirty={setProposalsDirty} proposalList={proposalList} />}></Route>
+            <Route path='/*' element={<MainPage loggedIn={loggedIn} logout={doLogOut} user={user} userDetail={userDetail} setProposalDirty={setProposalsDirty} proposalList={proposalList} cosupervisorProposalList={cosupervisorProposalList} />}></Route>
             <Route path='/login' element={loggedIn ? <Navigate replace to='/' /> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}  />
             <Route path='/applyToProp/:propId' element={<ApplyToProposal addApplication={addApplication} loggedIn={loggedIn} logout={doLogOut} user={user}/>}></Route>
             <Route path='/browseAppDec' element={loggedIn ? <BrowseAppDecision appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>

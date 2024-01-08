@@ -212,6 +212,7 @@ async function getAllProposals() {
     }
 }
 
+// function to retrive a list of proposals for the cosupervisor
 async function getCosupProposals() {
     const response = await fetch(URL + '/cosup/ProposalsList', {
         credentials: 'include'
@@ -539,7 +540,8 @@ const API = {
     applyRequest,
     getAllThesisRequests,
     getAllStudents,
-    AcceptOrRejectThesisRequestClerk
+    AcceptOrRejectThesisRequestClerk,
+    getCosupProposals
 };
 
 export default API;

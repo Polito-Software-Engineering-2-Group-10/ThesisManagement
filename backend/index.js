@@ -548,12 +548,8 @@ app.patch('/api/clerk/Requestlist/:requestid',
             }
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
             const teacherInfo= await teacherTable.getByEmail(requestDetail.supervisor);
-            console.log("detail supervisor: ",requestDetail.supervisor);
-            console.log("info", teacherInfo);
-            res.json(requestResult);
            if(requestResult && requestResult.status_clerk===true)
            {
-
             try {
                 const res = await sendEmail({
                     recipient_mail: requestDetail.supervisor,
@@ -568,6 +564,7 @@ app.patch('/api/clerk/Requestlist/:requestid',
            
             
            }
+            res.json(requestResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }
@@ -741,7 +738,6 @@ app.delete('/api/teacher/deleteProposal',
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
                     try {
-                        console.log('arrived');                                          
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,

@@ -481,6 +481,16 @@ app.post('/api/student/applyRequest/:thesisid',
             if (existingRequest.count > 0) {
                 return res.status(400).json({ error: `The student already request to this thesis before!` });
             }
+
+            //Student can not request two different thesis at the same time
+            const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
+            const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
+            //Only all requests are failed the student can apply a new request
+            if(amountRequest.count!=failedRequest.count)
+            {
+                return res.status(400).json({ error: `The student has a processing/approved request!` });
+            }
+
            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);

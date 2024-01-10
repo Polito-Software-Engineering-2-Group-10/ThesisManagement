@@ -106,6 +106,24 @@ class ThesisRequestTable {
         return result;
     }
 
+     //Function for if Student can not request two different thesis at the same time
+     async getCountByStudentID(student_id) {
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, `Request with student_id ${student_id} not found`);
+        return result;
+    }
+
+    //check amount of failed requests
+    async getCountFailedRequestByStudentID(student_id) {
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND (status_clerk IS false OR (status_clerk IS true AND status_teacher =2))`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, `Request with student_id ${student_id} not found`);
+        return result;
+    }
+
+    //End
+
     async updateRequestClerkStatusById(id, status) {
         const query = `UPDATE thesis_request SET status_clerk = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);

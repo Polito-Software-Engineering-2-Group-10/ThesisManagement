@@ -97,7 +97,7 @@ const ActiveThesisRequestRow = ({
                             <b>Description:</b> {req.description}
                         </p>
                         <p>
-                            <b>Co-Supervisors:</b> {req.co_supervisor?.length == 0 ? 'No co-supervisors for this proposal' : req.cosupervisors}
+                            <b>Co-Supervisors:</b> {req.co_supervisor?.length == 0 ? 'No co-supervisors for this proposal' : req.co_supervisor.join(', ')}
                         </p>
                         <p>
                             This thesis request has been sent on <b>{dayjs(req.apply_date).format('YYYY-MM-DD')}</b>
@@ -107,10 +107,11 @@ const ActiveThesisRequestRow = ({
                             <b>{req.status_clerk ? 'This request has been accepted by the clerk management.' : (req.status_clerk == null ? 'This request has yet to be evaluated by the clerk.' : 'This request has been rejected by the clerk management.')}</b>
                         </p>
                         <p>
-                            <b>{req.status_teacher ? 'This request has been accepted by the supervisor.' : (req.status_teacher == null ? 'This request has yet to be evaluated by the supervisor.' : 'This request has been rejected by the supervisor.')}</b>
+                            {/*// ASSUMED STATUSES: 0 = pending, 1 = approved, 2 = request for change, 3 = rejected */}
+                            <b>{req.status_teacher==1 ? 'This request has been accepted by the supervisor.' : (req.status_teacher == null || req.status_teacher == 0 ? 'This request has yet to be evaluated by the supervisor.' : (req.status_teacher == 3 ? 'This request has been rejected by the supervisor.' : 'The supervisor asked for some changes.'))}</b>
                         </p>
                         <p>
-                            <b>Comments: </b>{req.comment ? req.comment : 'No comments from the supervisor yet.'}
+                            <b>Comments: </b>{req.comment ? req.comment : 'No comments from the supervisor'}
                         </p>
                     </div>
                     <Form style={{ display: showUpdate ? '' : 'none' }}>
@@ -153,7 +154,7 @@ const ActiveThesisRequestRow = ({
                         </Form.Group>
                     </Form>
 
-                    <Button className="m-2" style={{ display: showUpdate ? 'none' : '' }} variant="success" onClick={() => { setShowUpdate(true); }}>Update Request</Button>&nbsp;
+                    <Button className="m-2" style={{ display: (showUpdate || req.status_teacher!=2) ? 'none' : '' }} variant="success" onClick={() => { setShowUpdate(true); }}>Update Request</Button>&nbsp;
                     <Button className="m-2" style={{ display: showUpdate ? '' : 'none' }} type="submit" variant="success" onClick={handleUpdateThesisRequest}>Save Changes</Button>&nbsp;
                     <Button className="m-2" style={{ display: showUpdate ? '' : 'none' }} variant="danger" onClick={() => {setShowUpdate(false); setDirty(true);}}>Cancel</Button>&nbsp;
 
@@ -188,6 +189,7 @@ const ThesisRequest = (props) => {
             API.getAllProposalsForStudent(props.studentDetail.cod_degree)
                 .then((list) => {
                     setPropList(list)
+                    console.log(list);
                 })
                 .catch((err) => console.log(err));
             API.getAllThesisRequestsForStudent()
@@ -249,8 +251,6 @@ const ThesisRequest = (props) => {
             description: reqDesc
         }
 
-        console.log(thesis_request);
-        console.log(actualReq.id);
         API.updateThesisRequest(actualReq.id, thesis_request)
             .then(() => {
                 notify.success("Thesis request successfully modified")
@@ -390,7 +390,6 @@ const ThesisRequest = (props) => {
                                     onClickCallback={() => {
                                         setActualProp(propList.filter((p) => p.id == req.proposal_id));
                                         setActualReq(req);
-                                        console.log(req);
                                         setDirty(true);
                                     }}
                                     req={req} key={index} index={index} actualProp={actualProp ? actualProp[0] : ''}

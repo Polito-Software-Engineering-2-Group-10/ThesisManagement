@@ -51,3 +51,43 @@
 button{
     color: var(--prussiaBlue) !important;
 }
+
+@media screen and (max-width: 570px){
+    .container-filter-proposal{
+        display: flex;
+        flex-direction: column !important;
+    }
+    
+    #card-filter{
+        width: 100% !important;
+        max-width: 100% !important;
+        position:static !important;
+    }
+}
+
+#card-filter{
+    height: fit-content;
+    max-width: 15em;
+}
+
+#card-filter {
+    position: sticky;
+    top: 11em;
+}
+
+#card-proposal{
+    width: 100%;
+}
+
+.container-filter-proposal{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1em;
+    padding: 1em;
+}
+
+.pagination{
+    padding-left: 2em;
+    padding-right: 2em;
+}

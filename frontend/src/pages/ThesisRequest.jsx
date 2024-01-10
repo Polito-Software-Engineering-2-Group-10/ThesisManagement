@@ -1,4 +1,6 @@
 import "../styles/form.css"
+import "../styles/ThesisRequest.css"
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Container, Button, Row, Col } from 'react-bootstrap';
 import { Navigation } from "./Navigation";
 import API from '../API';
@@ -10,14 +12,17 @@ import Tabs from 'react-bootstrap/Tabs';
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import useNotification from '../hooks/useNotifcation';
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 
-const ThesisRequestRow = ({ 
-    app, onClickCallback, realTitle, index, actualProp, title, description, 
-    cosupervisors, handleSendThesisRequestClick, dirty, setTitle, setDescription, 
+
+const ThesisRequestRow = ({
+    app, onClickCallback, realTitle, index, actualProp, title, description,
+    cosupervisors, handleSendThesisRequestClick, dirty, setTitle, setDescription,
     setCosupervisors
 }) => (
     <Row>
@@ -73,6 +78,91 @@ const ThesisRequestRow = ({
     </Row>
 );
 
+const ActiveThesisRequestRow = ({ 
+    req, index, onClickCallback, actualProp, showUpdate, setShowUpdate, actualReq, setActualReq,
+    reqTitle, reqDesc, reqCosup, setReqCosup, setReqDesc, setReqTitle, setDirty, dirty, handleUpdateThesisRequest}) => (
+    <Row>
+        <Col>
+            <Accordion.Item eventKey={index}>
+                <Accordion.Header onClick={onClickCallback}>{req ? req.title : ''}</Accordion.Header>
+                <Accordion.Body>
+                    <div style={{ display: showUpdate ? 'none' : '' }}>
+                        <p>
+                            <b>Supervisor:</b> {actualProp ? actualProp.teacher_name + " " + actualProp.teacher_surname : ''}
+                        </p>
+                        <p>
+                            <b>Supervisor mail:</b> {req.supervisor}
+                        </p>
+                        <p>
+                            <b>Description:</b> {req.description}
+                        </p>
+                        <p>
+                            <b>Co-Supervisors:</b> {req.co_supervisor?.length == 0 ? 'No co-supervisors for this proposal' : req.cosupervisors}
+                        </p>
+                        <p>
+                            This thesis request has been sent on <b>{dayjs(req.apply_date).format('YYYY-MM-DD')}</b>
+                        </p>
+                        <hr></hr>
+                        <p>
+                            <b>{req.status_clerk ? 'This request has been accepted by the clerk management.' : (req.status_clerk == null ? 'This request has yet to be evaluated by the clerk.' : 'This request has been rejected by the clerk management.')}</b>
+                        </p>
+                        <p>
+                            <b>{req.status_teacher ? 'This request has been accepted by the supervisor.' : (req.status_teacher == null ? 'This request has yet to be evaluated by the supervisor.' : 'This request has been rejected by the supervisor.')}</b>
+                        </p>
+                        <p>
+                            <b>Comments: </b>{req.comment ? req.comment : 'No comments from the supervisor yet.'}
+                        </p>
+                    </div>
+                    <Form style={{ display: showUpdate ? '' : 'none' }}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Title</Form.Label>
+                            {
+                                (req) ? (
+                                    <Form.Control type="text" value={reqTitle} onChange={event => setReqTitle(event.target.value)}/>
+                                )
+                                    : ''
+                            }
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Description</Form.Label>
+                            {
+                                (req) ? (
+                                    <Form.Control as="textarea" rows={5} value={reqDesc} onChange={event => setReqDesc(event.target.value)}/>)
+                                    : ''
+                            }
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Supervisor</Form.Label>
+                            <Form.Control type="text" disabled defaultValue={actualProp ? actualProp.teacher_name + ' ' + actualProp.teacher_surname : ''} />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Co-Supervisors</Form.Label>
+                            {(req) ? (
+                                req.co_supervisor?.length != 0 ?
+                                    <Form.Control type="text" value={reqCosup} onChange={event => setReqCosup(event.target.value)}/>
+                                    : <Form.Control type="text" placeholder="No co-supervisor for this proposal" value={reqCosup} onChange={event => setReqCosup(event.target.value)}/>
+                            ) : ''}
+
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Thesis Request Date</Form.Label>
+                            <Form.Control disabled type="text" defaultValue={req ? dayjs(req.apply_date).format('YYYY-MM-DD') : ''} />
+                            <Form.Text id="passwordHelpBlock" muted>
+                                Request date won't change if you make changes.
+                            </Form.Text>
+                        </Form.Group>
+                    </Form>
+
+                    <Button className="m-2" style={{ display: showUpdate ? 'none' : '' }} variant="success" onClick={() => { setShowUpdate(true); }}>Update Request</Button>&nbsp;
+                    <Button className="m-2" style={{ display: showUpdate ? '' : 'none' }} type="submit" variant="success" onClick={handleUpdateThesisRequest}>Save Changes</Button>&nbsp;
+                    <Button className="m-2" style={{ display: showUpdate ? '' : 'none' }} variant="danger" onClick={() => {setShowUpdate(false); setDirty(true);}}>Cancel</Button>&nbsp;
+
+                </Accordion.Body>
+            </Accordion.Item>
+        </Col>
+    </Row>
+);
+
 const ThesisRequest = (props) => {
 
     const [actualProp, setActualProp] = useState(undefined);
@@ -83,16 +173,28 @@ const ThesisRequest = (props) => {
     const [dirty, setDirty] = useState(false);
     const [acceptedPropId, setAcceptedPropId] = useState(undefined);
     const [showModal, setShowModal] = useState(false);
+    const [showActive, setShowActive] = useState(false);
+    const [activeRequests, setActiveRequests] = useState(undefined);
+    const [showUpdate, setShowUpdate] = useState(false);
+    const [actualReq, setActualReq] = useState(undefined);
+    const [reqTitle, setReqTitle] = useState('');
+    const [reqDesc, setReqDesc] = useState('');
+    const [reqCosup, setReqCosup] = useState('');
 
-    const notify=useNotification();
-    
+    const notify = useNotification();
+
     useEffect(() => {
         if (props.studentDetail) {
             API.getAllProposalsForStudent(props.studentDetail.cod_degree)
                 .then((list) => {
                     setPropList(list)
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
+            API.getAllThesisRequestsForStudent()
+                .then((list) => {
+                    setActiveRequests(list);
+                })
+                .catch((err) => console.log(err));
         }
     }, [props.studentDetail]);
 
@@ -105,6 +207,15 @@ const ThesisRequest = (props) => {
                 .catch((err) => console.log(err));
         }
     }, [acceptedPropId]);
+
+    useEffect(() => {
+        if (dirty && actualReq) {
+            setReqTitle(actualReq.title);
+            setReqDesc(actualReq.description);
+            setReqCosup(actualReq.co_supervisor.join(', '));
+        }
+        setDirty(false);
+    }, [dirty, actualReq]);
 
     useEffect(() => {
         if (dirty && actualProp) {
@@ -126,9 +237,29 @@ const ThesisRequest = (props) => {
         event.preventDefault();
         setShowModal(true);
     }
-    
+
+    const handleUpdateThesisRequest = (event) => {
+        event.preventDefault();
+
+        const cosupervisor_array = reqCosup == '' ? [] : reqCosup.split(/[,;]/).map((k) => k.trim());
+
+        const thesis_request = {
+            title: reqTitle,
+            co_supervisor: cosupervisor_array,
+            description: reqDesc
+        }
+
+        console.log(thesis_request);
+        console.log(actualReq.id);
+        API.updateThesisRequest(actualReq.id, thesis_request)
+            .then(() => {
+                notify.success("Thesis request successfully modified")
+            })
+            .catch((err) =>
+                notify.error(err.error));
+    }
+
     const handleSendThesisRequest = () => {
-        //event.preventDefault();
         const cosupervisor_array = cosupervisors == '' ? [] : cosupervisors.split(/[,;]/).map((k) => k.trim());
 
         const thesis_request = {
@@ -142,79 +273,137 @@ const ThesisRequest = (props) => {
             .then(() => {
                 notify.success("Thesis request successfully sent")
             })
-            .catch((err) => 
-            notify.error(err.error));
+            .catch((err) =>
+                notify.error(err.error));
 
     }
 
     return (
         <>
-            <ToastContainer/>
+            <ToastContainer />
 
-            <ConfirmModal 
-                title = {"Do you want to send a thesis request for this proposal?"}
-                text  = {"The selected thesis request will be sent to the secretary."}
-                show={showModal} setShow={setShowModal} 
-                onConfirm={()=>handleSendThesisRequest()}
+            <ConfirmModal
+                title={"Do you want to send a thesis request for this proposal?"}
+                text={"The selected thesis request will be sent to the secretary."}
+                show={showModal} setShow={setShowModal}
+                onConfirm={() => handleSendThesisRequest()}
             />
 
             <Navigation logout={props.logout} loggedIn={props.loggedIn} user={props.user} />
 
-            <div className="my-3 text-center fw-bold fs-1" style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-                <h2>Make a Thesis Request</h2>
+            <Container style={{ marginTop: '2em' }}>
+
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Button
+                        onClick={() => setShowActive(true)}
+                        variant="outline-dark"
+                        className="align-items-center request-btn"
+                        style={{ marginLeft: 'auto', display: showActive ? 'none' : '' }}
+                    >
+                        <FontAwesomeIcon icon={faMagnifyingGlass} className="mr-2" style={{ marginRight: '8px' }} />
+                        <span>Your Active Thesis Requests</span>
+                    </Button>
+
+                    <Button
+                        onClick={() => setShowActive(false)}
+                        variant="outline-dark"
+                        className="align-items-center request-btn"
+                        style={{ marginLeft: 'auto', display: showActive ? '' : 'none' }}
+                    >
+                        <FontAwesomeIcon icon={faPenToSquare} className="mr-2" style={{ marginRight: '8px' }} />
+                        <span>Make a Thesis Request</span>
+                    </Button>
+
+                </div>
+            </Container>
+
+            {/* parte make thesis request */}
+            <div style={{ display: showActive ? 'none' : '' }}>
+                <div className="my-3 text-center fw-bold fs-1" style={{ paddingBottom: '20px' }}>
+                    <h2>Make a Thesis Request</h2>
+                </div>
+
+                <Tabs style={{ fontWeight: 'bold', margin: '0 auto', width: '60%', display: "flex", alignItems: 'center', justifyContent: 'center' }}
+                    defaultActiveKey="applications"
+                    className="mb-3"
+
+                >
+                    <Tab eventKey="applications" title="Choose from accepted applications">
+                        <Accordion defaultActiveKey="0">
+                            <Container style={{ width: '70%' }}>
+                                {
+                                    (props.appList && propList) ? props.appList.filter((a) => a.status == true).map((app, index) => {
+                                        return <ThesisRequestRow
+                                            onClickCallback={() => {
+                                                setAcceptedPropId(app.proposal_id);
+                                                setDirty(true);
+                                            }}
+                                            realTitle={app.thesis_title}
+                                            app={app}
+                                            key={index} index={index} actualProp={actualProp} title={title} description={description}
+                                            handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
+                                            setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
+                                        />
+                                    }) : <h3>There are no accepted applications</h3>
+                                }
+                            </Container>
+                        </Accordion>
+                    </Tab>
+                    <Tab eventKey="proposals" title="Or from other thesis proposals">
+                        <Accordion defaultActiveKey="0" style={{ marginBottom: '30px' }}>
+                            <Container style={{ width: '70%' }}>
+                                {
+                                    (propList && props.appList) ? propList.filter((p) => {
+                                        const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
+                                        return !acceptedPropIds.includes(p.id)
+                                    }).map((prop, index) => {
+                                        return <ThesisRequestRow
+                                            onClickCallback={() => {
+                                                setActualProp(propList.filter((p) => p.id == prop.id));
+                                                setDirty(true);
+                                            }}
+                                            realTitle={prop.title}
+                                            app={prop}
+                                            key={index} index={index} actualProp={actualProp} title={title} description={description}
+                                            handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
+                                            setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
+                                        />
+                                    }) : ''
+                                }
+                            </Container>
+                        </Accordion>
+                    </Tab>
+                </Tabs >
             </div>
 
-            <Tabs style={{ fontWeight: 'bold', margin: '0 auto', width: '60%', display: "flex", alignItems: 'center', justifyContent: 'center' }}
-                defaultActiveKey="applications"
-                className="mb-3"
+            {/* part see and update thesis request */}
+            <div style={{ display: showActive ? '' : 'none' }}>
+                <div className="my-3 text-center fw-bold fs-1" style={{ paddingBottom: '20px' }}>
+                    <h2>Active Thesis Requests</h2>
+                </div>
 
-            >
-                <Tab eventKey="applications" title="Choose from accepted applications">
-                    <Accordion defaultActiveKey="0">
-                        <Container style={{ width: '70%' }}>
-                            {
-                                (props.appList && propList) ? props.appList.filter((a) => a.status == true).map((app, index) => {
-                                    return <ThesisRequestRow 
-                                        onClickCallback={() => {
-                                            setAcceptedPropId(app.proposal_id);
-                                            setDirty(true);
-                                        }}
-                                        realTitle={app.thesis_title}
-                                        app={app}
-                                        key={index} index={index} actualProp={actualProp} title={title} description={description} 
-                                        handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
-                                        setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
-                                    />
-                                }) : <h3>There are no accepted applications</h3>
-                            }
-                        </Container>
-                    </Accordion>
-                </Tab>
-                <Tab eventKey="proposals" title="Or from other thesis proposals">
-                    <Accordion defaultActiveKey="0" style={{ marginBottom: '30px' }}>
-                        <Container style={{ width: '70%' }}>
-                            {
-                                (propList && props.appList) ? propList.filter((p) => {
-                                    const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
-                                    return !acceptedPropIds.includes(p.id)
-                                }).map((prop, index) => {
-                                    return <ThesisRequestRow 
-                                        onClickCallback={() => {
-                                            setActualProp(propList.filter((p) => p.id == prop.id));
-                                            setDirty(true);
-                                        }}
-                                        realTitle={prop.title}
-                                        app={prop}
-                                        key={index} index={index} actualProp={actualProp} title={title} description={description} 
-                                        handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
-                                        setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
-                                    />
-                                }) : ''
-                            }
-                        </Container>
-                    </Accordion>
-                </Tab>
-            </Tabs >
+                <Accordion defaultActiveKey="0" style={{ marginBottom: '30px' }}>
+                    <Container style={{ width: '70%' }}>
+                        {
+                            (activeRequests) ? activeRequests.map((req, index) => {
+                                return <ActiveThesisRequestRow
+                                    onClickCallback={() => {
+                                        setActualProp(propList.filter((p) => p.id == req.proposal_id));
+                                        setActualReq(req);
+                                        console.log(req);
+                                        setDirty(true);
+                                    }}
+                                    req={req} key={index} index={index} actualProp={actualProp ? actualProp[0] : ''}
+                                    showUpdate={showUpdate} setShowUpdate={setShowUpdate} actualReq={actualReq} setActualReq={setActualReq}
+                                    reqTitle={reqTitle} reqDesc={reqDesc} reqCosup={reqCosup}
+                                    setReqTitle={setReqTitle} setReqDesc={setReqDesc} setReqCosup={setReqCosup} setDirty={setDirty} dirty={dirty}
+                                    handleUpdateThesisRequest={handleUpdateThesisRequest}
+                                />
+                            }) : ''
+                        }
+                    </Container>
+                </Accordion>
+            </div>
         </>
     )
 }

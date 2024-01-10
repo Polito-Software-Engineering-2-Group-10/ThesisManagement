@@ -6085,14 +6085,10 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  null,
  null,
  null),
- (6,8, 
- 'Well being app',
- 'Obbiettivo della tesi è sviluppare una app e relativo back end per supportare le persone a perseguire uno stile di vita salutare. 
-La app raccoglie (direttamente, o tramite device esterni tipo smartwatch o fitbit) dati sulla vita della persona (attività fisica, qualità e durata del sonno, pressione, pulsazioni) (nutrizione, tipo e quantità del cibo mangiato e delle bevande). Confrontando i dati raccolti con pattern predefiniti e possibilmente con analisi mediche supplettive  la app suggerisce  modifiche allo stile di vita (recommendation). Via via che la persona viene monitorata altre modifiche sono suggerite e il loro effetto verificato.
-La parte back end della app raccoglie in modo anonimo i dati di molti utenti e utilizzando tecniche statistiche e di machine learning costruisce e raffina modelli e pattern predittivi da usare per le recommendation.
- Le recommendation iniziali sono derivate dalla letteratura scientifica su aging e well being (vedere ad esempio Fontana L., The path to longevity).  Scopo di lungo termine della app è di raccogliere dati per validare e migliorare le recommendation.
- Il lavoro è svolto in collaborazione con University of Sydney e Azienda Ospedaliera Verona. Il lavoro supporta una tesi lato app e una lato backend.', 
- 'morisio.maurizio@tmtest.polito.it', 
+ (6,1043, 
+ 'Separatore inerziale per vapori condensati',
+ 'Il lavoro include una parte teorica e una parte sperimentale. Viene richiesto di studiare il fenomeno di condensazione di alcune sostanze in condizioni controllate e ripetibili all’interna di geometrie semplici. la concentrazione particellare, prima, durante e dopo il processo di condensazione dovrà essere valutata per via teorica. Per validare i risultati ottenuti, si progetterà un esperimento in cui si riescano a controllare alcune delle variabili che governano il fenomeno. I dati misurati saranno utili per estendere la previsione del funzionamento del separatore inerziale di vapori condensati ad altri casi di interesse industriale.', 
+ 'mariatronville.paolo@tmtest.polito.it', 
  ARRAY[]::text[],
  '2023-10-10', 
  true,

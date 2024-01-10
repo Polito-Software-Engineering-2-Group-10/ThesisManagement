@@ -532,6 +532,7 @@ app.patch('/api/student/Requestlist/:requestid',
             description: req.body.description,
             co_supervisor: req.body.co_supervisor
         }
+        
         try {
             const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
             res.json(requestInfo);

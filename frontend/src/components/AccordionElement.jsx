@@ -1,5 +1,6 @@
 import {Accordion, Button} from 'react-bootstrap';
 import {Link, useNavigate}   from 'react-router-dom';
+import dayjs                 from 'dayjs';
 
 export const AccordionElement = (props) => {
     const {id, title, professor, expiration, level, type, actions, supervisor, coSupervisor} = props; 
@@ -10,8 +11,8 @@ export const AccordionElement = (props) => {
         <Accordion.Body>
             {professor&& <p><b>Professor: </b>{professor}</p>}
             {supervisor && <p><b>Supervisor: </b>{supervisor}r</p>}
-            {coSupervisor && <p><b>co-supervisors: </b>{coSupervisor.join(", ")}</p>}
-            <p><b>Expiration date: </b>{expiration}</p>
+            {coSupervisor && <p><b>co-supervisors: </b>{coSupervisor && coSupervisor?.join(", ")}</p>}
+            <p><b>Expiration date: </b>{dayjs(expiration).format('DD/MM/YYYY')}</p>
             <p><b>Type:       </b>{type}</p>
             <p><b>Level:      </b>{level}</p>
 
@@ -31,7 +32,39 @@ export const AccordionElement = (props) => {
                                 View
                             </Button>
                         </Link>
-                        
+                    }
+                
+                    {
+                        /* edit button */
+                        actions?.edit &&
+                            <Button variant="primary" className='btn-edit' onClick={actions?.edit}>
+                                <i className="bi bi-pencil-square"></i>
+                                Edit
+                            </Button>
+                    }
+                
+                    { /* copy button */
+                        actions?.copy &&
+                        <Button variant="primary" className='btn-copy' onClick={actions?.copy}>
+                            <i className="bi bi-clipboard-plus"></i>
+                            Copy
+                        </Button>
+                    }
+
+                    { /* archive button */
+                        actions?.archive &&
+                        <Button variant="primary" className='btn-archive' onClick={actions?.archive}>
+                            <i className="bi bi-archive"></i>
+                            Archive
+                        </Button>
+                    }
+                
+                    { /* delete button */
+                        actions?.delete &&
+                        <Button variant="primary" className='btn-delete' onClick={actions?.delete}>
+                            <i className="bi bi-trash"></i>
+                            Delete
+                        </Button>
                     }
                 </div>
             }

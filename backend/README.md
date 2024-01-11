@@ -265,6 +265,36 @@ The backend exposes the following APIs:
         "approval_date": null
     }
     ```
+- GET `/api/student/RequestList`
+    - This API will return all the thesis requests made by the student currently logged in. It returns a list of thesis requests in the form:
+    ```json
+        {
+        "id": <id of the request>,
+        "student_id": <id of a student>,
+        "proposal_id": <id of a proposal>,
+        "title": "<title of the thesis>",
+        "description": "<explanation of the thesis>",
+        "supervisor": "<email of the supervisor>",
+        "co_supervisor": "<email of the co-supervisor>", //could be empty
+        "apply_date": "<apply request date>", // date of the request applied
+        "comment": "<comment of the teacher>",
+        "status_clerk": null,  //status evaluated by clerk
+        "status_teacher": null, //status evaluated by teacher, is a number, 0 for pending, 1 for accepted, 2 for change request, 3 for rejected
+        "approval_date": null //approval date of a request, it can be true only with 'status_teacher' and 'status_clerk' are both true.
+    },
+    ```
+- PATCH `/api/student/Requestlist/<requestid>`
+    - This API is used to update a thesis request to address a teacher's comment. It accepts a JSON object with the following structure:
+    ```json
+    {
+        "title": "<thesis title>",
+        "description": "<thesis description>",
+        "co_supervisor": ["<co-supervisor 1 email>", "<co-supervisor 2 email>"], // array of co-supervisors emails, can be empty
+    }
+    ```
+    Following this request, the request will be updated with the given parameters, the status will be reset to 0 (pending) and the teacher's comment will be reset to null.
+    It also returns the updated request in the same format as the one returned by `/api/student/RequestList`.
+
 - GET `/api/clerk/Requestlist`
     - This API will return all the requests need to be evaluated by cletk in the database, it expects no parameters. It returns a list of thesis requests in the form:
     ```json
@@ -277,6 +307,7 @@ The backend exposes the following APIs:
         "supervisor": "<email of the supervisor>",
         "co_supervisor": "<email of the co-supervisor>", //could be empty
         "apply_date": "<apply request date>", // date of the request applied
+        "comment": "<comment of the teacher>",
         "status_clerk": null,  //status evaluated by clerk
         "status_teacher": null, //status evaluated by teacher
         "approval_date": null //approval date of a request, it can be true only with 'status_teacher' and 'status_clerk' are both true.

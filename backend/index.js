@@ -506,6 +506,16 @@ app.post('/api/student/applyRequest/:thesisid',
             if (existingRequest.count > 0) {
                 return res.status(400).json({ error: `The student already request to this thesis before!` });
             }
+
+            //Student can not request two different thesis at the same time
+            const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
+            const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
+            //Only all requests are failed the student can apply a new request
+            if(amountRequest.count!=failedRequest.count)
+            {
+                return res.status(400).json({ error: `The student has a processing/approved request!` });
+            }
+
            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);
@@ -518,6 +528,55 @@ app.post('/api/student/applyRequest/:thesisid',
     }
 );
 
+/*End*/
+
+//Get thesis request - Student
+// GET /api/student/Requestlist
+// get the list of requests as a student to browse them and see their status
+app.get('/api/student/Requestlist',
+    isLoggedInAsStudent,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllRequestByStudent(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+//Update thesis request - Student
+// PATCH /api/student/Requestlist/:requestid
+// update a thesis request
+app.patch('/api/student/Requestlist/:requestid',
+    isLoggedInAsStudent,
+    [
+        check('title').isString().isLength({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('co_supervisor').isArray().optional(),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const request = {
+            title: req.body.title,
+            description: req.body.description,
+            co_supervisor: req.body.co_supervisor
+        }
+        
+        try {
+            const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
+            res.json(requestInfo);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+        }
+    }
+);
 /*End*/
 
 
@@ -573,6 +632,79 @@ app.patch('/api/clerk/Requestlist/:requestid',
             }
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
             res.json(requestResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+);
+
+/*End*/
+
+//Get thesis request - Professor
+app.get('/api/teacher/Requestlist',
+    isLoggedInAsTeacher,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllNotApprovedRequestByTeacher(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+/*Approve thesis request - Professor */
+
+//Approve a thesis request
+//PATCH /api/teacher/Requestlist/:requestid
+app.patch('/api/teacher/Requestlist/:requestid',
+      isLoggedInAsTeacher,
+    [
+       check('status_teacher').isInt()
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array()});
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            if (requestDetail.status_teacher !== null) {
+                return res.status(400).json({ error: `This request has already been evaluated` });
+            }
+            //const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher, req.body.comment);
+            const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher);
+            res.json(requestResult);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+);
+
+//Add a comment of request
+//PATCH /api/teacher/Requestlist/:requestid/comment
+app.patch('/api/teacher/Requestlist/:requestid/comment',
+      isLoggedInAsTeacher,
+    [
+        check('comment').isString().isLength({ min: 1 })
+    ],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array()});
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            const requestComment = await thesisRequestTable.updateRequestCommentById(req.params.requestid, req.body.comment);
+            res.json(requestComment);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }

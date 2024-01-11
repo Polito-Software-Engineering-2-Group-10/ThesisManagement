@@ -182,6 +182,36 @@ async function getAllThesisRequests() {
     }
 }
 
+async function getAllThesisRequestsForStudent() {
+    const response = await fetch(URL + '/student/Requestlist', {
+        credentials: 'include'
+    });
+    const requestsList = await response.json();
+    if (response.ok) {
+        return requestsList;
+    } else {
+        throw requestsList;
+    }
+}
+
+async function updateThesisRequest(requestid, request){
+    const response = await fetch(`${URL}/student/Requestlist/${requestid}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({title: request.title, description: request.description, co_supervisor: request.co_supervisor}), 
+    });
+
+    const request_info = await response.json();
+    if (response.ok) {
+        return request_info;
+    } else {
+        throw request_info;
+    }
+}
+
 async function AcceptOrRejectThesisRequestClerk(request_id, status) {
     const response = await fetch(`${URL}/clerk/Requestlist/${request_id}`, {
         method: 'PATCH',
@@ -539,9 +569,11 @@ const API = {
     getStudentSubmittedCv,
     applyRequest,
     getAllThesisRequests,
+    getAllThesisRequestsForStudent,
     getAllStudents,
     AcceptOrRejectThesisRequestClerk,
-    getCosupProposals
+    getCosupProposals,
+    updateThesisRequest
 };
 
 export default API;

@@ -348,7 +348,7 @@ const ThesisRequest = (props) => {
                         <Accordion defaultActiveKey="0">
                             <Container style={{ width: '70%' }}>
                                 {
-                                    (props.appList && propList) ? props.appList.filter((a) => a.status == true)
+                                    (props.appList && propList && activeRequests) ? props.appList.filter((a) => a.status == true)
                                     .filter((p)=>{
                                         const acceptedReqId = activeRequests.map((a) => a.proposal_id);
                                         return !acceptedReqId.includes(p.id);
@@ -373,7 +373,7 @@ const ThesisRequest = (props) => {
                         <Accordion defaultActiveKey="0" style={{ marginBottom: '30px' }}>
                             <Container style={{ width: '70%' }}>
                                 {
-                                    (propList && props.appList) ? propList.filter((p) => {
+                                    (propList && props.appList && activeRequests) ? propList.filter((p) => {
                                         const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
                                         return !acceptedPropIds.includes(p.id)
                                     }).filter((p)=>{

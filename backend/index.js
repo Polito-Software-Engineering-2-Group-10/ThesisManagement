@@ -344,7 +344,6 @@ app.post('/api/teacher/insertProposal',
         try {
             const proposalId = await thesisProposalTable.addThesisProposal(proposal)
             //notification for co-supervisors
-            console.log(proposal.co_supervisor);
             const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
 
             let g = '';
@@ -353,7 +352,7 @@ app.post('/api/teacher/insertProposal',
                 if(g.length!=0){
                     try{
                         const res = await sendEmail({
-                            recipient_mail: 's319950@studenti.polito.it',
+                            recipient_mail: g[0].email,
                             subject: `New Thesis Proposal`,
                             message: `Dear Professor ${g[0].surname} ${g[0].name},\nYou've just been added to the thesis proposal named "${proposal.title}" as a co-supervisor.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
                         });
@@ -959,7 +958,29 @@ app.put('/api/teacher/updateProposal/:thesisid',
             programmes: req.body.programmes
         }
         try {
-            const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId)
+            const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId);
+
+            //notification for co-supervisors
+            const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
+
+            let g = '';
+            for (const c of cosupervisor_array) {
+                g = await teacherTable.getByEmail(c);
+                if(g.length!=0){
+                    try{
+                        const res = await sendEmail({
+                            recipient_mail: g[0].email,
+                            subject: `Thesis ${proposal.title} has been modified`,
+                            message: `Dear Professor ${g[0].surname} ${g[0].name},\nThe thesis proposal named "${proposal.title}", in which you are co-supervisor, has been modified.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
+                        });
+                    }
+                    catch (err) {
+                        res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
+                    }
+                }
+            }
+
             res.json(proposalId);
         } catch (err) {
             res.status(503).json({ error: `Database error during the update of the proposal: ${err}` });

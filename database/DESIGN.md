@@ -94,7 +94,8 @@
 | CO_SUPERVISORS      | TEXT[]  | YES         |          | The emails of the possibly internal co-supervisors                                                              |
 | APPLY_DATE          | DATE    | NO          |          | Date of a new request                                                                                           |
 | STATUS_CLERK        | BOOL    | YES         |          | Status of the request evaluated by clerk, NULL means not evaluated, TRUE means accepted, FALSE means rejected   |
-| STATUS_TEACHER      | BOOL    | YES         |          | Status of the request evaluated by teacher, NULL means not evaluated, TRUE means accepted, FALSE means rejected |
+| STATUS_TEACHER      | INTEGER | YES         |          | Status of the request evaluated by teacher, 1 means accepted, 2 means rejected and 3 means 'request change'     |
+| COMMENT             | TEXT    | YES         |          | Professor's suggestion for asking students to change their requests                                             |
 | APPROVAL_DATE       | DATE    | YES         |          | Date of a new request is approved                                                                               |
 
 ### Secretary clerk table

@@ -507,11 +507,12 @@ app.post('/api/student/applyRequest/:thesisid',
             const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
             const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
             //Only all requests are failed the student can apply a new request
-            if (amountRequest.count != failedRequest.count) {
+            if(amountRequest.count!=failedRequest.count)
+            {
                 return res.status(400).json({ error: `The student has a processing/approved request!` });
             }
 
-            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
+           // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);
         }
@@ -562,7 +563,7 @@ app.patch('/api/student/Requestlist/:requestid',
             description: req.body.description,
             co_supervisor: req.body.co_supervisor
         }
-
+        
         try {
             const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
             res.json(requestInfo);
@@ -655,15 +656,15 @@ app.get('/api/teacher/Requestlist',
 //Approve a thesis request
 //PATCH /api/teacher/Requestlist/:requestid
 app.patch('/api/teacher/Requestlist/:requestid',
-    isLoggedInAsTeacher,
+      isLoggedInAsTeacher,
     [
-        check('status_teacher').isInt()
+       check('status_teacher').isInt()
     ],
     async (req, res) => {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
+                return res.status(422).json({ errors: errors.array()});
             }
             const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
             if (!requestDetail) {
@@ -684,7 +685,7 @@ app.patch('/api/teacher/Requestlist/:requestid',
 //Add a comment of request
 //PATCH /api/teacher/Requestlist/:requestid/comment
 app.patch('/api/teacher/Requestlist/:requestid/comment',
-    isLoggedInAsTeacher,
+      isLoggedInAsTeacher,
     [
         check('comment').isString().isLength({ min: 1 })
     ],
@@ -692,7 +693,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
+                return res.status(422).json({ errors: errors.array()});
             }
             const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
             if (!requestDetail) {

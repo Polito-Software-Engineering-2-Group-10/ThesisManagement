@@ -6,7 +6,7 @@ import "../styles/LoginPage.css";
 import logoBlu from "../img/LogoBlu.svg";
 
 function LoginPage(props){
-    const [email, setEmail] = useState('ferrero.renato@polito.it');
+    const [email, setEmail] = useState('ferrero.renato@tmtest.polito.it');
     const [password, setPassword] = useState('2');
     const [errorMessage, setErrorMessage] = useState('') ;
     const navigate = useNavigate();

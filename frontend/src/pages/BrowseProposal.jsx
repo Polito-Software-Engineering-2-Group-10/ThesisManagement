@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBoxArchive} from "@fortawesome/free-solid-svg-icons";
 import {ToastContainer} from "react-toastify";
+
 import ConfirmModal from '../components/ConfirmModal';
 
 import {Accordion} from 'react-bootstrap';
@@ -27,6 +28,8 @@ function BrowseProposal(props) {
 
     return (
         <div className='browse-proposals'>
+            
+        
             <ToastContainer/>
             <Container>
                 <ProposalTable
@@ -35,31 +38,32 @@ function BrowseProposal(props) {
                     setProposalDirty={props.setProposalDirty}
                 />
 
-                <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
-                    Co-Supervised Proposals
-                </h3>
-        
-                <Accordion>
-                    {cosupervisorProposalList && cosupervisorProposalList?.length > 0 ?
-                        cosupervisorProposalList.map((proposal, index) => {
-                            return (
-                                <AccordionElement
-                                    key={index}
-                                    id = {proposal.id}
-                                    title={proposal.title} 
-                                    expiration={proposal.expiration}
-                                    level={proposal.level}
-                                    type={proposal.type}
-                                    description={proposal.description}
-                                    co_supervisor={proposal.co_supervisor}
-                                    actions={{
-                                        view: `/applyToProp/${proposal.id}`
-                                    }}
-                                />
-                            );
-                        }
-                    ) : <p className="center-text">No co-supervised proposals</p>
-                }</Accordion>
+                
+                    <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
+                        Co-Supervised Proposals
+                    </h3>
+                    <Accordion>
+                        {cosupervisorProposalList && cosupervisorProposalList?.length > 0 ?
+                            cosupervisorProposalList.map((proposal, index) => {
+                                return (
+                                    <AccordionElement
+                                        key={index}
+                                        id = {proposal.id}
+                                        title={proposal.title} 
+                                        expiration={proposal.expiration}
+                                        level={proposal.level}
+                                        type={proposal.type}
+                                        description={proposal.description}
+                                        supervisor={proposal.supervisor}
+                                        coSupervisor={proposal.co_supervisor}
+                                        actions={{
+                                            view: `/applyToProp/${proposal.id}`
+                                        }}
+                                    />
+                                );
+                            }
+                        ) : <p className="center-text">No co-supervised proposals</p>
+                    }</Accordion>
             </Container>
         </div>
     );
@@ -134,33 +138,30 @@ function ProposalTable(props) {
     };
 
     return (
-        <Container className="proposal-table">
-        
+        <div className="proposal-table">
             <ConfirmModal 
                 title = {"Do you want to delete the proposal?"}
                 text  = {"The selected proposal will be permanently removed."}
                 show={showModal} setShow={setShowModal} 
                 onConfirm={()=>deleteProposal(selectedProposal)}
             />
-        
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <Button
-                    onClick={handleViewArchivedClick}
-                    variant="outline-dark"
-                    className="d-flex align-items-center archived-btn"
-                    id='view-archived-proposals'
-                >
-                    <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
-                    <span>View Archived Proposals</span>
-                </Button>
 
-            </div>
+            <Button
+                onClick={handleViewArchivedClick}
+                variant="outline-dark"
+                className="archived-btn"
+                id='view-archived-proposals'
+            >
+                <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
+            <span>View Archived Proposals</span>
+            </Button>
+
             <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
                 Active Proposals
             </h3>
         
             <Accordion>
-                {proposalList && proposalList.map((proposal, index) => {
+                {proposalList?.length > 0 ? proposalList.map((proposal, index) => {
                     return (
                         <AccordionElement 
                             key={index}
@@ -178,13 +179,13 @@ function ProposalTable(props) {
                             }}
                         />
                     );
-                })}
+                }) : <p className="center-text">No active proposals</p>}
                 
             </Accordion>
       
             
         
-        </Container>
+        </div>
     );
 }
 

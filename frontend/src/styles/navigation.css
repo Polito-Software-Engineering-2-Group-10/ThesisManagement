@@ -12,6 +12,7 @@
 
 .color-nav{
     background-color: var(--prussiaBlue);
+    padding: 0;
 }
 
 
@@ -24,22 +25,32 @@
 #navbarTitle {
     display: flex;
     flex-direction: row;
-    
+    flex-wrap: wrap;
+    align-content: center;
     align-items: center;
     padding: 1em;
     width: 100%;
     height: 6em;
+    justify-content: center;
+    gap:0.5em;
+    /* flex-basis: 0px; */
 }
 
-#navbarTitle h1 {
-    font-size: 2.3em;
-}
+
 
 #navbarTitle > h1 {
     display: block;
-    width: 100%;
+    align-items: center;
+    align-content: center;
+    align-self: center;
     text-align: center;
     cursor: pointer;
+    justify-content: center;
+    font-size: 2.3em;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    flex-grow: 1;
 }
 
 #navbar p{
@@ -57,10 +68,17 @@
 #navbarClock {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     color: var(--prussiaBlue);
     width: fit-content;
+    max-width: fit-content;
+    margin-bottom: auto;
+    margin-top: auto;
+    align-content: center;
+    min-width: 13em;
+    
+    
 }
 
 #navbar{
@@ -74,6 +92,7 @@
 #navbarTitle > img {
     width: 13em;
     cursor: pointer;
+    
 }
 
 #navbar .dropdown > a{
@@ -133,20 +152,25 @@ a:hover, #nav-links > a:hover {
     flex-wrap: wrap;
 }
 
-@media screen and (max-width: 992px)
-{
-    .color-nav {
-        height: 4em;
-        flex-wrap: wrap;
-    }
+.navbar-toggler:focus{
+    box-shadow: none;
+    
 }
 
-@media screen and (max-width: 992px) {
-    .color-nav {
-        height: 4em;
-        flex-wrap: wrap;
+@media screen and (max-width: 880px) {
+
+    #navbarTitle > img {
+        display: none;
     }
-    
+    #navbarClock{
+        min-width: fit-content;
+    }
+
+}
+
+
+@media screen and (max-width: 767px) {
+   
 
     .color-nav  .container
     {
@@ -155,7 +179,7 @@ a:hover, #nav-links > a:hover {
     
     .navbar-nav{
         background-color: var(--prussiaBlue);
-        width: 100%;
+        width: 100vw;
     }
     
     .navbar-nav #nav-links{
@@ -170,9 +194,33 @@ a:hover, #nav-links > a:hover {
     }
 
     #navbarTitle {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        align-content: center;
+        align-items: center;
+        padding: 1em;
+        width: 100%;
+        height: 6em;
+        justify-content: space-between;
+        gap:0;
+
+
+        /*
         flex-direction: column;
         align-items: center;
         flex-wrap: wrap;
+        align-content: auto;*/
+        
+    }
+
+    #navbarClock {
+        
+        justify-content: center;
+        align-items: center;
+        min-width: 100%;
+
     }
 
     #navbarTitle > h1 {
@@ -183,10 +231,7 @@ a:hover, #nav-links > a:hover {
         width: 10em;
     }
 
-    #navbarClock {
-        margin-top: 1em;
-    }
-
+    
     #navbar {
         margin-bottom: 1em;
     }
@@ -204,4 +249,3 @@ a:hover, #nav-links > a:hover {
     }
     
 }
-

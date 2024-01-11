@@ -11,7 +11,7 @@ export const AccordionElement = (props) => {
         <Accordion.Body>
             {professor&& <p><b>Professor: </b>{professor}</p>}
             {supervisor && <p><b>Supervisor: </b>{supervisor}r</p>}
-            {coSupervisor && <p><b>co-supervisors: </b>{coSupervisor && coSupervisor?.join(", ")}</p>}
+            {coSupervisor && <p><b>Co-supervisors: </b>{coSupervisor && coSupervisor?.join(", ")}</p>}
             <p><b>Expiration date: </b>{dayjs(expiration).format('DD/MM/YYYY')}</p>
             <p><b>Type:       </b>{type}</p>
             <p><b>Level:      </b>{level}</p>
@@ -55,10 +55,18 @@ export const AccordionElement = (props) => {
                         actions?.archive &&
                         <Button variant="primary" className='btn-archive' onClick={actions?.archive}>
                             <i className="bi bi-archive"></i>
-                            Archive
+                            archive
                         </Button>
                     }
-                
+               
+                    { /* archive button */
+                        actions?.unarchive &&
+                        <Button variant="primary" className='btn-archive' onClick={actions?.unarchive}>
+                            <i className="bi bi-archive"></i>
+                            unarchive
+                        </Button>
+                    }
+                  
                     { /* delete button */
                         actions?.delete &&
                         <Button variant="primary" className='btn-delete' onClick={actions?.delete}>

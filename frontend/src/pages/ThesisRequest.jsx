@@ -16,7 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faL, faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -181,8 +181,21 @@ const ThesisRequest = (props) => {
     const [reqTitle, setReqTitle] = useState('');
     const [reqDesc, setReqDesc] = useState('');
     const [reqCosup, setReqCosup] = useState('');
+    const [dirtyReq, setDirtyReq ] = useState(false);
 
     const notify = useNotification();
+
+    useEffect(() => {
+        if(dirtyReq){
+            API.getAllThesisRequestsForStudent()
+                .then((list) => {
+                    setActiveRequests(list);
+                    console.log(list);
+                })
+                .catch((err) => console.log(err));
+                setDirtyReq(false);
+        }
+    }, [dirtyReq]);
 
     useEffect(() => {
         if (props.studentDetail) {
@@ -195,6 +208,7 @@ const ThesisRequest = (props) => {
             API.getAllThesisRequestsForStudent()
                 .then((list) => {
                     setActiveRequests(list);
+                    console.log(list);
                 })
                 .catch((err) => console.log(err));
         }
@@ -253,7 +267,9 @@ const ThesisRequest = (props) => {
 
         API.updateThesisRequest(actualReq.id, thesis_request)
             .then(() => {
-                notify.success("Thesis request successfully modified")
+                notify.success("Thesis request successfully modified");
+                setShowUpdate(false);
+                setDirtyReq(true);
             })
             .catch((err) =>
                 notify.error(err.error));
@@ -332,7 +348,11 @@ const ThesisRequest = (props) => {
                         <Accordion defaultActiveKey="0">
                             <Container style={{ width: '70%' }}>
                                 {
-                                    (props.appList && propList) ? props.appList.filter((a) => a.status == true).map((app, index) => {
+                                    (props.appList && propList) ? props.appList.filter((a) => a.status == true)
+                                    .filter((p)=>{
+                                        const acceptedReqId = activeRequests.map((a) => a.proposal_id);
+                                        return !acceptedReqId.includes(p.id);
+                                    }).map((app, index) => {
                                         return <ThesisRequestRow
                                             onClickCallback={() => {
                                                 setAcceptedPropId(app.proposal_id);
@@ -356,6 +376,9 @@ const ThesisRequest = (props) => {
                                     (propList && props.appList) ? propList.filter((p) => {
                                         const acceptedPropIds = props.appList.filter((a) => a.status === true).map((a) => a.proposal_id);
                                         return !acceptedPropIds.includes(p.id)
+                                    }).filter((p)=>{
+                                        const acceptedReqId = activeRequests.map((a) => a.proposal_id);
+                                        return !acceptedReqId.includes(p.id);
                                     }).map((prop, index) => {
                                         return <ThesisRequestRow
                                             onClickCallback={() => {

@@ -86,6 +86,18 @@ class ThesisRequestTable {
         return ThesisRequest.fromRow(result);
     }
 
+    async updateThesisRequest(student_id, request_id, new_request) {
+        // set comment to NULL when updating request because this means that allegedly the student has satisfied the teacher's comment
+        const PENDING_STATUS = 0; // if this is changed, also change the corresponding value in the frontend
+        const CHANGE_REQUESTED = 2;
+        /// ASSUMED STATUSES: 0 = pending, 1 = approved, 2 = request for change, 3 = rejected
+        const query = `UPDATE thesis_request SET title = $3, description = $4, co_supervisor = $5, comment = NULL, status_teacher = ${PENDING_STATUS} WHERE student_id = $1 AND id = $2 AND status_teacher = ${CHANGE_REQUESTED} RETURNING *`;
+        const sid = getNum(student_id);
+        const rid = getNum(request_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, rid, new_request.title, new_request.description, new_request.co_supervisor, `No request found to be updated`);
+        return ThesisRequest.fromRow(result);
+    }
+
     async getCountByFK(student_id, proposal_id) {
         const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND proposal_id = $2`;
         const sid = getNum(student_id);
@@ -93,6 +105,24 @@ class ThesisRequestTable {
         const result = await this.db.executeQueryExpectOne(query, sid, pid, `Request with student_id ${student_id} and proposal_id ${proposal_id} not found`);
         return result;
     }
+
+     //Function for if Student can not request two different thesis at the same time
+     async getCountByStudentID(student_id) {
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, `Request with student_id ${student_id} not found`);
+        return result;
+    }
+
+    //check amount of failed requests
+    async getCountFailedRequestByStudentID(student_id) {
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND (status_clerk IS false OR (status_clerk IS true AND status_teacher =2))`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectOne(query, sid, `Request with student_id ${student_id} not found`);
+        return result;
+    }
+
+    //End
 
     async updateRequestClerkStatusById(id, status) {
         const query = `UPDATE thesis_request SET status_clerk = $2 WHERE id = $1 RETURNING *`;
@@ -127,6 +157,13 @@ class ThesisRequestTable {
         const aid = getNum(id);
         const result = await this.db.executeQueryExpectOne(query, aid, comment, `Request with id ${id} not found`);
         return ThesisRequest.fromRow(result);
+    }
+
+    async getAllRequestByStudent(student_id) {
+        const query = `SELECT * FROM thesis_request WHERE student_id = $1`;
+        const sid = getNum(student_id);
+        const result = await this.db.executeQueryExpectAny(query, sid);
+        return result.map(ThesisRequest.fromRow);
     }
 
 }

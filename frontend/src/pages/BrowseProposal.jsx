@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import { Button,Container, Table } from "react-bootstrap";
-import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
@@ -9,12 +8,16 @@ import API from '../API';
 import useNotification from '../hooks/useNotifcation';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faArrowRotateRight, faBoxArchive} from "@fortawesome/free-solid-svg-icons";
+import {faBoxArchive} from "@fortawesome/free-solid-svg-icons";
 import {ToastContainer} from "react-toastify";
+
 import ConfirmModal from '../components/ConfirmModal';
 
+import {Accordion} from 'react-bootstrap';
+import { AccordionElement } from '../components/AccordionElement';
+
 function BrowseProposal(props) {
-    
+    const {cosupervisorProposalList} = props;   
     const [activeProposals, setActiveProposals] = useState(null);
 
     useEffect(() => {
@@ -24,17 +27,45 @@ function BrowseProposal(props) {
     }, [props.proposalList]);
 
     return (
-        <>
+        <div className='browse-proposals'>
+            
+        
             <ToastContainer/>
             <Container>
                 <ProposalTable
                     proposalList={activeProposals}
                     user={props.user}
-                    
                     setProposalDirty={props.setProposalDirty}
                 />
+
+                
+                    <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
+                        Co-Supervised Proposals
+                    </h3>
+                    <Accordion>
+                        {cosupervisorProposalList && cosupervisorProposalList?.length > 0 ?
+                            cosupervisorProposalList.map((proposal, index) => {
+                                return (
+                                    <AccordionElement
+                                        key={index}
+                                        id = {proposal.id}
+                                        title={proposal.title} 
+                                        expiration={proposal.expiration}
+                                        level={proposal.level}
+                                        type={proposal.type}
+                                        description={proposal.description}
+                                        supervisor={proposal.supervisor}
+                                        coSupervisor={proposal.co_supervisor}
+                                        actions={{
+                                            view: `/applyToProp/${proposal.id}`
+                                        }}
+                                    />
+                                );
+                            }
+                        ) : <p className="center-text">No co-supervised proposals</p>
+                    }</Accordion>
             </Container>
-        </>
+        </div>
     );
 }
 
@@ -72,7 +103,6 @@ function ProposalTable(props) {
             thesis_title:proposal.title
         }
         API.deleteProposal(proposal.id,mailInfo).then(({ data, status })=>{
-            console.log(props)
             props.setProposalDirty(true);
             if (status == 400)
             {
@@ -107,76 +137,58 @@ function ProposalTable(props) {
         navigate('/*');
     };
 
-    const generateRow = (result) => {
-        return(
-        <tr key={result.id} style={{ textAlign: 'center' }} onClick={() => handleProposalClick(result)}
-            className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
-        >
-        <td>{result.title}</td>
-        <td>{dayjs(result.expiration).format('DD/MM/YYYY')}</td>
-        <td>{result.level==1 ? "Bachelor" : "Master"}</td>
-        <td>{result.type}</td>
-            <td className="d-flex justify-content-center align-items-center">
-                 <Button className="btn-edit" title="Update proposal" onClick={() => handleUpdateClick(result)}>
-                     <i className="bi bi-pencil-square"></i>
-                 </Button>
-                 <Button className="btn-copy" onClick={() => handleCopyClick(result)} title="Create proposal starting from this one">
-                     <i className="bi bi-copy"></i>
-                 </Button>
-                 <Button className="btn-archive" onClick={() => handleArchiveClick(result)} title="Archive proposal">
-                     <i className="bi bi-archive"></i>
-                 </Button>
-                 <Button className="btn-delete" onClick={() => handleDeleteClick(result)} title="Delete proposal">
-                     <i className="bi bi-trash"></i>
-                 </Button>
-             </td>
-        </tr>
-        )
-    }
-
     return (
-        <Container className="proposal-table">
-        
+        <div className="proposal-table">
             <ConfirmModal 
                 title = {"Do you want to delete the proposal?"}
                 text  = {"The selected proposal will be permanently removed."}
                 show={showModal} setShow={setShowModal} 
                 onConfirm={()=>deleteProposal(selectedProposal)}
             />
-        
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <Button
-                    onClick={handleViewArchivedClick}
-                    variant="outline-dark"
-                    className="d-flex align-items-center archived-btn"
-                    id='view-archived-proposals'
-                >
-                    <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
-                    <span>View Archived Proposals</span>
-                </Button>
 
-            </div>
+            <Button
+                onClick={handleViewArchivedClick}
+                variant="outline-dark"
+                className="archived-btn"
+                id='view-archived-proposals'
+            >
+                <FontAwesomeIcon icon={faBoxArchive} className="mr-2" style={{ marginRight: '8px' }} />
+            <span>View Archived Proposals</span>
+            </Button>
+
             <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
                 Active Proposals
             </h3>
-            <Table hover bordered responsive>
-                <thead style={{ textAlign: 'center' }}>
-                <tr>
-                    <th>Title</th>
-                    <th>Expiration</th>
-                    <th>Level</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {proposalList && proposalList.map((result, index) =>
-                    generateRow(result)
-                )}
-                </tbody>
-            </Table>
-        </Container>
+        
+            <Accordion>
+                {proposalList?.length > 0 ? proposalList.map((proposal, index) => {
+                    return (
+                        <AccordionElement 
+                            key={index}
+                            id = {proposal.id}
+                            title={proposal.title} 
+                            expiration={proposal.expiration}
+                            level={proposal.level}
+                            type={proposal.type}
+                        
+                            actions={{
+                                "copy": ()      => handleCopyClick(proposal),
+                                "edit": ()      => handleUpdateClick(proposal),
+                                "archive": ()   => handleArchiveClick(proposal),
+                                "delete": ()    => handleDeleteClick(proposal)
+                            }}
+                        />
+                    );
+                }) : <p className="center-text">No active proposals</p>}
+                
+            </Accordion>
+      
+            
+        
+        </div>
     );
 }
+
+
 
 export default BrowseProposal;

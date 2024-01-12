@@ -1,6 +1,6 @@
 import {useEffect, useState, useContext} from 'react';
 import {Link, useNavigate}   from 'react-router-dom';
-import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col } from 'react-bootstrap';
+import {Form, Table, Button, Badge, Card, FormGroup, Container, Row, Col, Accordion} from 'react-bootstrap';
 import {Navigation} from './Navigation.jsx';
 import API from '../API.jsx';
 import "../styles/pagination.css";
@@ -8,75 +8,31 @@ import "../styles/SearchProposal.css";
 import AppContext from '../AppContext.jsx';
 
 import ReactPaginate from 'react-paginate';
+import { AccordionElement } from '../components/AccordionElement.jsx';
 
 
 function Proposals( { currentProposals, getProfessorsInformation, professors, perPage, sortColumn, sortOrder, handleSort }) {
-
+const navigate=useNavigate();
     return (
-    <Table  bordered hover responsive className="items" style={{
-        height: currentProposals?.length === perPage ? '100vh' : `${currentProposals?.length * 100/perPage}vh`
-    }}>                            
-        <thead>
-            <tr>
-                {/* <th className="center-text">Title</th> */}
-                <th className="center-text" onClick={() => handleSort('title')}>
-                    {sortColumn === 'title' && sortOrder === 'asc' ? <>Title <i className="bi bi-arrow-up"></i></>
-                    : (sortOrder === 'desc' ? <>Title <i className="bi bi-arrow-down"></i></>
-                     : <>Title <i className="bi bi-arrow-down-up"></i></>)}
-                </th>
-                
-                {/* <th className="center-text">Professor</th> */}
-                <th className="center-text" onClick={() => handleSort('supervisor')}>
-                    {sortColumn === 'supervisor' && sortOrder === 'asc' ? <>Professor <i className="bi bi-arrow-up"></i></>
-                    : (sortOrder === 'desc' ? <>Professor <i className="bi bi-arrow-down"></i></>
-                     : <>Professor <i className="bi bi-arrow-down-up"></i></>)}
-                </th>
-
-                {/* <th className="center-text">Expiration Date</th> */}
-                <th className="center-text" onClick={() => handleSort('expiration')}>
-                    {sortColumn === 'expiration' && sortOrder === 'asc' ? <>Expiration Date <i className="bi bi-arrow-up"></i></>
-                    : (sortOrder === 'desc' ? <>Expiration Date <i className="bi bi-arrow-down"></i></>
-                     : <>Expiration Date <i className="bi bi-arrow-down-up"></i></>)}
-                </th>
-
-                {/* <th className="center-text">Type</th> */}
-                <th className="center-text" onClick={() => handleSort('type')}>
-                    {sortColumn === 'type' && sortOrder === 'asc' ? <>Type <i className="bi bi-arrow-up"></i></>
-                    : (sortOrder === 'desc' ? <>Type <i className="bi bi-arrow-down"></i></>
-                     : <>Type <i className="bi bi-arrow-down-up"></i></>)}
-                </th>
-
-                {/* <th className="center-text">Level</th> */}
-                <th className="center-text" onClick={() => handleSort('level')}>
-                    {sortColumn === 'level' && sortOrder === 'asc' ? <>Level <i className="bi bi-arrow-up"></i></>
-                    : (sortOrder === 'desc' ? <>Level <i className="bi bi-arrow-down"></i></>
-                     : <>Level <i className="bi bi-arrow-down-up"></i></>)}
-                </th>
-
-            </tr>
-        </thead>
-        <tbody>
+        <Accordion>
+        
         {currentProposals && currentProposals.map((proposal, index) => (
-        <tr key={index} className="thesis-proposal" style={{
-            height: `${100/perPage}%`
-        }}>
-            <td>
-                <Link
-                    to={`/applyToProp/${proposal.id}`}
-                    className="text-primary"
-                    style={{textDecoration : "none"}}
-                >
-                    {proposal.title}
-                </Link>
-            </td>
-            <td>{getProfessorsInformation(professors, proposal)}</td>
-            <td>{proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}</td>
-            <td>{proposal.type}</td>
-            <td>{proposal.level == 1 ? 'Bachelor' : 'Master'}</td>
-        </tr>
+            <AccordionElement
+                key={index}
+                id={proposal.id}
+                title={proposal.title}
+                professor={getProfessorsInformation(professors, proposal)}
+                expiration={proposal.expiration.substring(0, proposal.expiration.indexOf("T"))}
+                level={proposal.level == 1 ? 'Bachelor' : 'Master'}
+                type={proposal.type}
+                actions={{
+                    view: `/applyToProp/${proposal.id}`
+                }}
+            />
         ))}
-        </tbody>
-    </Table>)
+            
+        </Accordion>
+    )
 }
 
 function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformation, professors, sortColumn, sortOrder, handleSort  }) {
@@ -97,18 +53,17 @@ function PaginatedProposals( { itemsPerPage, proposalList, getProfessorsInformat
     }
 
     return (
-        <>
-            <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} perPage={itemsPerPage} sortColumn={sortColumn}
+        <>    <Proposals currentProposals={currentItems} getProfessorsInformation={getProfessorsInformation} professors={professors} perPage={itemsPerPage} sortColumn={sortColumn}
                 sortOrder={sortOrder}
                 handleSort={handleSort}/>
 
             <ReactPaginate 
-                nextLabel='next >'
+                nextLabel='>'
                 onPageChange={handlePageClick}
                 pageRangeDisplayed={4}
                 marginPagesDisplayed={1}
                 pageCount={pageCount}
-                previousLabel='< previous'
+                previousLabel='<'
                 pageClassName="page-item"
                 pageLinkClassName="page-link"
                 previousClassName="page-item"
@@ -339,12 +294,8 @@ function SearchForProposals(props) {
                 (   
 
                     /*<div className="container mt-4">*/
-                    <Container>
-                       
-                        <Row>
-                            <Col sm={3}>
-                               
-                                <Card className="mb-4" style={{marginTop: '20px'}}>
+                    <div className='container-filter-proposal'>
+                                <Card id="card-filter" className="mb-4">
                                     <Card.Body>
                                         <div className="mb-3">
                                             <h5 display="inline-block "> Filter by: </h5>
@@ -592,20 +543,18 @@ function SearchForProposals(props) {
                                     if you change one you have to change the other 
                                     I'm using fixed height rows because that way it avoids having the navigation bar at the bottom of the page shift around because of the table constant resizing    
                                 */}
-                            </Col>
-                            <Col>
-                                    <Card className="mb-4" style={{marginTop: '20px'}}>
+                                    <Card id="card-proposal" className="mb-4" >
                                     <PaginatedProposals itemsPerPage={10} proposalList={sortedProposals} getProfessorsInformation={getProfessorsInformation} professors={professors} handleSort={handleSort}/>
                                     </Card>
-                            </Col>
-                        </Row>
                         
-                    </Container>
+                    </div>
                     //</div>
                 )
             : ''}
         </>
     );
 }
+
+
 
 export default SearchForProposals;

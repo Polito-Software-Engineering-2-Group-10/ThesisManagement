@@ -68,25 +68,24 @@ function Navigation(props) {
     return (
       <div id="navbar">
         
-        <Container id="navbarTitle" >
-            <img src={logoBlu} onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
-
-            <h1 className="title" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}>{title}</h1>  
+          <div id="navbarTitle" >
+              <img src={logoBlu} onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}/>
+              <h1 className="title" onClick={()=>navigate('/')} onKeyDown={()=>navigate('/')}>{title}</h1>  
+          
+              {props.loggedIn && (
+                  <div id="navbarClock">
+                        <p>{virtualClock}</p>
+                        <i
+                          className="bi bi-calendar"
+                          onClick={handleEditClick}
+                          onKeyDown={handleEditClick}
+                        ></i>
+                  </div>
+                )}
+          </div>
         
-        {props.loggedIn && (
-            <Container  id="navbarClock">
-                  <p>{virtualClock}</p>
-                  <i
-                    className="bi bi-calendar"
-                    onClick={handleEditClick}
-                    onKeyDown={handleEditClick}
-                  ></i>
-            </Container>
-          )}
-        </Container>
-        
-        <Navbar collapseOnSelect className="color-nav" expand="lg" data-bs-theme="dark">
-        <Container>
+        <Navbar collapseOnSelect className="color-nav" expand="md" data-bs-theme="dark">
+        <div id="nav-toggle">
         <Navbar.Toggle aria-controls='responsive-navbar-nav' />
         <Navbar.Collapse id='responsive-navbar-nav'>
         
@@ -159,7 +158,7 @@ function Navigation(props) {
               </Modal.Footer>
             </Modal>
           </Navbar.Collapse>
-        </Container>
+        </div>
       </Navbar>
     </div>
     );

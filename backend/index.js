@@ -266,6 +266,31 @@ app.get('/api/teacher/ProposalsList',
             // AND COMMENT THIS OUT INSTEAD
             //const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
+            console.log(req.user);
+            res.json(proposalList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+        }
+    }
+);
+
+/*Browse Cosupervised (Active) Proposals */
+
+//GET /api/cosup/ProposalsList
+// get the list of all cosupervised active proposals
+
+app.get('/api/cosup/ProposalsList',
+    isLoggedInAsTeacher,
+    
+    async (req, res) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            
+            const proposalList = await thesisProposalTable.getByCosupervisor(req.user.email);
             res.json(proposalList);
         }
         catch (err) {
@@ -481,6 +506,16 @@ app.post('/api/student/applyRequest/:thesisid',
             if (existingRequest.count > 0) {
                 return res.status(400).json({ error: `The student already request to this thesis before!` });
             }
+
+            //Student can not request two different thesis at the same time
+            const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
+            const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
+            //Only all requests are failed the student can apply a new request
+            if(amountRequest.count!=failedRequest.count)
+            {
+                return res.status(400).json({ error: `The student has a processing/approved request!` });
+            }
+
            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);
@@ -493,6 +528,55 @@ app.post('/api/student/applyRequest/:thesisid',
     }
 );
 
+/*End*/
+
+//Get thesis request - Student
+// GET /api/student/Requestlist
+// get the list of requests as a student to browse them and see their status
+app.get('/api/student/Requestlist',
+    isLoggedInAsStudent,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllRequestByStudent(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+//Update thesis request - Student
+// PATCH /api/student/Requestlist/:requestid
+// update a thesis request
+app.patch('/api/student/Requestlist/:requestid',
+    isLoggedInAsStudent,
+    [
+        check('title').isString().isLength({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('co_supervisor').isArray().optional(),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const request = {
+            title: req.body.title,
+            description: req.body.description,
+            co_supervisor: req.body.co_supervisor
+        }
+        
+        try {
+            const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
+            res.json(requestInfo);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+        }
+    }
+);
 /*End*/
 
 

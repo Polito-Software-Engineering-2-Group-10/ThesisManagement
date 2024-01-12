@@ -46,8 +46,12 @@
     border-color: rgba(0, 0, 0, 0.1);
 }
 
-.proposal-table {
-    margin-top: 2em;
+.btn-view{
+    background-color: rgb(237, 237, 237);
+    border-color: rgba(255, 255, 255, 0);
+}
+.btn-view > i {
+    margin-right: 0.3em;
 }
 
 #view-archived-proposals {
@@ -59,3 +63,26 @@
     color:var(--orange) !important;
 }
 
+.archived-btn {
+
+    margin-right: 0 !important;
+    margin-bottom: 1em;
+}
+
+.proposal-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.accordion {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 2em;
+}
+
+
+@media screen and (max-width: 430px){
+    .archived-btn{
+        width: 100%;
+    }
+}

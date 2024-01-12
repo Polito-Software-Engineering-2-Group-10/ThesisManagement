@@ -30,16 +30,22 @@
 
 }
 
-.apply-btn {
+.apply-btn, .accept-btn  {
     margin-top:10px;
     background-color: var(--dark-green);
     color:white !important;
+    border:0;
 }
 
-.cancel-btn {
+.cancel-btn, .reject-btn {
     margin-top: 10px;
     background-color: var(--cancelButton);
     color:white !important;
+    border: 0;
+}
+
+.accept-btn > i, .reject-btn > i {
+    margin-right: 0.3em;
 }
 
 

@@ -285,6 +285,9 @@ const ThesisRequest = (props) => {
             description: description,
             apply_date: dayjs().format('YYYY-MM-DD')
         }
+        
+        console.log(actualProp);
+        
         API.applyRequest(thesis_request, Array.isArray(actualProp) ? actualProp[0].id : actualProp.id)
             .then(() => {
                 notify.success("Thesis request successfully sent")

@@ -548,7 +548,7 @@ app.patch('/api/student/Requestlist/:requestid',
             res.json(requestInfo);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+            res.status(503).json({ error: `Database error while updating the thesis request: ${err}` });
         }
     }
 );

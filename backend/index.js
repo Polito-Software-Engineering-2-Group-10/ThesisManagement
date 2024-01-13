@@ -565,7 +565,7 @@ app.get('/api/teacher/Requestlist',
             res.json(requestList);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while retrieving the requests' list: ${err}` });
         }
     }
 )
@@ -597,7 +597,7 @@ app.patch('/api/teacher/Requestlist/:requestid',
             const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher);
             res.json(requestResult);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while updating the request status: ${err}` });
         }
     }
 );
@@ -622,7 +622,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
             const requestComment = await thesisRequestTable.updateRequestCommentById(req.params.requestid, req.body.comment);
             res.json(requestComment);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while updating the request status: ${err}` });
         }
     }
 );

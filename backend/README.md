@@ -592,3 +592,7 @@ The backend exposes the following APIs:
     ```
     - It will send an email to the given recipient with the given subject and text.
     - It returns a string detailing the result of the operation.
+
+- GET `/api/cosup/ProposalsList`
+    - No parameters, this api return an array with all the active co-supervised proposal of the current logged in teacher.
+    - Each element of the array is an entire proposal object 

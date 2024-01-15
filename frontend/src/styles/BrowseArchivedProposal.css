@@ -4,3 +4,36 @@
     color:var(--orange) !important;
 }
 
+.archived-title {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.search {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ababab;
+    width: 400px;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: linear 0.2s;
+}
+
+.search::placeholder {
+    color: #757575;
+    transition: linear 0.2s;
+}
+
+.search:focus {
+    border-color: #000000;
+    transition: linear 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.search:focus::placeholder {
+    opacity: 50%;
+    transition: linear 0.2s;
+}

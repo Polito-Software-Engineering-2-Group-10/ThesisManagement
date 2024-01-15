@@ -26,6 +26,7 @@ import {
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
 import { check, validationResult } from "express-validator"; // validation middleware
+import validator from "validator";
 import dayjs from 'dayjs';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -208,7 +209,8 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             const co_supervisorMails = proposalDetail.co_supervisor;
             for(const csm of co_supervisorMails)
             {
-                if(checkEmail(csm))
+                //if(checkEmail(csm))
+                if(validator.isEmail(csm))
                 {
                     try {
                     const res = await sendEmail({
@@ -582,8 +584,11 @@ app.patch('/api/clerk/Requestlist/:requestid',
             {
                 for(const csm of co_supervisorMails)
             {
-                if(checkEmail(csm))
+                //if(checkEmail(csm))
+                if(validator.isEmail(csm))
                 {
+                    //console.log(csm+" "+validator.isEmail(csm));
+                    //console.log(validator.isEmail("test"));
                     try {
                     const res = await sendEmail({
                         recipient_mail: csm,

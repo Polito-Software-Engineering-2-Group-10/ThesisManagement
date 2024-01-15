@@ -750,6 +750,23 @@ app.patch('/api/clerk/Requestlist/:requestid',
                 }
             }
             }
+            const teacherInfo= await teacherTable.getByEmail(requestDetail.supervisor);
+           if(requestResult && requestResult.status_clerk===true)
+           {
+            try {
+                const res = await sendEmail({
+                    recipient_mail: requestDetail.supervisor,
+                    subject: `New Thesis Request - "${requestDetail.title}"`,
+                    message: `Dear Professor ${teacherInfo[0].surname} ${teacherInfo[0].name},\nThere is a new thesis request related to your thesis topic "${requestDetail.title}" for you.\nBest Regards,\nPolito Staff.`
+                });
+            }
+            catch (err) {
+                res.status(500).json({ error: `Server error during sending notification ${err}` });
+                return;
+            }
+           
+            
+           }
             res.json(requestResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
@@ -996,7 +1013,7 @@ app.delete('/api/teacher/deleteProposal',
                     const app = await applicationTable.getById(s.app_id);
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
-                    try {                                        
+                    try {
                         const res = await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,

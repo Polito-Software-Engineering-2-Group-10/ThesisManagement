@@ -73,6 +73,7 @@ class TeacherTable {
         const result = await this.db.executeQueryExpectAny(query, email);
         return result;
     }
+
 }
 
 export { Teacher, TeacherTable };

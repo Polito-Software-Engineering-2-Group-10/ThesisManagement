@@ -1,11 +1,21 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsClerk } from '../index.js';
-import {secretaryClerkTable, thesisRequestTable} from '../dbentities.js';
+import {
+    secretaryClerkTable,
+    teacherTable,
+    thesisRequestTable
+} from '../dbentities.js';
 import { jest } from '@jest/globals';
 
 afterAll(async () => {
     await psqlDriver.closeAll();
 });
+
+jest.mock('nodemailer', () => ({
+    createTransport: jest.fn().mockReturnValue({
+        sendMail: jest.fn().mockReturnValue({ message: 'Email sent successfully' })
+    })
+}));
 
 function registerMockMiddleware(app, index, middleware) {
     function mockWare(req, res, next) {
@@ -170,6 +180,36 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
         const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: true })
         expect(response.status).toBe(400);
         expect(response.body).toEqual({ error: 'This request has already been accepted' });
+    });
+
+    test('Should throw an error with 500 status code when it fails to send a notification to the relative professor', async () => {
+        const thesisRequest = {
+            id: 1,
+            details: 'Details',
+            status_clerk: null,
+            supervisor: 'mail',
+        }
+        const result = {
+            status_clerk: true,
+        }
+        const teacherInfo = [
+            {
+                surname: 'Surname',
+                name: 'Name',
+            }
+            ]
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'clerk' };
+            next();
+        });
+
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest)
+        jest.spyOn(thesisRequestTable, 'updateRequestClerkStatusById').mockImplementationOnce(() => result);
+        jest.spyOn(teacherTable, 'getByEmail').mockImplementationOnce(() => teacherInfo);
+        const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: true })
+        expect(response.status).toBe(500);
+        expect(response.body).toBeTruthy();
     });
 
     test('Should throw an error with 400 status code when the thesis request has already been rejected', async () => {

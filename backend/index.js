@@ -26,10 +26,10 @@ import {
 import virtualClock from './VirtualClock.js';
 import { psqlDriver } from './dbdriver.js';
 import { check, validationResult } from "express-validator"; // validation middleware
-import validator from "validator";
 import dayjs from 'dayjs';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import validator from 'validator';
 
 const env = process.env.NODE_ENV || 'development';
 const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
@@ -96,10 +96,6 @@ const storage = multer.diskStorage({
   
 const upload = multer({storage})
 
-function checkEmail(str){
-    const valid = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return valid.test(str);
-}
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
     try {
@@ -209,7 +205,6 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             const co_supervisorMails = proposalDetail.co_supervisor;
             for(const csm of co_supervisorMails)
             {
-                //if(checkEmail(csm))
                 if(validator.isEmail(csm))
                 {
                     try {

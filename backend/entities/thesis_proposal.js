@@ -82,12 +82,18 @@ class ThesisProposalTable {
             tp.teacher_id = t.id AND 
             tp.archived = false AND 
             tp.expiration > $1 AND
+            (
             EXISTS (
                       SELECT 1 FROM unnest(groups) AS code_degree
                       WHERE code_degree LIKE '%' || $2 || '%'
                     )
-         
-                ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
+            OR
+            EXISTS (
+                        SELECT 1 FROM public.group as g, public.degree_department_bridge as ddb
+                        WHERE ddb.cod_department = g.cod_department AND g.name = ANY(tp.groups) AND ddb.cod_degree = $2
+                    )
+            )
+            ORDER BY tp.level, tp.expiration ASC, tp.type ASC`,
             current_date_string,cod_degree
         )
         // Not using ThesisProposal.fromRow because we need to return the raw data, otherwise teacher_name and teacher_surname 

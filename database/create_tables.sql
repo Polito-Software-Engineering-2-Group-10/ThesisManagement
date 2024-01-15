@@ -33,6 +33,23 @@ CREATE TABLE IF NOT EXISTS public.group
 );
 ALTER TABLE IF EXISTS public.group OWNER TO thesismanager;
 
+-- degree-department bridge table
+CREATE TABLE IF NOT EXISTS public.degree_department_bridge
+(
+    cod_degree TEXT NOT NULL,
+    cod_department INTEGER NOT NULL,
+    CONSTRAINT degree_department_bridge_pk PRIMARY KEY (cod_degree, cod_department),
+    CONSTRAINT degree_department_bridge_cod_degree_fkey FOREIGN KEY (cod_degree)
+        REFERENCES public.degree (cod_degree)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT degree_department_bridge_cod_department_fkey FOREIGN KEY (cod_department)
+        REFERENCES public.department (cod_department)
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+ALTER TABLE IF EXISTS public.degree_department_bridge OWNER TO thesismanager;
+
 -- teacher
 CREATE TABLE IF NOT EXISTS public.teacher
 (

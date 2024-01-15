@@ -115,3 +115,9 @@
 | PROPOSAL_ID    | INTEGER | NO          | FOREIGN  | Id of the thesis that the student applied to          |
 | APPLICATION_ID | INTEGER | NO          | FOREIGN  | Id of the application                                 |
 | FILEPATH       | TEXT    | NO          |          | Filepath of the applicant cv                          |
+
+### Degree-department brigde table
+| FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
+| COD_DEGREE     | TEXT    | NO          | FOREIGN  | Code of the degree                                    |
+| COD_DEPARTMENT | INTEGER | NO          | FOREIGN  | Code of the department                                |

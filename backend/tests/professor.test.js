@@ -203,6 +203,32 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             id: 1,
             status: null,
         }
+
+        const mockAppResult = {
+            proposal_id: 333,
+            student_id: 1,
+            status: true
+        }
+
+        const propDetails = {
+            teacher_id: 1,
+            co_supervisor: [
+                'gino@prova.com',
+                'pippo@test.com'
+            ],
+            title: 'titolo'
+        }
+
+        const mockSInfo = {
+            surname: 'cognome',
+            name: 'nome'
+        }
+
+        const mockTInfo = {
+            surname: 'cognome',
+            name: 'nome'
+        }
+
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -210,11 +236,14 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
         jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
-        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => true);
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => mockAppResult);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => propDetails);
+        jest.spyOn(studentTable, 'getById').mockImplementationOnce(() => mockSInfo);
+        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => mockTInfo);
         jest.spyOn(thesisProposalTable, 'archiveThesisProposal').mockImplementationOnce(() => true);
         const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
         expect(response.status).toBe(200);
-        expect(response.body).toBe(true);
+        expect(response.body).toEqual(mockAppResult);
     });
 
     test('Should successfully reject the application with the specified ID', async () => {
@@ -226,6 +255,32 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
             id: 1,
             status: null,
         }
+
+        const mockAppResult = {
+            proposal_id: 333,
+            student_id: 1,
+            status: true
+        }
+
+        const propDetails = {
+            teacher_id: 1,
+            co_supervisor: [
+                'gino@prova.com',
+                'pippo@test.com'
+            ],
+            title: 'titolo'
+        }
+
+        const mockSInfo = {
+            surname: 'cognome',
+            name: 'nome'
+        }
+
+        const mockTInfo = {
+            surname: 'cognome',
+            name: 'nome'
+        }
+        
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
             req.user = { id: 1, role: 'teacher' };
@@ -233,10 +288,14 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         });
         jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
         jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
-        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => true);
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => mockAppResult);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => propDetails);
+        jest.spyOn(studentTable, 'getById').mockImplementationOnce(() => mockSInfo);
+        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => mockTInfo);
+        jest.spyOn(thesisProposalTable, 'archiveThesisProposal').mockImplementationOnce(() => true);
         const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: false})
         expect(response.status).toBe(200);
-        expect(response.body).toBe(true);
+        expect(response.body).toEqual(mockAppResult);
     });
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {

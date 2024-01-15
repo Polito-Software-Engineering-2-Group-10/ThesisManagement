@@ -567,7 +567,7 @@ VALUES
 (549, 'PRIMATESTA', 'STEFANO', 'primatesta.stefano@tmtest.polito.it', 1, 6),
 (550, 'CARDONI', 'ALESSANDRO', 'cardoni.alessandro@tmtest.polito.it', 1, 9),
 (551, 'DALLA CHIARA', 'BRUNO', 'dallachiara.bruno@tmtest.polito.it', 2, 2),
-(552, 'TEST', 'PROFESSOR', 'thesis.management.test@gmail.com', 2, 1);
+(552, 'TEST', 'PROFESSOR', 'thesis.management.test@gmail.com', 3, 2);
 
 INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
 VALUES('Tesi senza titolo', 34, 'beltramo.silvia@tmtest.polito.it', ARRAY['cuneo.cristina@tmtest.polito.it']::text[], ARRAY['ANALISI FONTI DOCUMENTARIE','ANALISI FONTI ICONOGRAFICHE','STORIA DEL TERRITORIO','STORIA DELL''ARCHITETTURA','STORIA DELLE TECNICHE COSTRUTTIVE']::text[], 'Tesi di Laurea', ARRAY['L-36 group 1']::text[], 'Il percorso di ricerca si inserisce in un bando PNRR “Proposte di intervento per il restauro e la valorizzazione di parchi e giardini storici da finanziare nell’ambito del PNRR - INTERVENTO 2.3 – PARCHI E GIARDINI STORICI INTERVENTO DI RECUPERO”. La ricerca da svolgere si incentra su un edificio, una villa del tardo Quattrocento e del suo giardino, con una apertura all''indagine a scala territoriale, privilegiando l''impiego di fonti documentarie, scritte e iconografiche, e l''analisi dell''architettura. Nell''ambito della tesi saranno previste attività di catalogazione e gestione di data base.', ARRAY['Per una tesi di prevalente carattere storico, aver sostenuto gli esami di storia previsti dal piano di studio (votazione > 27). Possedere le relative competenze disciplinari nel campo della rappresentazione e del rilievo e della gestione di banche dati.']::text[], '', '2024-09-19', 1, ARRAY['L-36 - Political Sciences and International Relations']::text[]),
@@ -6043,7 +6043,7 @@ COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin
 1	1254	2023-11-30	\N
 \.
 
-INSERT INTO public.thesis_request(student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date, status_clerk, status_teacher, approval_date)
+INSERT INTO public.thesis_request(student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date, status_clerk, status_teacher, comment, approval_date)
 VALUES(1,2, 
  'Progettazione e sviluppo di un cluster di  mini radio sonde per misure Lagrangiane delle fluttuazioni di quantità fisiche in atmosfera',
  'Lattività di ricerca prevede la progettazione di una mini radio sonda innovativa per la misura delle fluttuazioni di temperatura pressione e umidità’ entro le nuvole tiepide. Il tesista dovrà prestare particolare attenzione alla minimizzazione di pesi ed ingombri del PCB.
@@ -6053,7 +6053,8 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  '2023-09-19', 
  null,
  null,
- '2023-10-8'),
+ null,
+ null),
  (2,3, 
  'Analysis and Correlation of Behaviour on Online Social Networks',
  'Online social networks, such as Instagram and Facebook, allow users to interact and debate with each other. In this research, the candidate will collect large quantities of data from social networks and from public repositories such as Wikidata. The data will be organized and analyzed using big data techniques (such as Pyspark). Then, the student will characterize the behaviour of different classes of users on the social network (e.g., nationality, activity,  language, age, etc.). The student will analyze possible bias in the categories and the dynamic of the changes. The student will possibly use machine learning techniques, forecasting methods and graphs.', 
@@ -6061,7 +6062,8 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  ARRAY['vassio.luca@tmtest.polito.it']::text[],
  '2023-11-22', 
  true,
- false,
+ 2,
+ 'The topic is not fine for me',
  null),
 (3,4, 
  'L’analisi del fabbisogno di energia elettrica e termica del parco edilizio esistente attraverso un sistema informativo geografico',
@@ -6070,7 +6072,8 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  ARRAY[]::text[],
  '2023-07-19', 
  false,
- false,
+ 3,
+ 'You need to fix your format',
  null),
  (5,5, 
  'Flow control for laminar/transitional flows',
@@ -6078,6 +6081,7 @@ Sarà necessario inoltre lo sviluppo del firmware associato.  Il firmware sarà 
  'serpieri.jacopo@tmtest.polito.it', 
  ARRAY[]::text[],
  '2023-12-1', 
+ null,
  null,
  null,
  null),
@@ -6093,6 +6097,7 @@ La parte back end della app raccoglie in modo anonimo i dati di molti utenti e u
  '2023-10-10', 
  true,
  null,
+ null,
  null),
  (7,18, 
  'Analisi della siccità in Piemonte',
@@ -6101,18 +6106,66 @@ La parte back end della app raccoglie in modo anonimo i dati di molti utenti e u
  ARRAY['viglione.alberto@tmtest.polito.it']::text[],
  '2023-11-10', 
  false,
- true,
+ 1,
+ null,
  null),
  (2,32, 
  'Malicious Code Detection for Automotive-secured systems',
  'The recent period is growing the number of attacks that leverage on relaying third parties’ software exploits. Many security vulnerability detection tools are already available today in the market. These tools allow scanning of the source code of projects, infrastructure and applications and reporting potential security vulnerabilities and weaknesses. The current approach swing between two categories of analyzers: dynamic and static. Both are not useful when the third-party software module is delivered to the customer directly compiled code without source code sharing. This habit is quite common in the automotive domain for protecting Intellectual Properties (IP), made easy by AUTOSAR Architecture Framework that guarantees software module compatibility.
 In the present thesis, the student shall develop a novel static analysis based on traditional and deep-learning methods that detect potential software vulnerabilities on binary code instead of traditional source code.', 
  'dicarlo.stefano@tmtest.polito.it', 
- ARRAY['savino.alessandro@tmtest.polito.it,']::text[],
+ ARRAY['savino.alessandro@tmtest.polito.it']::text[],
  '2023-06-21', 
  true,
+ 1,
+ null,
+'2023-07-16'),
+ (3,41, 
+ 'Prof. Aurelio Somà - tirocinio con borsa',
+ 'Focus di questa tesi /tirocinio è sulla progettazione di nuovi circuiti stampati, partendo da prototipi esistenti.', 
+ 'parvis.marco@tmtest.polito.it', 
+ ARRAY['soma.aurelio@tmtest.polito.it','Referenti Insdustriali']::text[],
+ '2023-09-22', 
  true,
-'2023-07-16');
+ 3,
+ 'The description is not very clear',
+ null),
+(7,118, 
+ 'CFD analysis of ARC VV channels',
+ 'Focus di questa tesi /tirocinio è sulla progettazione di nuovi circuiti stampati, partendo da prototipi esistenti.', 
+ 'testoni.raffaella@tmtest.polito.it', 
+ ARRAY['zucchetti.massimo@tmtest.polito.it']::text[],
+ '2023-10-02', 
+ true,
+ 3,
+ 'Need some details',
+ null),
+ (7,1138, 
+ 'Conceptual design of SMR',
+ 'Application of innovative design tools to design SMR. Main aspects to be investigated are: reactor operations (neutronics, fuel management and burnup), thermal-hydraulics and thermo-mechanics. Optimization codes may be used during the analysis to improve reactor performance. All the tools are written in python. Prior knowledge of python or object-oriented programming is suggested, but not mandatory.', 
+ 'testoni.raffaella@tmtest.polito.it', 
+ ARRAY[]::text[],
+ '2023-12-06', 
+ true,
+ null,
+ null,
+ null),
+  (7,1193, 
+ 'The Stored Energy Fingerprints of Radiation Damage',
+ 'The current unit of radiation damage, the displacements per atom (DPA), is a calculated exposure parameter that does not directly yield the defect populations responsible for irradiation-induced material properties. Were an a posteriori measure of radiation damage to exist, it would help to answer numerous, lingering questions about the nature and effects of irradiation. We propose the use of stored energy fingerprints as this new, more descriptive unit of radiation damage. They can be measured after irradiation, and they are hypothesized to yield information about the resulting defect populations. We present a combination of timeaccelerated molecular dynamics (MD) simulations and nanoscale differential scanning calorimetry (nanoDSC) measurements, which together paint a more measurable picture of the multiscale nature of radiation damage. Potential applications range from settling the question of neutron/ion irradiation equivalency, to quantitatively understanding dose rate effects, to verification of historical uranium enrichment [1]
+A first part of the project will simply collect previous work done at MIT [e.g. 2], analyzing the defects that were formed during simulated irradiation in fusion-relevant materials, finding the average energies of each type of defect that forms in the materials. Previous work found out that, as the PKA energy increased, the average energy of each defect remained constant, but the amount of clustering and the number of dislocations increased. Defect clusters and dislocations each had their own energies associated with them, allowing for some differentiation in defects solely based on the stored energy. 
+Calorimetry heating was also simulated on the irradiated materials, showing the effect that the heating rate has on the process. The simulations allow for extrapolation to experimental heating rates. 
+Further work at the Mesoscale Nuclear Materials Laboratory, in which the proponent would like to be involved, deals with irradiating single crystal metals and performing nanocalorimetry on the obtained samples, thus working to obtain the energy stored in each material due to irradiation. The long-term goal is to determine if this metric, the Wigner energy, is a viable way of measuring radiation damage, and if so, it will allow for a better, more universal understanding of how irradiation affects materials.
+ [1] http://ne.unm.edu/events/michael-short-abstract.pdf 
+[2] https://dspace.mit.edu/bitstream/handle/1721.1/112369/1011355070-MIT.pdf?sequence=1', 
+ 'testoni.raffaella@tmtest.polito.it', 
+ ARRAY[]::text[],
+ '2024-1-02', 
+ true,
+ null,
+ null,
+ null);
+ 
 INSERT INTO public.career (id, cod_course, title_course, cfu, grade, date)
 VALUES
 (1, '03IOYOA', 'Elementi di fisica nucleare', 6, 19, '2023-04-04'),

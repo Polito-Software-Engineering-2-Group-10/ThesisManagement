@@ -13,7 +13,7 @@ function InfoBox(props){
                     ( props.user.role == 'teacher' ?
                     <Container >
                         
-                        <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
+                        <BrowseProposal setProposalDirty={props.setProposalDirty} proposalList={props.proposalList} cosupervisorProposalList={props.cosupervisorProposalList} loggedIn={props.loggedIn} logout={props.doLogOut} user={props.user}/>
 
 
                     </Container>

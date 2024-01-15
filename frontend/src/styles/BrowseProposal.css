@@ -46,6 +46,14 @@
     border-color: rgba(0, 0, 0, 0.1);
 }
 
+.btn-view{
+    background-color: rgb(237, 237, 237);
+    border-color: rgba(255, 255, 255, 0);
+}
+.btn-view > i {
+    margin-right: 0.3em;
+}
+
 .proposal-table {
     margin-top: 2em;
 }
@@ -59,3 +67,8 @@
     color:var(--orange) !important;
 }
 
+.accordion {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 3em;
+}

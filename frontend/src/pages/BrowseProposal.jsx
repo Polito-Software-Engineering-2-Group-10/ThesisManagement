@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import { Button,Container, Table } from "react-bootstrap";
-import { Navigation } from "./Navigation";
 import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
@@ -9,12 +8,14 @@ import API from '../API';
 import useNotification from '../hooks/useNotifcation';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faArrowRotateRight, faBoxArchive} from "@fortawesome/free-solid-svg-icons";
+import {faBoxArchive} from "@fortawesome/free-solid-svg-icons";
 import {ToastContainer} from "react-toastify";
 import ConfirmModal from '../components/ConfirmModal';
 
+import {Accordion} from 'react-bootstrap';
+
 function BrowseProposal(props) {
-    
+    const {cosupervisorProposalList} = props;   
     const [activeProposals, setActiveProposals] = useState(null);
 
     useEffect(() => {
@@ -24,17 +25,40 @@ function BrowseProposal(props) {
     }, [props.proposalList]);
 
     return (
-        <>
+        <div className='browse-proposals'>
             <ToastContainer/>
             <Container>
                 <ProposalTable
                     proposalList={activeProposals}
                     user={props.user}
-                    
                     setProposalDirty={props.setProposalDirty}
                 />
+
+                <h3 style={{ backgroundColor: '#f0f0f0', padding: '10px', borderRadius: '5px' }} className="center-text">
+                    Co-Supervised Proposals
+                </h3>
+        
+                <Accordion>
+                    {cosupervisorProposalList && cosupervisorProposalList?.length > 0 ?
+                        cosupervisorProposalList.map((proposal, index) => {
+                            return (
+                                <AccordionRow 
+                                    key={index}
+                                    id = {proposal.id}
+                                    title={proposal.title} 
+                                    expiration={proposal.expiration}
+                                    level={proposal.level}
+                                    type={proposal.type}
+                                    description={proposal.description}
+                                    co_supervisor={proposal.co_supervisor}
+                                    supervisor={proposal.supervisor}
+                                />
+                            );
+                        }
+                    ) : <p className="center-text">No co-supervised proposals</p>
+                }</Accordion>
             </Container>
-        </>
+        </div>
     );
 }
 
@@ -72,7 +96,6 @@ function ProposalTable(props) {
             thesis_title:proposal.title
         }
         API.deleteProposal(proposal.id,mailInfo).then(({ data, status })=>{
-            console.log(props)
             props.setProposalDirty(true);
             if (status == 400)
             {
@@ -175,8 +198,36 @@ function ProposalTable(props) {
                 )}
                 </tbody>
             </Table>
+        
+            
+        
         </Container>
     );
+}
+
+// component to display the accordion
+const AccordionRow = (props) => {
+    const {id, title, description, supervisor, co_supervisor, expiration, level, type} = props; 
+
+    return (
+      <Accordion.Item eventKey={id} className='accordion-row'>
+        <Accordion.Header>{title}</Accordion.Header>
+        <Accordion.Body>
+            <p><b>Supervisor: </b>{supervisor}</p>
+            <p><b>Co-Supervisors: </b>{co_supervisor.join(", ")}</p>
+            <p><b>Expiration:     </b>{expiration}</p>
+            <p><b>Level:          </b>{level}</p>
+            <p><b>Type:           </b>{type}</p>
+
+            <div className="accordion-row-buttons">
+                <Button variant="primary" className='btn-view' onClick={()=>{}}>
+                     <i className="bi bi-file-earmark-fill"></i>
+                    View
+                </Button>
+            </div>
+        </Accordion.Body>
+      </Accordion.Item>
+    ) 
 }
 
 export default BrowseProposal;

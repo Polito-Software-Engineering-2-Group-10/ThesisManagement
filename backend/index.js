@@ -820,6 +820,33 @@ app.patch('/api/teacher/Requestlist/:requestid',
 
 //Add a comment of request
 //PATCH /api/teacher/Requestlist/:requestid/comment
+
+app.patch('/api/teacher/Requestlist/:requestid/comment',
+      isLoggedInAsTeacher,
+    [
+        //check('comment').isString(),
+        check('status_teacher').isInt()
+    ],
+    async (req, res) => {
+        
+        try {
+            console.log(req.body);
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array()});
+            }
+            const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
+            if (!requestDetail) {
+                return res.status(400).json({ error: 'The request does not exist!' });
+            }
+            const requestComment = await thesisRequestTable.updateRequestCommentById(req.params.requestid, req.body.status_teacher, req.body.comment);
+            res.json(requestComment);
+        } catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+    );
+/*
 app.patch('/api/teacher/Requestlist/:requestid/comment',
       isLoggedInAsTeacher,
     [
@@ -841,7 +868,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }
     }
-);
+);*/
 
 /*End*/
 

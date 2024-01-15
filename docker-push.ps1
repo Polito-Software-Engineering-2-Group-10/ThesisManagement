@@ -1,3 +1,6 @@
+param(
+    [Parameter(Mandatory=$true)][string[]]$ImageNames = @("backend", "frontend", "database", "saml")
+)
 function PushDockerImage {
     param(
         [Parameter(Mandatory=$true)][string]$ImageName
@@ -9,7 +12,7 @@ function PushDockerImage {
     Set-Location ..
 }
 
-PushDockerImage "backend"
-PushDockerImage "frontend"
-PushDockerImage "database"
-PushDockerImage "saml"
+for ($i = 0; $i -lt $ImageNames.Length; $i++) {
+    $ImageName = $ImageNames[$i]
+    PushDockerImage $ImageName
+}

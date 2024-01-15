@@ -9,7 +9,7 @@ const currentStrategy = process.env.PASSPORT_STRATEGY || 'saml';
 const basePgConfig = {
     user: 'thesismanager',
     password: 'thesismanager',
-    host: process.env.GITHUB_ACTIONS !== undefined ? '0:0:0:0' : config[env][currentStrategy].app.database_host,
+    host: process.env.GITHUB_ACTIONS !== undefined ? '0.0.0.0' : config[env][currentStrategy].app.database_host,
     port: process.env.GITHUB_ACTIONS !== undefined ? 5432 : config[env][currentStrategy].app.database_port,
 }
 

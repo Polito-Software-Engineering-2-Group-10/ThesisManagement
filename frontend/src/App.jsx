@@ -120,12 +120,11 @@ function App() {
         await API.logOutWithSaml();
     } else {
         await API.logOut();
+        window.location.href = '/';
     }
     setLoggedIn(false);
     setUser(null);
     setUserDetail(null);
-    
-    window.location.href = '/login';
   }
 
   const loginSuccessful = (user) => {

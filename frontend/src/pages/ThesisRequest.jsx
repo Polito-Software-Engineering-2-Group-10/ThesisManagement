@@ -149,7 +149,7 @@ const ActiveThesisRequestRow = ({
                             <Form.Label>Thesis Request Date</Form.Label>
                             <Form.Control disabled type="text" defaultValue={req ? dayjs(req.apply_date).format('YYYY-MM-DD') : ''} />
                             <Form.Text id="passwordHelpBlock" muted>
-                                Request date won't change if you make changes.
+                                Request date won&apos;t change if you make changes.
                             </Form.Text>
                         </Form.Group>
                     </Form>

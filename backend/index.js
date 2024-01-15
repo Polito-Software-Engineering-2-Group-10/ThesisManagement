@@ -336,7 +336,6 @@ app.get('/api/teacher/ProposalsList',
             // AND COMMENT THIS OUT INSTEAD
             //const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
-            console.log(req.user);
             res.json(proposalList);
         }
         catch (err) {
@@ -731,11 +730,8 @@ app.patch('/api/clerk/Requestlist/:requestid',
             {
                 for(const csm of co_supervisorMails)
             {
-                //if(checkEmail(csm))
                 if(validator.isEmail(csm))
                 {
-                    //console.log(csm+" "+validator.isEmail(csm));
-                    //console.log(validator.isEmail("test"));
                     try {
                     const res = await sendEmail({
                         recipient_mail: csm,

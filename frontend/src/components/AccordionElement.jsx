@@ -10,7 +10,7 @@ export const AccordionElement = (props) => {
         <Accordion.Header>{title}</Accordion.Header>
         <Accordion.Body>
             {professor&& <p><b>Professor: </b>{professor}</p>}
-            {supervisor && <p><b>Supervisor: </b>{supervisor}r</p>}
+            {supervisor && <p><b>Supervisor: </b>{supervisor}</p>}
             {coSupervisor && <p><b>Co-supervisors: </b>{coSupervisor && coSupervisor?.join(", ")}</p>}
             <p><b>Expiration date: </b>{dayjs(expiration).format('DD/MM/YYYY')}</p>
             <p><b>Type:       </b>{type}</p>

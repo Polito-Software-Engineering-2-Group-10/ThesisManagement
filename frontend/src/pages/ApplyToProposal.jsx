@@ -32,7 +32,6 @@ function ApplyToProposal(props) {
   const handleSaveFile = () => {
     setFile(tempFile);
     setShow(false);
-    console.log(tempFile);
   }
 
   const handleSelectFile = (e) => {

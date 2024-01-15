@@ -34,7 +34,6 @@ class SQLVirtualClockTable {
         return result.count > 0;
     }
     async set(virtual_time) {
-        console.log(virtual_time);
         const query = `INSERT INTO virtual_clock (virtual_time) VALUES ($1) ON CONFLICT (onerow_id) DO UPDATE SET virtual_time = $1 RETURNING *`;
         await this.db.executeQueryExpectAny(query, virtual_time);
     }

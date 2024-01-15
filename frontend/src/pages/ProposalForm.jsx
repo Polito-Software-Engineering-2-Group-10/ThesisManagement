@@ -112,7 +112,6 @@ const ProposalForm = (props) => {
           "teacher_id": "1",
         };
            if (isEditing) {
-               console.log("sooos");
         updateProposal(proposal);
       } else {
           // copying the proposal with a new insert 

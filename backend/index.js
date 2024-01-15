@@ -601,8 +601,6 @@ app.post('/api/student/applyRequest/:thesisid',
             //Student can not request two different thesis at the same time
             const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
             const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
-            console.log(amountRequest);
-            console.log(failedRequest);
             //Only all requests are failed the student can apply a new request
             if(amountRequest.count!=failedRequest.count)
             {

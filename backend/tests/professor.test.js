@@ -442,7 +442,9 @@ describe('POST /api/teacher/insertProposal', () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'addThesisProposal').mockImplementationOnce(() => true);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
         const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
+        spied.mockRestore();
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
     });
@@ -620,9 +622,11 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
         const response = await request(app)
             .put(`/api/teacher/updateProposal/${proposalID}`)
             .send(proposalUpdated);
+        spied.mockRestore();
         expect(response.status).toBe(200);
         expect(response.body).toEqual(proposalID);
     });

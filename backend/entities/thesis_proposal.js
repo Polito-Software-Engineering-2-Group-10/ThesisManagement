@@ -298,6 +298,13 @@ class ThesisProposalTable {
         return result;
     }
 
+    async getByCosupervisor(cosup_mail){
+        const query = `select * from thesis_proposal where $1=ANY(co_supervisor) AND archived = false`;
+        const result = await this.db.executeQueryExpectAny(query,cosup_mail);
+        return result;
+
+    }
+
     async getFilteredProposals(filterObject) {
         let query = `SELECT thesis_proposal.*, teacher.name as teacher_name, teacher.surname as teacher_surname FROM thesis_proposal, teacher WHERE thesis_proposal.teacher_id = teacher.id`;
         let params = [];

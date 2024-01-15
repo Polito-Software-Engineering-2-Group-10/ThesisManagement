@@ -918,3 +918,36 @@ describe('GET /api/teacher/getSubmittedCV/:applicationid', ()=>{
     
     })
 });
+
+//GET /api/cosup/ProposalsList
+describe('GET /api/cosup/ProposalsList', () => {
+    test('Should successfully retrieve the list of active thesis proposals of a given cosupervisor', async () => {
+        
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+
+        jest.spyOn(thesisProposalTable, 'getByCosupervisor').mockImplementationOnce(() => []);
+
+        const response = await request(app).get('/api/cosup/ProposalsList');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([]);
+
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+
+        jest.spyOn(thesisProposalTable, 'getByCosupervisor').mockImplementationOnce(() => { throw new Error('Database error') });
+
+        const response = await request(app).get('/api/cosup/ProposalsList');
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: 'Database error during retrieving application List Error: Database error'});
+    });
+})

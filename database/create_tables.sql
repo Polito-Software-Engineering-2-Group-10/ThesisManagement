@@ -1,3 +1,6 @@
+CREATE EXTENSION pg_cron;
+
+GRANT USAGE ON SCHEMA public TO thesismanager;
 -- Create tables
 
 -- degree
@@ -71,7 +74,8 @@ CREATE TABLE IF NOT EXISTS public.thesis_proposal
     expiration date NOT NULL,
     level integer NOT NULL,
     programmes text[],
-    archived boolean NOT NULL DEFAULT false,
+    archived integer NOT NULL DEFAULT 0, -- 0 = not archived, 1 = archived (expiration), 2 = archived (manually by teacher)
+    professor_notified boolean NOT NULL DEFAULT false, -- true = professor was already notified 1 week before expiration, false = professor was not notified
     CONSTRAINT thesis_proposal_pk PRIMARY KEY (id),
     CONSTRAINT thesis_proposal_teacher_id_fkey FOREIGN KEY (teacher_id)
         REFERENCES public.teacher (id)
@@ -192,3 +196,12 @@ CREATE TABLE IF NOT EXISTS public.applicant_cv
         ON DELETE CASCADE
 );
 ALTER TABLE IF EXISTS public.applicant_cv OWNER TO thesismanager;
+
+-- virtual clock
+CREATE TABLE IF NOT EXISTS public.virtual_clock
+(
+    onerow_id boolean PRIMARY KEY DEFAULT true,
+    virtual_time timestamp with time zone NOT NULL,
+    CONSTRAINT virtual_clock_onerow_id_check CHECK (onerow_id)
+);
+ALTER TABLE IF EXISTS public.virtual_clock OWNER TO thesismanager;

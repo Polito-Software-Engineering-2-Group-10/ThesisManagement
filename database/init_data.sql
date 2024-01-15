@@ -106,3 +106,93 @@ VALUES
 (8, 4, 'Group 2 - DIATI'),
 (9, 5, 'Group 1 - DIMEAS'),
 (10, 5, 'Group 2 - DIMEAS');
+
+-- prcedure to notify professors about expiring thesis proposals
+CREATE PROCEDURE public.notify_professors_about_expiring_thesis_proposals()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+current_clock timestamp with time zone := now();
+future_clock timestamp with time zone;
+thesis_entry record;
+expiring_thesis_ids text := '';
+BEGIN
+    IF EXISTS(SELECT FROM public.virtual_clock) THEN
+        SELECT virtual_time INTO current_clock FROM public.virtual_clock;
+    END IF;
+    future_clock := current_clock + INTERVAL '7 days';
+    FOR thesis_entry IN
+        UPDATE public.thesis_proposal SET professor_notified = true
+        WHERE expiration > current_clock AND expiration < future_clock AND archived = 0 AND professor_notified = false
+        RETURNING id
+    LOOP
+        expiring_thesis_ids := expiring_thesis_ids || thesis_entry.id || ',';
+    END LOOP;
+    PERFORM pg_notify('notify_professors', expiring_thesis_ids);
+END
+$$;
+
+-- procedure to archive thesis proposals
+CREATE PROCEDURE public.archive_thesis_proposals()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+current_clock timestamp with time zone := now();
+updated_app_ids text := '';
+updated_app record;
+BEGIN
+    IF EXISTS(SELECT FROM public.virtual_clock) THEN
+        SELECT virtual_time INTO current_clock FROM public.virtual_clock;
+    END IF;
+    -- after archiving the expired thesis proposals, we need to reject all applications
+    FOR updated_app IN
+        UPDATE public.application SET status = false 
+        WHERE status IS NULL AND public.application.proposal_id IN (
+            SELECT id FROM public.thesis_proposal
+            WHERE expiration < current_clock AND archived = 0
+        )
+        RETURNING id
+    LOOP
+        updated_app_ids := updated_app_ids || updated_app.id || ',';
+    END LOOP;
+    
+    UPDATE public.thesis_proposal
+    SET archived = 1
+    WHERE expiration < current_clock AND archived = 0;
+    
+    PERFORM pg_notify('application_status', updated_app_ids);
+
+    UPDATE public.thesis_proposal
+    SET archived = 0
+    WHERE expiration > current_clock AND archived = 1;
+END
+$$;
+
+CREATE FUNCTION public.virtual_clock_update_func()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    CALL public.archive_thesis_proposals();
+    CALL public.notify_professors_about_expiring_thesis_proposals();
+    RETURN NULL;
+END;
+$$;
+
+
+CREATE TRIGGER virtual_clock_update_trigger
+AFTER UPDATE OF "virtual_time" ON public.virtual_clock
+FOR EACH ROW WHEN (OLD IS DISTINCT FROM NEW)
+EXECUTE FUNCTION public.virtual_clock_update_func();
+
+CREATE TRIGGER virtual_clock_insert_delete_trigger
+AFTER INSERT OR DELETE ON public.virtual_clock
+FOR EACH ROW
+EXECUTE FUNCTION public.virtual_clock_update_func();
+
+-- cron job to archive thesis proposals
+SELECT cron.schedule('Auto-archive thesis proposals', '*/1 * * * *', 'CALL public.archive_thesis_proposals()');
+
+-- cron job to notify professors about expiring thesis proposals
+-- CURRENTLY RUNS EVERY MINUTE FOR TESTING PURPOSES
+SELECT cron.schedule('Notify professors about expiring thesis proposals', '*/1 * * * *', 'CALL public.notify_professors_about_expiring_thesis_proposals()');

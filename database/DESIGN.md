@@ -19,7 +19,7 @@
 | EXPIRATION         | DATE    | NO          |          | Date of expiration of this thesis proposal                                                                                          |
 | LEVEL              | INTEGER | NO          |          | Level of this thesis, e.g. 1 for bachelor, 2 for masters and 3 for doctorate                                                                                                                |
 | PROGRAMMES         | TEXT[]  | YES         |          | CdS/Programmes linked to this thesis                                                                                                |
-| ARCHIVED           | BOOLEAN | NO          |          | Flag of the thesis is archived or not                                                                                               |
+| ARCHIVED           | INTEGER | NO          |          | Flag of the thesis is archived or not, 0  = not archived, 1 means archived because of expiration, 2 means archived manually by the professor                                                                                                                |
 
 ### TEACHER table
 | FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                        |
@@ -114,3 +114,9 @@
 | PROPOSAL_ID    | INTEGER | NO          | FOREIGN  | Id of the thesis that the student applied to          |
 | APPLICATION_ID | INTEGER | NO          | FOREIGN  | Id of the application                                 |
 | FILEPATH       | TEXT    | NO          |          | Filepath of the applicant cv                          |
+
+### Virtual clock table
+| FIELD_NAME     | TYPE    | CAN BE NULL | KEY TYPE | DESCRIPTION                                           |
+| -----------    | ------- | ----------- | -------- | ----------------------------------------------------- |
+| onerow_id      | BOOLEAN | NO          | PRIMARY  | Id of the virtual clock, only one row allowed 
+| virtual_time   | TIMESTAMP WITH TZ     | NO          |          | Virtual time of the system                            |

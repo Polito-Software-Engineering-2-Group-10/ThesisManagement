@@ -150,6 +150,18 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectAny(query, aid);
         return result;
     }
+
+    async getRejectedAppInfo(application_ids) {
+        const query = `SELECT s.email, tp.title as title, t.surname as surname          
+        FROM student s, application a, teacher t, thesis_proposal tp
+        WHERE 
+            s.id = a.student_id 
+            AND a.proposal_id = tp.id
+            AND tp.teacher_id = t.id
+        AND a.id = ANY($1)`;
+        const result = await this.db.executeQueryExpectAny(query, application_ids);
+        return result;
+    }
 }
 
 export { Application, ApplicationTable };

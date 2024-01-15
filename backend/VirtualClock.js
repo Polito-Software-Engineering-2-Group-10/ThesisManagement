@@ -1,13 +1,16 @@
 import dayjs from "dayjs";
+import { virtualClockTable } from "./dbentities.js";
 class VirtualClock {
     constructor(offset = 0) {
         this.offset = offset;
     }
-    setOffset(offset) {
+    async setOffset(offset) {
         this.offset = offset;
+        await virtualClockTable.set(this.getSqlDate());
     }
-    resetOffset() {
+    async resetOffset() {
         this.offset = 0;
+        await virtualClockTable.delete();
     }
     getSqlDate() {
         let current_date = dayjs.unix((dayjs().unix() + this.offset));

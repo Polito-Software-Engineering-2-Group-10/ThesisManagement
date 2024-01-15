@@ -1,5 +1,5 @@
 param(
-    [Parameter(Mandatory=$true)][string[]]$ImageNames = @("backend", "frontend", "database", "saml")
+    [Parameter(Mandatory=$false)][string[]]$ImageNames = @("backend", "frontend", "database", "saml")
 )
 function PushDockerImage {
     param(

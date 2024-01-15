@@ -10,7 +10,7 @@ const basePgConfig = {
     user: 'thesismanager',
     password: 'thesismanager',
     host: config[env][currentStrategy].app.database_host,
-    port: config[env][currentStrategy].app.database_port,
+    port: process.env.GITHUB_ACTIONS !== undefined ? 5432 : config[env][currentStrategy].app.database_port,
 }
 
 class PsqlDb {

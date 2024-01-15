@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import AccessControlRedirect from "../components/AccessControlRedirect";
 
 
 
@@ -297,6 +298,7 @@ const ThesisRequest = (props) => {
 
     return (
         <>
+            <AccessControlRedirect roles={['student']} loggedIn={props.loggedIn} user={props.user} />
             <ToastContainer />
 
             <ConfirmModal

@@ -8,6 +8,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import useNotification from '../hooks/useNotifcation';
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AccessControlRedirect from '../components/AccessControlRedirect';
 
 const ClerkManagmentRequest = (props) => {
     const [reqList, setReqList] = useState(props.reqList);
@@ -52,6 +53,7 @@ const ClerkManagmentRequest = (props) => {
 
     return (
         <>
+        <AccessControlRedirect roles={['clerk']} user={props.user} loggedIn={props.loggedIn}/>
         <ToastContainer/>
         <div>
       

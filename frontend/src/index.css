@@ -20,7 +20,22 @@ h1{
     font-family: Poppins-Regular, sans-serif;
 }
 
+.update-btn > i{
+    margin-right: 5px !important;
+}
 
+.update-btn{
+    margin-top: 10px !important;
+    background-color: var(--orange);
+    color: white !important;
+    border-color: var(--orange);
+}
+
+.update-btn:hover{
+    background-color: var(--light-orange);
+    color: white !important;
+    border-color: var(--light-orange);
+}
 
 .btn-confirm, .btn-success{
     background-color: var(--confirmButton);
@@ -73,4 +88,13 @@ h1{
     background-color: var(--light-prussiaBlue);
     color: white !important;
     border-color: var(--light-prussiaBlue);
+}
+
+.page-title {
+    font-family: Poppins-Bold, sans-serif !important;
+    color: var(--prussiaBlue);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-bottom: 0.5em;
 }

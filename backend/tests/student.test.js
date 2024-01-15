@@ -430,3 +430,95 @@ describe('POST /api/student/applyRequest/:thesisid', () => {
         expect(response.body).toEqual({ error: `Database error during retrieving application List: Error: Database error` });
     });
 });
+
+// GET /api/student/Requestlist
+describe('GET /api/student/Requestlist', () => {
+    test('Should successfully return the list of requests issued by the logged student', async () => {
+        const requests_list = [
+            {
+                id: 1,
+            },
+            {
+                id: 2,
+            },
+        ];
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getAllRequestByStudent').mockImplementationOnce(() => requests_list);
+        const response = await request(app).get('/api/student/Requestlist');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(requests_list);
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getAllRequestByStudent').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).get('/api/student/Requestlist');
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error during retrieving requests list. Error: Database error'});
+    });
+});
+//PATCH /api/student/Requestlist/:requestid
+describe('PATCH /api/student/Requestlist/:requestid', () => {
+    test('Should successfully update a request presented by the logged student', async () => {
+        const student_request = {
+            title: 'Title',
+            description: 'Description',
+            co_supervisor: ['supervisor1', 'supervisor2']
+        }
+        const parameters = {
+            title: 'Title',
+            description: 'Description',
+            co_supervisor: ['supervisor1', 'supervisor2']
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'updateThesisRequest').mockImplementationOnce(() => student_request);
+        const response = await request(app).patch('/api/student/Requestlist/1').send(parameters);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(student_request);
+    });
+
+    test('Should throw an error with 422 status code when a validation error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        const response = await request(app).patch('/api/student/Requestlist/1').send({});
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        const parameters = {
+            title: 'Title',
+            description: 'Description',
+            co_supervisor: ['supervisor1', 'supervisor2']
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'updateThesisRequest').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).patch('/api/student/Requestlist/1').send(parameters);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({error: 'Database error while updating the thesis request: Error: Database error'});
+    });
+
+});

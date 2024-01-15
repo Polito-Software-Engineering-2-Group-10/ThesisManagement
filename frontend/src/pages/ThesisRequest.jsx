@@ -16,14 +16,14 @@ import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faL, faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {faMagnifyingGlass, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 
 
 const ThesisRequestRow = ({
     app, onClickCallback, realTitle, index, actualProp, title, description,
     cosupervisors, handleSendThesisRequestClick, dirty, setTitle, setDescription,
-    setCosupervisors
+    setCosupervisors, setAcTitle, setAcDescription, setAcCosupervisors
 }) => (
     <Row>
         <Col>
@@ -171,6 +171,9 @@ const ThesisRequest = (props) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [cosupervisors, setCosupervisors] = useState('');
+    const [ACtitle, setAcTitle] = useState('');
+    const [ACdescription, setAcDescription] = useState('');
+    const [ACcosupervisors, setAcCosupervisors] = useState('');
     const [dirty, setDirty] = useState(false);
     const [acceptedPropId, setAcceptedPropId] = useState(undefined);
     const [showModal, setShowModal] = useState(false);
@@ -201,14 +204,12 @@ const ThesisRequest = (props) => {
         if (props.studentDetail) {
             API.getAllProposalsForStudent(props.studentDetail.cod_degree)
                 .then((list) => {
-                    setPropList(list)
-                    console.log(list);
+                    setPropList(list);
                 })
                 .catch((err) => console.log(err));
             API.getAllThesisRequestsForStudent()
                 .then((list) => {
                     setActiveRequests(list);
-                    console.log(list);
                 })
                 .catch((err) => console.log(err));
         }
@@ -355,14 +356,22 @@ const ThesisRequest = (props) => {
                                     }).map((app, index) => {
                                         return <ThesisRequestRow
                                             onClickCallback={() => {
+                                                API.getProposal(app.proposal_id)
+                                                .then((prop) => {
+                                                    setAcDescription(prop.description);
+                                                    setAcTitle(prop.title);
+                                                    setAcCosupervisors(prop.co_supervisor.join(', '));
+                                                })
+                                                .catch((err) => console.log(err));
+
                                                 setAcceptedPropId(app.proposal_id);
                                                 setDirty(true);
                                             }}
                                             realTitle={app.thesis_title}
                                             app={app}
-                                            key={index} index={index} actualProp={actualProp} title={title} description={description}
+                                            key={index} index={index} actualProp={actualProp} title={ACtitle} description={ACdescription}
                                             handleSendThesisRequestClick={handleSendThesisRequestClick} dirty={dirty}
-                                            setTitle={setTitle} setDescription={setDescription} setCosupervisors={setCosupervisors} cosupervisors={cosupervisors}
+                                            setTitle={setAcTitle} setDescription={setAcDescription} setCosupervisors={setAcCosupervisors} cosupervisors={ACcosupervisors}
                                         />
                                     }) : <h3>There are no accepted applications</h3>
                                 }

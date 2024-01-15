@@ -51,7 +51,7 @@ class ThesisRequestTable {
 
     async getAllNotApprovedRequestByTeacher(id) {
         const query = `SELECT tr.* FROM thesis_request tr, thesis_proposal tp WHERE tr.proposal_id = tp.id AND tp.teacher_id = $1 
-        AND (status_clerk IS true AND status_teacher IS null)`;
+        AND (status_clerk IS true AND (status_teacher IS null OR status_teacher=0))`;
             const result = await this.db.executeQueryExpectAny(query, getNum(id));
         return result.map(ThesisRequest.fromRow);
     }
@@ -116,7 +116,7 @@ class ThesisRequestTable {
 
     //check amount of failed requests
     async getCountFailedRequestByStudentID(student_id) {
-        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND (status_clerk IS false OR (status_clerk IS true AND status_teacher =2))`;
+        const query = `SELECT COUNT(*) as count FROM thesis_request WHERE student_id = $1 AND (status_clerk IS false OR (status_clerk IS true AND status_teacher =3))`;
         const sid = getNum(student_id);
         const result = await this.db.executeQueryExpectOne(query, sid, `Request with student_id ${student_id} not found`);
         return result;

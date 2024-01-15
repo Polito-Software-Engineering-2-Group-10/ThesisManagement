@@ -667,7 +667,7 @@ app.patch('/api/student/Requestlist/:requestid',
             res.json(requestInfo);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+            res.status(503).json({ error: `Database error while updating the thesis request: ${err}` });
         }
     }
 );
@@ -810,7 +810,7 @@ app.patch('/api/teacher/Requestlist/:requestid',
             if (!requestDetail) {
                 return res.status(400).json({ error: 'The request does not exist!' });
             }
-            if (requestDetail.status_teacher !== null) {
+            if (requestDetail.status_teacher !== null && requestDetail.status_teacher !== 0) {
                 return res.status(400).json({ error: `This request has already been evaluated` });
             }
             //const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher, req.body.comment);

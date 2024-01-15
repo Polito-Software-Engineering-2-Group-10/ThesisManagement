@@ -18,6 +18,7 @@ import BrowseProposal from './pages/BrowseProposal';
 import BrowseArchivedProposals from './pages/BrowseArchivedProposals';
 import BrowseAndAcceptApplication from './pages/BrowseAndAcceptApplication.jsx';
 import ClerkManagmentRequest from './pages/ClerkManagmentRequest.jsx';
+import ProfessorManagementRequest from './pages/ProfessorManagementRequest.jsx';
 
 function App() {
   const notify =useNotification();
@@ -168,6 +169,7 @@ function App() {
             <Route path='/updateProposal/:thesisId' element={loggedIn ? <ProposalForm teacherDetail={userDetail} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
             <Route path='/thesisRequest' element={loggedIn ? <ThesisRequest studentDetail={userDetail} appList={appList} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
             <Route path='/clerk' element={loggedIn ? <ClerkManagmentRequest clerk={userDetail} reqList={reqList} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
+            <Route path='/managementRequest' element={loggedIn ? <ProfessorManagementRequest reqList={reqList} loggedIn={loggedIn} logout={doLogOut} user={user} proposalsDirty={proposalsDirty} setProposalsDirty={setProposalsDirty}/> : <LoginPage loggedIn={loggedIn} loginSuccessful={loginSuccessful} />}></Route>  
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

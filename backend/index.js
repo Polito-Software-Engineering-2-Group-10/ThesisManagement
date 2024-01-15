@@ -86,11 +86,11 @@ const isLoggedInAsClerk = (req, res, next) => {
 };
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      return cb(null, "./public/files")
+    destination: function (req, file, cb) {
+        return cb(null, "./public/files")
     },
     filename: function (req, file, cb) {
-      return cb(null, `${Date.now()}_${file.originalname}`)
+        return cb(null, `${Date.now()}_${file.originalname}`)
     }
 })
 
@@ -439,6 +439,27 @@ app.post('/api/teacher/insertProposal',
         }
         try {
             const proposalId = await thesisProposalTable.addThesisProposal(proposal)
+            //notification for co-supervisors
+            const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
+
+            let g = '';
+            for (const c of cosupervisor_array) {
+                g = await teacherTable.getByEmail(c);
+                if(g.length!=0){
+                    try{
+                        const res = await sendEmail({
+                            recipient_mail: g[0].email,
+                            subject: `New Thesis Proposal`,
+                            message: `Dear Professor ${g[0].surname} ${g[0].name},\nYou've just been added to the thesis proposal named "${proposal.title}" as a co-supervisor.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
+                        });
+                    }
+                    catch (err) {
+                        res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
+                    }
+                }
+            }
+
             res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of proposal: ${err}` });
@@ -471,7 +492,7 @@ app.get('/api/teacher/getGeneratedCV/:applicationid', isLoggedInAsTeacher, async
         doc.setFontSize(15);
         doc.text('Career', 105, 100, { align: 'center' });
         doc.setFontSize(12);
-        doc.autoTable( 
+        doc.autoTable(
             {
                 head: [['Cod Course', 'Title Course', 'CFU', 'Grade', 'Date']],
                 body: careerData.map(c => [c.cod_course, c.title_course, c.cfu, c.grade, dayjs(c.date).format('YYYY-MM-DD')]),
@@ -577,6 +598,18 @@ app.post('/api/student/applyRequest/:thesisid',
             if (existingRequest.count > 0) {
                 return res.status(400).json({ error: `The student already request to this thesis before!` });
             }
+
+            //Student can not request two different thesis at the same time
+            const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
+            const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
+            console.log(amountRequest);
+            console.log(failedRequest);
+            //Only all requests are failed the student can apply a new request
+            if(amountRequest.count!=failedRequest.count)
+            {
+                return res.status(400).json({ error: `The student has a processing/approved request!` });
+            }
+
            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);
@@ -589,6 +622,55 @@ app.post('/api/student/applyRequest/:thesisid',
     }
 );
 
+/*End*/
+
+//Get thesis request - Student
+// GET /api/student/Requestlist
+// get the list of requests as a student to browse them and see their status
+app.get('/api/student/Requestlist',
+    isLoggedInAsStudent,
+    async (req, res) => {
+        try {
+            const requestList = await thesisRequestTable.getAllRequestByStudent(req.user.id);
+            res.json(requestList);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+        }
+    }
+)
+/*End*/
+
+//Update thesis request - Student
+// PATCH /api/student/Requestlist/:requestid
+// update a thesis request
+app.patch('/api/student/Requestlist/:requestid',
+    isLoggedInAsStudent,
+    [
+        check('title').isString().isLength({ min: 1 }),
+        check('description').isString().isLength({ min: 1 }),
+        check('co_supervisor').isArray().optional(),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const request = {
+            title: req.body.title,
+            description: req.body.description,
+            co_supervisor: req.body.co_supervisor
+        }
+        
+        try {
+            const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
+            res.json(requestInfo);
+        }
+        catch (err) {
+            res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
+        }
+    }
+);
 /*End*/
 
 
@@ -625,7 +707,7 @@ app.get('/api/clerk/Requestlist',
 //PATCH /api/clerk/Requestlist/:requestid
 //Approve a thesis request
 app.patch('/api/clerk/Requestlist/:requestid',
-      isLoggedInAsClerk,
+    isLoggedInAsClerk,
     [
         check('status_clerk').isBoolean()
     ],
@@ -998,7 +1080,29 @@ app.put('/api/teacher/updateProposal/:thesisid',
             programmes: req.body.programmes
         }
         try {
-            const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId)
+            const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId);
+
+            //notification for co-supervisors
+            const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
+
+            let g = '';
+            for (const c of cosupervisor_array) {
+                g = await teacherTable.getByEmail(c);
+                if(g.length!=0){
+                    try{
+                        const res = await sendEmail({
+                            recipient_mail: g[0].email,
+                            subject: `Thesis ${proposal.title} has been modified`,
+                            message: `Dear Professor ${g[0].surname} ${g[0].name},\nThe thesis proposal named "${proposal.title}", in which you are co-supervisor, has been modified.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
+                        });
+                    }
+                    catch (err) {
+                        res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
+                    }
+                }
+            }
+
             res.json(proposalId);
         } catch (err) {
             res.status(503).json({ error: `Database error during the update of the proposal: ${err}` });
@@ -1018,7 +1122,7 @@ app.post("/api/send_email",
 
 /*UPLOAD FILE API*/
 app.post('/upload', upload.single('file'), (req, res) => {
-    return res.json({uploaded: true})
+    return res.json({ uploaded: true })
 })
 
 /*END API*/

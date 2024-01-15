@@ -330,11 +330,41 @@ describe('POST /api/student/applyRequest/:thesisid', () => {
         jest.spyOn(thesisRequestTable, 'getCountByFK').mockImplementationOnce(() => {
             return {count: 0};
         });
+        jest.spyOn(thesisRequestTable, 'getCountByStudentID').mockImplementationOnce(() => 2);
+        jest.spyOn(thesisRequestTable, 'getCountFailedRequestByStudentID').mockImplementationOnce(() => 2);
         jest.spyOn(thesisRequestTable, 'addThesisRequestWithDate').mockImplementationOnce(() => startRequest);
         const response = await request(app).post('/api/student/applyRequest/1')
             .send(startRequest);
         expect(response.status).toBe(200);
         expect(response.body).toEqual(startRequest);
+    });
+
+    test('Should retrieve a 400 when a student tries to apply to a thesis request if one other is pending', async () => {
+        const startRequest = {
+            title: 'Title',
+            description: 'Description',
+            supervisor: 'Supervisor@polito.it',
+            co_supervisor: ['Co-supervisor1', 'Co-supervisor2'],
+            apply_date: '2023-12-12'
+        }
+        const amountRequest = { count: 3 };
+        const failedRequest = { count: 2 };
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'student' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getCountByFK').mockImplementationOnce(() => {
+            return {count: 0};
+        });
+        jest.spyOn(thesisRequestTable, 'getCountByStudentID').mockImplementationOnce(() => amountRequest);
+        jest.spyOn(thesisRequestTable, 'getCountFailedRequestByStudentID').mockImplementationOnce(() => failedRequest);
+        jest.spyOn(thesisRequestTable, 'addThesisRequestWithDate').mockImplementationOnce(() => startRequest);
+        const response = await request(app).post('/api/student/applyRequest/1')
+            .send(startRequest);
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ error: 'The student has a processing/approved request!'});
     });
 
     test('Should throw an error with 422 status code when a validation error occurs', async () => {

@@ -694,7 +694,7 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
             expiration: '2023/01/01',
             level: 1,
             type: 'Type1',
-            archived: false
+            archived: 0
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
@@ -714,7 +714,7 @@ describe('PATCH /api/teacher/ProposalsList/:proposalid', () => {
             expiration: '2023/01/01',
             level: 1,
             type: 'Type1',
-            archived: true
+            archived: 1
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);

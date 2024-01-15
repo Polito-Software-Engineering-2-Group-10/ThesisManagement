@@ -305,7 +305,7 @@ class ThesisProposalTable {
     }
 
     async getByCosupervisor(cosup_mail){
-        const query = `select * from thesis_proposal where $1=ANY(co_supervisor) AND archived = false`;
+        const query = `select * from thesis_proposal where $1=ANY(co_supervisor) AND archived = 0`;
         const result = await this.db.executeQueryExpectAny(query,cosup_mail);
         return result;
 
@@ -372,7 +372,7 @@ WHERE NOT EXISTS (
             params.push(groups);
             i++;
         }
-        query += ` AND archived = false AND expiration > $${i}`
+        query += ` AND archived = 0 AND expiration > $${i}`
         query += ' ORDER BY thesis_proposal.level, thesis_proposal.expiration ASC, thesis_proposal.type ASC'
         const result = await this.db.executeQueryExpectAny(query, ...params, virtualClock.getSqlDate());
         return result;

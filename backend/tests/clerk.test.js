@@ -191,6 +191,7 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
         }
         const result = {
             status_clerk: true,
+            co_supervisor: []
         }
         const teacherInfo = [
             {

@@ -186,6 +186,7 @@ const ThesisRequest = (props) => {
     const [reqDesc, setReqDesc] = useState('');
     const [reqCosup, setReqCosup] = useState('');
     const [dirtyReq, setDirtyReq ] = useState(false);
+    const [currentTab, setCurrentTab] = useState(0);
 
     const notify = useNotification();
 
@@ -278,13 +279,13 @@ const ThesisRequest = (props) => {
     }
 
     const handleSendThesisRequest = () => {
-        const cosupervisor_array = cosupervisors == '' ? [] : cosupervisors.split(/[,;]/).map((k) => k.trim());
+        const cosupervisor_array = (currentTab === 0 ? ACcosupervisors : cosupervisors) === '' ? [] : (currentTab === 0 ? ACcosupervisors : cosupervisors).split(/[,;]/).map((k) => k.trim());
 
         const thesis_request = {
-            title: title,
+            title: currentTab === 0 ? ACtitle : title,
             supervisor: Array.isArray(actualProp) ? actualProp[0].supervisor : actualProp.supervisor,
             co_supervisor: cosupervisor_array,
-            description: description,
+            description: currentTab === 0 ? ACdescription : description,
             apply_date: dayjs().format('YYYY-MM-DD')
         }
         API.applyRequest(thesis_request, Array.isArray(actualProp) ? actualProp[0].id : actualProp.id)
@@ -345,7 +346,7 @@ const ThesisRequest = (props) => {
                 <Tabs style={{ fontWeight: 'bold', margin: '0 auto', width: '60%', display: "flex", alignItems: 'center', justifyContent: 'center' }}
                     defaultActiveKey="applications"
                     className="mb-3"
-
+                    onSelect={(k) => setCurrentTab(k === 'applications' ? 0 : 1)}
                 >
                     <Tab eventKey="applications" title="Choose from accepted applications">
                         <Accordion defaultActiveKey="0">
@@ -358,13 +359,10 @@ const ThesisRequest = (props) => {
                                     }).map((app, index) => {
                                         return <ThesisRequestRow
                                             onClickCallback={() => {
-                                                API.getProposal(app.proposal_id)
-                                                .then((prop) => {
-                                                    setAcDescription(prop.description);
-                                                    setAcTitle(prop.title);
-                                                    setAcCosupervisors(prop.co_supervisor.join(', '));
-                                                })
-                                                .catch((err) => console.log(err));
+                                                const prop = propList.filter((p) => p.id == app.proposal_id)[0];
+                                                setAcDescription(prop.description);
+                                                setAcTitle(prop.title);
+                                                setAcCosupervisors(prop.co_supervisor.join(', '));
 
                                                 setAcceptedPropId(app.proposal_id);
                                                 setDirty(true);

@@ -572,8 +572,8 @@ const API = {
     getAllThesisRequestsForStudent,
     getAllStudents,
     AcceptOrRejectThesisRequestClerk,
-    updateThesisRequest,
-    getCosupProposals
+    getCosupProposals,
+    updateThesisRequest
 };
 
 export default API;

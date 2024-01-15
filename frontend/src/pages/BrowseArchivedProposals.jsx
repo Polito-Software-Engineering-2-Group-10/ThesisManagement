@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Button, Container, Table} from "react-bootstrap";
+import {Button, Container, Table,Accordion} from "react-bootstrap";
 import API from '../API';
 import useNotification from '../hooks/useNotifcation';
 import {Navigation} from "./Navigation.jsx";
@@ -8,6 +8,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowRotateLeft} from '@fortawesome/free-solid-svg-icons';
 import {ToastContainer} from "react-toastify";
 import "../styles/BrowseArchivedProposal.css";
+import { AccordionElement } from '../components/AccordionElement.jsx';
+
+import ConfirmModal from '../components/ConfirmModal';
 
 function BrowseArchivedProposals(props) {
     const {setProposalsDirty, proposalsList, loggedIn, logOut, user} = props;
@@ -41,6 +44,7 @@ function BrowseArchivedProposals(props) {
 
 function ProposalTable(props) {
     const {archivedProposals, user, setProposalsDirty} = props;
+    const [showModal, setShowModal] = useState(false);
 
     const navigate = useNavigate();
     const notify = useNotification();
@@ -90,6 +94,11 @@ function ProposalTable(props) {
     }
 
     const handleDeleteClick = (proposal) => {
+        setShowModal(true);
+        setSelectedProposal(proposal);
+    }
+
+    const deleteProposal = (proposal) => {
         const mailInfo=
             {
                 teacher_name: user.name,
@@ -149,8 +158,15 @@ function ProposalTable(props) {
 
     return (
         <Container className="proposal-table">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <div>
+            <ConfirmModal 
+                title = {"Do you want to delete the proposal?"}
+                text  = {"The selected proposal will be permanently removed."}
+                show={showModal} setShow={setShowModal} 
+                onConfirm={()=>deleteProposal(selectedProposal)}
+            />
+
+            <div id="search-archived">
+                <div id="search-div">
                     <i className="bi bi-search" style={ {marginRight: '10px'} }></i>
                     <input
                         type='text'
@@ -159,10 +175,10 @@ function ProposalTable(props) {
                         onChange={(e)=>setQuery(e.target.value)}
                     />
                 </div>
-                <Button
+                <Button 
                     onClick={handleViewActiveClick}
                     variant="outline-dark"
-                    className="d-flex align-items-center archived-btn"
+                    className="view-active-btn"
                 >
                     <FontAwesomeIcon icon={faArrowRotateLeft} className="mr-2 " style={ {marginRight: '8px'} } />
                     <span>View Active Proposals</span>
@@ -171,20 +187,29 @@ function ProposalTable(props) {
             <h3 className="archived-title">
                 Archived Proposals
             </h3>
-            <Table hover bordered responsive>
-                <thead style={ {textAlign: 'center'} }>
-                    <tr>
-                        <th>Title</th>
-                        <th>Expiration</th>
-                        <th>Level</th>
-                        <th>Type</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredList?.map((result) => generateRow(result))}
-                </tbody>
-            </Table>
+        
+            <Accordion>
+                { filteredList?.length > 0 ? filteredList?.map((result, index) => {
+                    return (
+                        <AccordionElement
+                            title={result.title}
+                            expiration={result.expiration}
+                            level={result.level}
+                            type={result.type}
+                            key={index}
+                            id={result.id}
+                            actions={{
+                                "edit": ()      => handleUpdateClick(result),
+                                "copy": ()      => handleCopyClick(result),
+                                "unarchive": () => handleUnarchiveClick(result),
+                                "delete": ()    => handleDeleteClick(result)
+                            }}
+                        />
+                )}) : <p className="center-text">No archived proposals</p>
+                }
+            </Accordion>
+        
+        
         </Container>
     );
 }

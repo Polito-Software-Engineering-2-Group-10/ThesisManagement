@@ -54,10 +54,6 @@
     margin-right: 0.3em;
 }
 
-.proposal-table {
-    margin-top: 2em;
-}
-
 #view-archived-proposals {
     margin-left: auto;
 }
@@ -67,8 +63,26 @@
     color:var(--orange) !important;
 }
 
+.archived-btn {
+
+    margin-right: 0 !important;
+    margin-bottom: 1em;
+}
+
+.proposal-table {
+    display: flex;
+    flex-direction: column;
+}
+
 .accordion {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    padding-bottom: 3em;
+    padding-bottom: 2em;
+}
+
+
+@media screen and (max-width: 430px){
+    .archived-btn{
+        width: 100%;
+    }
 }

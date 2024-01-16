@@ -9,12 +9,16 @@
     background-color:  var(--prussiaBlue);
     color: white !important;
     border-color: var(--prussiaBlue);
+    width: 25vh;
 }
 
 .buttons2{
     background-color:  var(--samlButton);
     color: white !important;
     border-color: var(--samlButton);
+    width: 40vh;
+    
+    
 
 }
 
@@ -22,7 +26,28 @@
     background-color:  var(--cancelButton);
     color: white !important;
     border-color:  var(--cancelButton);
+    width: 25vh;
 
+}
+
+
+#login-button-divider {
+    display: flex;
+    align-items: center;
+    
+}
+
+.login-separate
+{
+    background-color: #9da3a8;
+    height: 1px;
+    width: calc(50% - 39px);
+}
+
+.login-separate-text
+{
+    width: 78px;
+    text-align: center;
 }
 
 @media screen and (max-width: 768px)  {
@@ -30,4 +55,12 @@
         width: 100%;
     }
     
+    
+}
+
+@media screen and (max-width: 991px)  {
+    .buttons2{
+        width: 25vh;
+     
+    }
 }

@@ -18,6 +18,7 @@ version: '3.1'
 services:
   db:
     image: atari2/thesismanagement:database
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     expose:
       - 5432
     ports:

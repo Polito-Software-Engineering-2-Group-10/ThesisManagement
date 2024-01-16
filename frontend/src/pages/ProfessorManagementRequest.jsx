@@ -18,7 +18,7 @@ function ProfessorManagementRequest(props){
     return (
         <>
             <Navigation
-                logout={props.logOut}
+                logout={props.logout}
                 loggedIn={props.loggedIn}
                 user={props.user}
             />

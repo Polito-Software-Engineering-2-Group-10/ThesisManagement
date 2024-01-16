@@ -124,7 +124,7 @@ class ApplicationTable {
             const query2 = `UPDATE application SET status = false WHERE (proposal_id = $1 OR student_id = $2) AND id != $3`;
             await this.db.executeQueryExpectAny(query2, proposal_id, student_id, aid);
             // Accepted proposals are automatically archived
-            const query3 = `UPDATE thesis_proposal SET archived = true WHERE id = $1`;
+            const query3 = `UPDATE thesis_proposal SET archived = 2 WHERE id = $1`;
             await this.db.executeQueryExpectAny(query3, proposal_id);
         }
         return Application.fromRow(result);

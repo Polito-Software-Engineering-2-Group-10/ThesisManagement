@@ -269,7 +269,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus == true) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
-            }
+           }
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });

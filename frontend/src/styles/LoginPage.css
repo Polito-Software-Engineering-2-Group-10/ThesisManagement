@@ -10,13 +10,14 @@
     color: white !important;
     border-color: var(--prussiaBlue);
     width: 25vh;
+    margin-right: 0.5em ;
 }
 
 .buttons2{
     background-color:  var(--samlButton);
     color: white !important;
     border-color: var(--samlButton);
-    width: 40vh;
+    width: 51vh;
     
     
 
@@ -27,6 +28,7 @@
     color: white !important;
     border-color:  var(--cancelButton);
     width: 25vh;
+    margin-left: 0.5em ;
 
 }
 
@@ -61,6 +63,64 @@
 @media screen and (max-width: 991px)  {
     .buttons2{
         width: 25vh;
+     
+    }
+}
+
+@media screen and (max-width: 1400px)  {
+   
+    .buttons{
+        width: 50vh;
+        margin-right: 0;
+     
+    }
+    .buttons2{
+        width:50vh;
+       
+     
+    }
+    .buttons3{
+        width: 50vh;
+        margin-left: 0;
+     
+    }
+}
+
+@media screen and (max-width: 1201px)  {
+   
+    .buttons{
+        width: 25vh;
+        margin-right: 0;
+     
+    }
+    .buttons2{
+        width:25vh;
+       
+     
+    }
+    .buttons3{
+        width: 25vh;
+        margin-left: 0;
+     
+    }
+}
+
+@media screen and (max-width: 1000px)  {
+   
+    .buttons{
+        width: 25vh;
+        margin-right: 0 ;
+     
+    }
+    .buttons2{
+        width:25vh;
+       
+     
+    }
+    .buttons3{
+        width: 25vh;
+        
+        margin-left: 0 ;
      
     }
 }

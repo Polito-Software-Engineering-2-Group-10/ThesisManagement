@@ -129,6 +129,11 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
             id: 1,
             details: 'Details',
             status_clerk: null,
+            supervisor: 'test@test.com',
+        }
+        const result = {
+            status_clerk: true,
+            co_supervisor: []
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
@@ -136,10 +141,11 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
             next();
         });
         jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest)
-        jest.spyOn(thesisRequestTable, 'updateRequestClerkStatusById').mockImplementationOnce(() => true);
+        jest.spyOn(thesisRequestTable, 'updateRequestClerkStatusById').mockImplementationOnce(() => result);
+        jest.spyOn(teacherTable, 'getByEmail').mockImplementationOnce(() => [{ name: 'test', surname: 'test' }]);
         const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: true })
         expect(response.status).toBe(200);
-        expect(response.body).toBe(true);
+        expect(response.body).toEqual({ "co_supervisor": [], "status_clerk": true });
     });
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {

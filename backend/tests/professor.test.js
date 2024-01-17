@@ -1,6 +1,14 @@
 import request from 'supertest';
 import { psqlDriver, app, isLoggedInAsTeacher, sendEmail } from '../index.js';
-import { thesisProposalTable, applicationTable, teacherTable, careerTable, studentTable, applicantCvTable } from '../dbentities.js';
+import {
+    thesisProposalTable,
+    applicationTable,
+    teacherTable,
+    careerTable,
+    studentTable,
+    applicantCvTable,
+    thesisRequestTable
+} from '../dbentities.js';
 import { jest } from '@jest/globals';
 import { response } from 'express';
 import { jsPDF } from 'jspdf';
@@ -442,7 +450,9 @@ describe('POST /api/teacher/insertProposal', () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'addThesisProposal').mockImplementationOnce(() => true);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
         const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
+        spied.mockRestore();
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
     });
@@ -620,9 +630,11 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
         const response = await request(app)
             .put(`/api/teacher/updateProposal/${proposalID}`)
             .send(proposalUpdated);
+        spied.mockRestore();
         expect(response.status).toBe(200);
         expect(response.body).toEqual(proposalID);
     });
@@ -1004,3 +1016,164 @@ describe('GET /api/cosup/ProposalsList', () => {
         expect(response.body).toEqual({ error: 'Database error while retrieving co-supervised active proposals. Error: Database error'});
     });
 })
+
+//GET /api/teacher/Requestlist
+describe('GET /api/teacher/Requestlist', ()=>{
+    test('Should successfully retrieve the list of thesis proposals yet to be approved', async () => {
+        const requestList = [
+            { name: 'request1' },
+            { name: 'request2' }
+        ]
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getAllNotApprovedRequestByTeacher').mockImplementationOnce(() => requestList);
+        const response = await request(app).get(`/api/teacher/Requestlist`);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(requestList);
+    })
+
+    test('Should return a 503 when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        })
+        jest.spyOn(thesisRequestTable, 'getAllNotApprovedRequestByTeacher').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        });
+        const response = await request(app).get(`/api/teacher/Requestlist`);
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({ error: 'Database error while retrieving the requests\' list: Error: Database error'} );
+    })
+
+});
+
+//PATCH /api/teacher/Requestlist/:requestId
+describe('PATCH /api/teacher/Requestlist/:requestId', () => {
+    test('Should successfully update the status of the thesis request', async () => {
+        const thesisRequest = {
+            status_teacher: null,
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest);
+        jest.spyOn(thesisRequestTable, 'updateRequestTeacherStatusById').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/Requestlist/1').send({status_teacher: 1});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(true);
+    });
+
+    test('Should throw an error with 400 status code when the thesis request has already been evaluated', async () => {
+        const thesisRequest = {
+            status_teacher: true,
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest);
+        const response = await request(app).patch('/api/teacher/Requestlist/1').send({status_teacher: 1});;
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual( {error: `This request has already been evaluated`} );
+    });
+
+    test('Should throw an error with 422 status code when the status passed is not an integer', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        const response = await request(app).patch('/api/teacher/Requestlist/1').send({status_teacher: 'invalid'});;
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 400 status code when the thesis request does not exist', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {});
+        const response = await request(app).patch('/api/teacher/Requestlist/1').send({status_teacher: 1});
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual( {error: `The request does not exist!`} );
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = {id: 1, role: 'teacher'};
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        })
+        const response = await request(app).patch('/api/teacher/Requestlist/1').send({status_teacher: 1});;
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual( {error: 'Database error while updating the request status: Error: Database error'} );
+    });
+});
+
+//PATCH /api/teacher/Requestlist/:requestid/comment
+describe('PATCH /api/teacher/Requestlist/:requestid/comment', () => {
+    test('Should successfully add a comment to the thesis request', async () => {
+        const thesisRequest = {
+            title: 'title',
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest);
+        jest.spyOn(thesisRequestTable, 'updateRequestCommentById').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(true);
+    });
+
+    test('Should throw an error with 422 status code when the comment passed is not a string', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 1});
+        expect(response.status).toBe(422);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw an error with 400 status code when the thesis request does not exist', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {});
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});;
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual( {error: `The request does not exist!`} );
+    });
+
+    test('Should throw an error with 503 status code when a database error occurs', async () => {
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = {id: 1, role: 'teacher'};
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {
+            throw new Error('Database error');
+        })
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});;
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual( {error: 'Database error while updating the request status: Error: Database error'} );
+    });
+});

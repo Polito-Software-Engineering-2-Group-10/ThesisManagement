@@ -266,7 +266,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
-            }
+           }
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });
@@ -578,8 +578,6 @@ app.post('/api/student/applyRequest/:thesisid',
             //Student can not request two different thesis at the same time
             const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
             const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
-            console.log(amountRequest);
-            console.log(failedRequest);
             //Only all requests are failed the student can apply a new request
             if(amountRequest.count!=failedRequest.count)
             {
@@ -755,7 +753,7 @@ app.get('/api/teacher/Requestlist',
             res.json(requestList);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while retrieving the requests' list: ${err}` });
         }
     }
 )
@@ -787,7 +785,7 @@ app.patch('/api/teacher/Requestlist/:requestid',
             const requestResult = await thesisRequestTable.updateRequestTeacherStatusById(req.params.requestid, req.body.status_teacher);
             res.json(requestResult);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while updating the request status: ${err}` });
         }
     }
 );
@@ -812,7 +810,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
             const requestComment = await thesisRequestTable.updateRequestCommentById(req.params.requestid, req.body.comment);
             res.json(requestComment);
         } catch (err) {
-            res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
+            res.status(503).json({ error: `Database error while updating the request status: ${err}` });
         }
     }
 );

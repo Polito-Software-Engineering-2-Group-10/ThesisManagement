@@ -24,7 +24,7 @@ import AccessControlRedirect from "../components/AccessControlRedirect";
 const ThesisRequestRow = ({
     app, onClickCallback, realTitle, index, actualProp, title, description,
     cosupervisors, handleSendThesisRequestClick, dirty, setTitle, setDescription,
-    setCosupervisors, setAcTitle, setAcDescription, setAcCosupervisors
+    setCosupervisors
 }) => (
     <Row>
         <Col>
@@ -33,19 +33,19 @@ const ThesisRequestRow = ({
                 <Accordion.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Title</Form.Label>
+                            <Form.Label>Title <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                             {
                                 (actualProp && !dirty) ? (
-                                    <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} />
+                                    <Form.Control type="text" defaultValue={title} onChange={event => setTitle(event.target.value)} required={true}/>
                                 )
                                     : ''
                             }
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Description <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                             {
                                 (actualProp && !dirty) ? (
-                                    <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} />)
+                                    <Form.Control as="textarea" rows={5} defaultValue={description} onChange={event => setDescription(event.target.value)} required={true}/>)
                                     : ''
                             }
                         </Form.Group>
@@ -117,19 +117,19 @@ const ActiveThesisRequestRow = ({
                     </div>
                     <Form style={{ display: showUpdate ? '' : 'none' }}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Title</Form.Label>
+                            <Form.Label>Title <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                             {
                                 (req) ? (
-                                    <Form.Control type="text" value={reqTitle} onChange={event => setReqTitle(event.target.value)}/>
+                                    <Form.Control type="text" value={reqTitle} onChange={event => setReqTitle(event.target.value)} required={true}/>
                                 )
                                     : ''
                             }
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Description <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                             {
                                 (req) ? (
-                                    <Form.Control as="textarea" rows={5} value={reqDesc} onChange={event => setReqDesc(event.target.value)}/>)
+                                    <Form.Control as="textarea" rows={5} value={reqDesc} onChange={event => setReqDesc(event.target.value)} required={true}/>)
                                     : ''
                             }
                         </Form.Group>
@@ -254,7 +254,9 @@ const ThesisRequest = (props) => {
 
     const handleSendThesisRequestClick = (event) => {
         event.preventDefault();
-        setShowModal(true);
+        if (title.trim() !== '' && description.trim() !== '') {
+            setShowModal(true);
+        } 
     }
 
     const handleUpdateThesisRequest = (event) => {
@@ -288,8 +290,6 @@ const ThesisRequest = (props) => {
             description: currentTab === 0 ? ACdescription : description,
             apply_date: dayjs().format('YYYY-MM-DD')
         }
-        
-        console.log(actualProp);
         
         API.applyRequest(thesis_request, Array.isArray(actualProp) ? actualProp[0].id : actualProp.id)
             .then(() => {

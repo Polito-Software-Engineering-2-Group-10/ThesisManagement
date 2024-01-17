@@ -356,3 +356,11 @@ describe('POST /upload', () => {
         expect(response.body).toBeTruthy();
     });
 });
+
+describe('Notify Expiration', () => {
+    test('Should succesfully notify the supervisor a week before his or her proposal expires', async () => {
+        await psqlDriver.listen('thesismanagement', 'notify_professors', async (msg) =>  {
+            console.log(msg.channel);
+        })
+    })
+})

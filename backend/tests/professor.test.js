@@ -267,7 +267,7 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         const mockAppResult = {
             proposal_id: 333,
             student_id: 1,
-            status: true
+            status: false
         }
 
         const propDetails = {
@@ -304,6 +304,57 @@ describe('PATCH /api/teacher/applicationDetail/:applicationid', () => {
         const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: false})
         expect(response.status).toBe(200);
         expect(response.body).toEqual(mockAppResult);
+    });
+
+    test('Should throw a 500 when something goes wrong with the email', async () => {
+        const application = {
+            id: 1,
+            status: undefined,
+        }
+        const application2 = {
+            id: 1,
+            status: null,
+        }
+
+        const mockAppResult = {
+            proposal_id: 333,
+            student_id: 1,
+            status: true
+        }
+
+        const propDetails = {
+            teacher_id: 1,
+            co_supervisor: [
+                'test',
+                'prova'
+            ],
+            title: 'titolo'
+        }
+
+        const mockSInfo = {
+            name: 'nome'
+        }
+
+        const mockTInfo = {
+            surname: 'cognome',
+            name: 'nome'
+        }
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(applicationTable, 'getTeacherAppDetailById').mockImplementationOnce(() => application)
+        jest.spyOn(applicationTable, 'getTeacherAppStatusById').mockImplementationOnce(() => application2);
+        jest.spyOn(applicationTable, 'updateApplicationStatusById').mockImplementationOnce(() => mockAppResult);
+        jest.spyOn(thesisProposalTable, 'getProposalDetailById').mockImplementationOnce(() => propDetails);
+        jest.spyOn(studentTable, 'getById').mockImplementationOnce(() => mockSInfo);
+        jest.spyOn(teacherTable, 'getById').mockImplementationOnce(() => mockTInfo);
+        jest.spyOn(thesisProposalTable, 'archiveThesisProposal').mockImplementationOnce(() => true);
+        const response = await request(app).patch('/api/teacher/applicationDetail/1').send({status: true})
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({error: 'Emails are not in the correct format'});
     });
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {
@@ -456,6 +507,67 @@ describe('POST /api/teacher/insertProposal', () => {
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
     });
+
+    test('Should successfully insert a new thesis proposal for the logged professor when there are no co-supervisors', async () => {
+        const proposal = {
+            title: 'Title',
+            supervisor: 'supervisor@example.com',
+            co_supervisor: [],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['group1', 'group2'],
+            description: 'Description1',
+            required_knowledge: ['knowledge1', 'knowledge2'],
+            notes: 'Notes1',
+            expiration: '2023-12-31',
+            level: 1,
+            programmes: ['program1', 'program2'],
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'addThesisProposal').mockImplementationOnce(() => true);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
+        const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
+        spied.mockRestore();
+        expect(response.status).toBe(200);
+        expect(response.body).toBeTruthy();
+    });
+
+    test('Should throw a 500 when something goes wrong with the email', async () => {
+        const proposal = {
+            title: 'Title',
+            supervisor: 'supervisor@example.com',
+            co_supervisor: ['co_supervisor1', 'co_supervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['group1', 'group2'],
+            description: 'Description1',
+            required_knowledge: ['knowledge1', 'knowledge2'],
+            notes: 'Notes1',
+            expiration: '2023-12-31',
+            level: 1,
+            programmes: ['program1', 'program2'],
+        }
+
+        const err = { message: 'No recipients defined'};
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'addThesisProposal').mockImplementationOnce(() => true);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => [{email: 'prova'}]);
+        const response = await request(app).post('/api/teacher/insertProposal').send(proposal)
+        spied.mockRestore();
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: `Server error during sending notification ${err}` });
+    });
+
+    
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {
         const proposal = {
@@ -630,6 +742,36 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
             next();
         });
         jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => [{email: 'test@prova.com', surname: 'surname', name: 'name'}]);
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(proposalUpdated);
+        spied.mockRestore();
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(proposalID);
+    });
+
+    test('Should successfully update the a thesis proposal given its ID (No cosupervisor)', async () => {
+        const proposalID = 1;
+        const proposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: [],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: '2022-02-02',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
         const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
         const response = await request(app)
             .put(`/api/teacher/updateProposal/${proposalID}`)
@@ -637,6 +779,69 @@ describe("PUT /api/teacher/updateProposal/:thesisid", () => {
         spied.mockRestore();
         expect(response.status).toBe(200);
         expect(response.body).toEqual(proposalID);
+    });
+
+    test('Should successfully update the a thesis proposal given its ID (No match for cosupervisor emails)', async () => {
+        const proposalID = 1;
+        const proposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: ['test', 'prova'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: '2022-02-02',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => []);
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(proposalUpdated);
+        spied.mockRestore();
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(proposalID);
+    });
+
+    test('Should throw a 500 error when something is wrong with the email', async () => {
+        const proposalID = 1;
+        const proposalUpdated = {
+            title: 'Proposal1',
+            co_supervisor: ['Cosupervisor1', 'Cosupervisor2'],
+            keywords: ['keyword1', 'keyword2'],
+            type: 'Type1',
+            groups: ['Group1', 'Group2'],
+            description: 'Description1',
+            required_knowledge: ['Knowledge1', 'Knowledge2'],
+            notes: 'Notes1',
+            expiration: '2022-02-02',
+            level: 1,
+            programmes: ['Program1', 'Program2'],
+        }
+
+        const err = { message: 'No recipients defined'};
+
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'teacher' };
+            next();
+        });
+        jest.spyOn(thesisProposalTable, 'updateThesisProposal').mockImplementationOnce(() => proposalID);
+        const spied = jest.spyOn(teacherTable, 'getByEmail').mockImplementation(() => [{email: 'test', surname: 'surname', name: 'name'}]);
+        const response = await request(app)
+            .put(`/api/teacher/updateProposal/${proposalID}`)
+            .send(proposalUpdated);
+        spied.mockRestore();
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: `Server error during sending notification ${err}` });
     });
 
     test('Should throw an error with 422 status code when a validation error occurs', async () => {

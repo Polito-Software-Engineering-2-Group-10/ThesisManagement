@@ -133,7 +133,7 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
         }
         const result = {
             status_clerk: true,
-            co_supervisor: []
+            co_supervisor: ['test@prova.com']
         }
         registerMockMiddleware(app, 0, (req, res, next) => {
             req.isAuthenticated = jest.fn(() => true);
@@ -145,7 +145,57 @@ describe('PATCH /api/clerk/Requestlist/:requestid', () => {
         jest.spyOn(teacherTable, 'getByEmail').mockImplementationOnce(() => [{ name: 'test', surname: 'test' }]);
         const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: true })
         expect(response.status).toBe(200);
-        expect(response.body).toEqual({ "co_supervisor": [], "status_clerk": true });
+        expect(response.body).toEqual({ "co_supervisor": ['test@prova.com'], "status_clerk": true });
+    });
+
+    test('Should succesfully update the thesis request when the clerk reject it', async () => {
+        const thesisRequest = {
+            id: 1,
+            details: 'Details',
+            status_clerk: null,
+            supervisor: 'test@test.com',
+        }
+        const result = {
+            status_clerk: false,
+            co_supervisor: ['test@prova.com']
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'clerk' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest)
+        jest.spyOn(thesisRequestTable, 'updateRequestClerkStatusById').mockImplementationOnce(() => result);
+        jest.spyOn(teacherTable, 'getByEmail').mockImplementationOnce(() => [{ name: 'test', surname: 'test' }]);
+        const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: false })
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ "co_supervisor": ['test@prova.com'], "status_clerk": false });
+    });
+
+    test('Should throw a 500 error when something goes wrong with the email', async () => {
+        const thesisRequest = {
+            id: 1,
+            details: 'Details',
+            status_clerk: null,
+            supervisor: 'test@test.com',
+        }
+        const result = {
+            status_clerk: true,
+            co_supervisor: [
+                'test'
+            ]
+        }
+        registerMockMiddleware(app, 0, (req, res, next) => {
+            req.isAuthenticated = jest.fn(() => true);
+            req.user = { id: 1, role: 'clerk' };
+            next();
+        });
+        jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest)
+        jest.spyOn(thesisRequestTable, 'updateRequestClerkStatusById').mockImplementationOnce(() => result);
+        jest.spyOn(teacherTable, 'getByEmail').mockImplementationOnce(() => [{ name: 'test', surname: 'test' }]);
+        const response = await request(app).patch('/api/clerk/Requestlist/1').send({ status_clerk: true })
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: `Emails are not in the correct format` });
     });
 
     test('Should throw an error with 422 status code when the format of the request is not valid', async () => {

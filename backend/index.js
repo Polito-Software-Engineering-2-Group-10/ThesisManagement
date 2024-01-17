@@ -118,7 +118,7 @@ await psqlDriver.listen(
             const thesisIds = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
             if (thesisIds.length === 0) return;
             const info = await thesisProposalTable.getThesisProposalByIds(thesisIds);
-            const result = Object.entries(Object.groupBy(info, ({ supervisor }) => supervisor)).map(([ email, proposals ]) => {
+            const result = Object.entries(Object.groupBy(info, ({ supervisor }) => supervisor)).map(([email, proposals]) => {
                 return {
                     email,
                     proposals: proposals.map(p => p.title)
@@ -129,13 +129,13 @@ await psqlDriver.listen(
                     recipient_mail: s.email,
                     subject: `Notification about soon-to-expire proposals`,
                     message: `Hello dear professor,\n There are some proposals that are going to expire soon (1 week from today). The titles are: ${s.proposals.join(', ')}.\nBest Regards, Polito Staff.`
-                });  
+                });
             }
         }
     }
 )
 
-const upload = multer({storage})
+const upload = multer({ storage })
 
 
 app.get('/api/teacher/details', isLoggedInAsTeacher, async (req, res) => {
@@ -229,14 +229,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             if (applicationDetail.status !== undefined) {
                 return res.status(400).json({ error: `This application has already been ${applicationDetail.status ? 'accepted' : 'rejected'}` });
             }
-            const applicationStatus = await applicationTable.getTeacherAppStatusById(req.params.applicationid);
 
-            if (!applicationStatus) {
-                return res.status(400).json({ error: 'The application does not exist!' });
-            }
-            if (applicationStatus.status !== null) {
-                return res.status(400).json({ error: `This application has already been ${applicationStatus.status ? 'accepted' : 'rejected'}` });
-            }
             const newStatus = Boolean(req.body.status);
             const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
             //send email to co-supervisor
@@ -244,29 +237,31 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             const studentInfo = await studentTable.getById(applicationResult.student_id);
             const teacherInfo = await teacherTable.getById(proposalDetail.teacher_id);
             const co_supervisorMails = proposalDetail.co_supervisor;
-            for(const csm of co_supervisorMails)
-            {
-                if(validator.isEmail(csm))
-                {
+            for (const csm of co_supervisorMails) {
+                if (validator.isEmail(csm)) {
                     try {
-                    await sendEmail({
-                        recipient_mail: csm,
-                        subject: `Application Status Updated - "${proposalDetail.title}"`,
-                        message: `Dear Co-Supervisor,
+                        await sendEmail({
+                            recipient_mail: csm,
+                            subject: `Application Status Updated - "${proposalDetail.title}"`,
+                            message: `Dear Co-Supervisor,
                         \nOne application of thesis "${proposalDetail.title}" by Student ${studentInfo.surname} ${studentInfo.name} related to you has been ${applicationResult.status ? 'ACCEPTED' : 'REJECTED'} by Main Supervisor ${teacherInfo.surname} ${teacherInfo.name}.
                         \nBest Regards,\nPolito Staff.`
-                    });
+                        });
+                    }
+                    catch (err) {
+                        res.status(500).json({ error: `Server error during sending notification ${err}` });
+                        return;
+                    }
                 }
-                catch (err) {
-                    res.status(500).json({ error: `Server error during sending notification ${err}` });
+                else {
+                    res.status(500).json({ error: 'Emails are not in the correct format' });
                     return;
-                }
                 }
             }
             // when an application is accepted, the relative proposal has to be archived
             if (newStatus) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
-           }
+            }
             res.json(applicationResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List ${err}` });
@@ -298,40 +293,8 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
 // in the meantime, the commented out code is the one that checks for expiration date
 app.get('/api/teacher/ProposalsList',
     isLoggedInAsTeacher,
-    // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
-    /*
-    [
-         check('date').isDate().optional()           
-    ],
-    */
     async (req, res) => {
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
-            }
-            // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
-            /*
-            if (req.body.date === undefined) {
-                const proposalList = await thesisProposalTable.getNotExpired();
-                const proposalSummary = proposalList.map(
-                    p => {
-                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
-                    }
-                );
-                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
-            } else {
-                const proposalList = await thesisProposalTable.getNotExpiredFromDate(req.body.date); 
-                const proposalSummary = proposalList.map(
-                    p => {
-                        return { thesis_title: p.title, thesis_expiration: p.expiration, thesis_level: p.level, thesis_type: p.type }
-                    }
-                );
-                res.json({ proposalSummary, date: req.body.date }); // UNCOMMENT THIS IF active MEANS DATE NOT EXPIRED
-            }
-            */
-            // AND COMMENT THIS OUT INSTEAD
-            //const proposalList = await thesisProposalTable.getActiveProposals();
             const proposalList = await thesisProposalTable.getByTeacherId(req.user.id);
             res.json(proposalList);
         }
@@ -370,7 +333,7 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
             if (proposalDetail.archived === 0) {
                 const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
-            } 
+            }
             if (proposalDetail.archived > 0) {
                 const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
@@ -426,8 +389,8 @@ app.post('/api/teacher/insertProposal',
             let g = '';
             for (const c of cosupervisor_array) {
                 g = await teacherTable.getByEmail(c);
-                if(g.length!=0){
-                    try{
+                if (g.length != 0) {
+                    try {
                         await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `New Thesis Proposal`,
@@ -535,6 +498,7 @@ app.post('/api/student/applyProposal',
                 });
             }
             catch (err) {
+                console.log(err);
                 res.status(500).json({ error: `Server error during sending notification ${err}` });
                 return;
             }
@@ -579,8 +543,7 @@ app.post('/api/student/applyRequest/:thesisid',
             const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
             const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
             //Only all requests are failed the student can apply a new request
-            if(amountRequest.count!=failedRequest.count)
-            {
+            if (amountRequest.count != failedRequest.count) {
                 return res.status(400).json({ error: `The student has a processing/approved request!` });
             }
             // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
@@ -632,7 +595,7 @@ app.patch('/api/student/Requestlist/:requestid',
             description: req.body.description,
             co_supervisor: req.body.co_supervisor
         }
-        
+
         try {
             const requestInfo = await thesisRequestTable.updateThesisRequest(req.user.id, req.params.requestid, request);
             res.json(requestInfo);
@@ -698,43 +661,43 @@ app.patch('/api/clerk/Requestlist/:requestid',
             const requestResult = await thesisRequestTable.updateRequestClerkStatusById(req.params.requestid, req.body.status_clerk);
             const co_supervisorMails = requestResult.co_supervisor;
             //when request is approved, send email to co-supervisor
-            if(requestResult.status_clerk === true)
-            {
-                for(const csm of co_supervisorMails)
-            {
-                if(validator.isEmail(csm))
-                {
-                    try {
-                    await sendEmail({
-                        recipient_mail: csm,
-                        subject: `New Request Approved - "${requestResult.title}"`,
-                        message: `Dear Co-Supervisor,\nThe thesis request "${requestResult.title}" related to you has been APPROVED by clerk.\nBest Regards,\nPolito Staff.`
+            if (requestResult.status_clerk === true) {
+                for (const csm of co_supervisorMails) {
+                    if (validator.isEmail(csm)) {
+                        try {
+                            await sendEmail({
+                                recipient_mail: csm,
+                                subject: `New Request Approved - "${requestResult.title}"`,
+                                message: `Dear Co-Supervisor,\nThe thesis request "${requestResult.title}" related to you has been APPROVED by clerk.\nBest Regards,\nPolito Staff.`
+                            });
+                        }
+                        catch (err) {
+                            res.status(500).json({ error: `Server error during sending notification ${err}` });
+                            return;
+                        }
+                    }
+                    else{
+                        res.status(500).json({ error: `Emails are not in the correct format` });
+                            return;
+                    }
+                }
+            }
+            const teacherInfo = await teacherTable.getByEmail(requestDetail.supervisor);
+            if (requestResult && requestResult.status_clerk === true) {
+                try {
+                    const res = await sendEmail({
+                        recipient_mail: requestDetail.supervisor,
+                        subject: `New Thesis Request - "${requestDetail.title}"`,
+                        message: `Dear Professor ${teacherInfo[0].surname} ${teacherInfo[0].name},\nThere is a new thesis request related to your thesis topic "${requestDetail.title}" for you.\nBest Regards,\nPolito Staff.`
                     });
                 }
                 catch (err) {
                     res.status(500).json({ error: `Server error during sending notification ${err}` });
                     return;
                 }
-                }
+
+
             }
-            }
-            const teacherInfo= await teacherTable.getByEmail(requestDetail.supervisor);
-           if(requestResult && requestResult.status_clerk===true)
-           {
-            try {
-                const res = await sendEmail({
-                    recipient_mail: requestDetail.supervisor,
-                    subject: `New Thesis Request - "${requestDetail.title}"`,
-                    message: `Dear Professor ${teacherInfo[0].surname} ${teacherInfo[0].name},\nThere is a new thesis request related to your thesis topic "${requestDetail.title}" for you.\nBest Regards,\nPolito Staff.`
-                });
-            }
-            catch (err) {
-                res.status(500).json({ error: `Server error during sending notification ${err}` });
-                return;
-            }
-           
-            
-           }
             res.json(requestResult);
         } catch (err) {
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
@@ -764,15 +727,15 @@ app.get('/api/teacher/Requestlist',
 //Approve a thesis request
 //PATCH /api/teacher/Requestlist/:requestid
 app.patch('/api/teacher/Requestlist/:requestid',
-      isLoggedInAsTeacher,
+    isLoggedInAsTeacher,
     [
-       check('status_teacher').isInt()
+        check('status_teacher').isInt()
     ],
     async (req, res) => {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array()});
+                return res.status(422).json({ errors: errors.array() });
             }
             const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
             if (!requestDetail) {
@@ -793,7 +756,7 @@ app.patch('/api/teacher/Requestlist/:requestid',
 //Add a comment of request
 //PATCH /api/teacher/Requestlist/:requestid/comment
 app.patch('/api/teacher/Requestlist/:requestid/comment',
-      isLoggedInAsTeacher,
+    isLoggedInAsTeacher,
     [
         check('comment').isString().isLength({ min: 1 })
     ],
@@ -801,7 +764,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array()});
+                return res.status(422).json({ errors: errors.array() });
             }
             const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
             if (!requestDetail) {
@@ -1073,8 +1036,8 @@ app.put('/api/teacher/updateProposal/:thesisid',
             let g = '';
             for (const c of cosupervisor_array) {
                 g = await teacherTable.getByEmail(c);
-                if(g.length!=0){
-                    try{
+                if (g.length != 0) {
+                    try {
                         await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `Thesis ${proposal.title} has been modified`,

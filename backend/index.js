@@ -381,7 +381,6 @@ app.post('/api/teacher/insertProposal',
         check('programmes').isArray({ min: 1 })
     ],
     async (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
@@ -402,35 +401,15 @@ app.post('/api/teacher/insertProposal',
             programmes: req.body.programmes
         }
         try {
-            const proposalId = await thesisProposalTable.addThesisProposal(proposal);
-            const co_supervisorMails = proposalId.co_supervisor;
-            //notification for co-supervisors
-            for(const csm of co_supervisorMails)
-            {
-                if(validator.isEmail(csm))
-                {
-                    //console.log(csm+" ");
-                    try {
-                    const res = await sendEmail({
-                        recipient_mail: csm,
-                        subject: `New Thesis Proposal - "${proposalId.title}"`,
-                       message: `Dear Professor,\nYou've just been added to the thesis proposal named "${proposalId.title}" as a co-supervisor.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
-                    });
-                }
-                catch (err) {
-                    res.status(500).json({ error: `Server error during sending notification ${err}` });
-                    return;
-                }
-                }
-            }
-            /*const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
-
+            const proposalId = await thesisProposalTable.addThesisProposal(proposal)
+            // notification for co-supervisors
+            const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
             let g = '';
             for (const c of cosupervisor_array) {
                 g = await teacherTable.getByEmail(c);
-                if(g.length!=0){
-                    try{
-                        const res = await sendEmail({
+                if (g.length != 0) {
+                    try {
+                        await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `New Thesis Proposal`,
                             message: `Dear Professor ${g[0].surname} ${g[0].name},\nYou've just been added to the thesis proposal named "${proposal.title}" as a co-supervisor.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
@@ -441,16 +420,13 @@ app.post('/api/teacher/insertProposal',
                         return;
                     }
                 }
-            }*/
-
+            }
             res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of proposal: ${err}` });
         }
-
     }
 );
-
 
 /*Get a CV based on an application to a thesis*/
 app.get('/api/teacher/getGeneratedCV/:applicationid', isLoggedInAsTeacher, async (req, res) => {
@@ -1110,37 +1086,16 @@ app.put('/api/teacher/updateProposal/:thesisid',
         }
         try {
             const proposalId = await thesisProposalTable.updateThesisProposal(proposal, thesisId);
-            const co_supervisorMails = proposalId.co_supervisor;
-            //console.log(co_supervisorMails+" ");
-            //notification for co-supervisors
-            for(const csm of co_supervisorMails)
-            {
-                if(validator.isEmail(csm))
-                {
-                   // console.log(csm+" ");
-                    try {
-                    const res = await sendEmail({
-                        recipient_mail: csm,
-                        subject: `Thesis ${proposalId.title} has been modified`,
-                        message: `Dear Professor,\nThe thesis proposal named "${proposalId.title}", in which you are co-supervisor, has been modified.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
-                    });
-                }
-                catch (err) {
-                    console.log(err);
-                    res.status(500).json({ error: `Server error during sending notification ${err}` });
-                    return;
-                }
-                }
-            }
 
-           /* const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
+            //notification for co-supervisors
+            const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
 
             let g = '';
             for (const c of cosupervisor_array) {
                 g = await teacherTable.getByEmail(c);
-                if(g.length!=0){
-                    try{
-                        const res = await sendEmail({
+                if (g.length != 0) {
+                    try {
+                        await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `Thesis ${proposal.title} has been modified`,
                             message: `Dear Professor ${g[0].surname} ${g[0].name},\nThe thesis proposal named "${proposal.title}", in which you are co-supervisor, has been modified.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
@@ -1151,7 +1106,7 @@ app.put('/api/teacher/updateProposal/:thesisid',
                         return;
                     }
                 }
-            }*/
+            }
 
             res.json(proposalId);
         } catch (err) {

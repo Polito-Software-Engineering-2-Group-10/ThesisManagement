@@ -261,6 +261,28 @@ async function AcceptOrRejectThesisRequestProfessor(request_id, status) {
     }
 }
 
+async function AskForChangesThesisRequestProfessor(request_id, status, comment) {
+    const response = await fetch(`${URL}/teacher/Requestlist/${request_id}/comment`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            {
+                status_teacher: status,
+                comment: comment
+            }), 
+    });
+
+    const thesis_request = await response.json();
+    if (response.ok) {
+        return thesis_request;
+    } else {
+        throw thesis_request;
+    }
+}
+
 async function getAllProposals() {
     const response = await fetch(URL + '/ProposalsList', {
         credentials: 'include'
@@ -606,7 +628,8 @@ const API = {
     getCosupProposals,
     updateThesisRequest,
     getAllThesisRequestsProfessor,
-    AcceptOrRejectThesisRequestProfessor
+    AcceptOrRejectThesisRequestProfessor,
+    AskForChangesThesisRequestProfessor
 };
 
 export default API;

@@ -4,6 +4,7 @@ import { useNavigate} from "react-router-dom";
 import API from "../API";
 import "../styles/LoginPage.css";
 import logoBlu from "../img/LogoBlu.svg";
+import { faDisplay } from "@fortawesome/free-solid-svg-icons";
 
 function LoginPage(props){
     const [email, setEmail] = useState('ferrero.renato@tmtest.polito.it');
@@ -78,10 +79,24 @@ function LoginPage(props){
                             <Form.Label>Password</Form.Label>
                             <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} />
                         </Form.Group>
-                        <div align="center">
-                        <Button className='my-2 buttons' type='submit'>Login</Button>
-                        <Button className='my-2 mx-2 buttons2' onClick={() => API.logInWithSaml() }>SAML Login</Button>
-                        <Button className='my-2 mx-2 buttons3' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
+                        <div>
+                            <div align="center">
+                                <Button className='my-2 buttons' type='submit'>Login</Button>
+                                
+                                <Button className='my-2 buttons3' variant='danger' onClick={()=>navigate('/')}>Cancel</Button>
+                            </div>    
+                            <div id="login-button-divider">
+                                <div className="login-separate"></div>
+                                <div className="login-separate-text">or</div>
+                                <div className="login-separate"></div>
+                                  
+                                
+                            </div>
+                            <div  align="center">
+                                <Button className='my-2  buttons2' onClick={() => API.logInWithSaml() }> 
+                               SAML Login </Button>
+                            </div>  
+                            
                         </div>
                     </Form>
         

@@ -4,19 +4,21 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react';
 import '../styles/ClerkManagmentRequest.css';
 import API from '../API';
-import ConfirmModal from '../components/ConfirmModal';
 import useNotification from '../hooks/useNotifcation';
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { AccordionElement } from '../components/AccordionElement';
+import ConfirmModal from '../components/ConfirmModal';
+import InputModal   from '../components/InputModal';
+
 
 function ProfessorManagementRequest(props){
 
     return (
         <>
             <Navigation
-                logout={props.logOut}
+                logout={props.logout}
                 loggedIn={props.loggedIn}
                 user={props.user}
             />
@@ -36,8 +38,10 @@ const AccordionManagementRequestProfessor = (props) => {
     const [reqList, setReqList] = useState(props.reqList);
     const [studList, setStudList] = useState(undefined);
     const [showModal, setShowModal] = useState(false);
+    const [showInputModal, setShowInputModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(undefined);
     const [status, setStatus] = useState(true);
+    const [comment, setComment] = useState("");
     const [dirty, setDirty] = useState(false);
 
     const notify=useNotification();
@@ -69,9 +73,19 @@ const AccordionManagementRequestProfessor = (props) => {
     const handleClick = (request_id, s) => {
         setSelectedRequest(request_id);
         setStatus(s);
-        setShowModal(true);
+        
+        if (s==2){ setShowInputModal(true); }
+        else     { setShowModal(true);      }
     }
-    
+   
+    const handleUpdateRequest = (request_id,status,comment) => {
+        API.AskForChangesThesisRequestProfessor(request_id,status,comment)
+        .then(()=>{
+            setDirty(true);
+            notify.success('Thesis request change have been sent');
+        })
+        .catch((err)=>notify.error(err));
+    }
 
     return (
         <>
@@ -82,8 +96,14 @@ const AccordionManagementRequestProfessor = (props) => {
             <ConfirmModal 
                 title = {status ? "Do you want to accept the request?" : "Do you want to reject the request?"}
                 text  = {status ? "The selected request will be visible for the professor." : "The selected request will be deleted."}
-                show={showModal} setShow={setShowModal} 
+                show  = {showModal} setShow={setShowModal} 
                 onConfirm={()=>handleSubmitRequest(selectedRequest, status)}
+            />
+
+            <InputModal
+                title = {"Ask student for changes"}
+                show={showInputModal} setShow={setShowInputModal} comment={comment} setComment={setComment}
+                onConfirm={()=>handleUpdateRequest(selectedRequest,status,comment)}
             />
 
             {   /* IF the are no requests, the accordions are not showed */
@@ -95,27 +115,6 @@ const AccordionManagementRequestProfessor = (props) => {
                     <Accordion defaultActiveKey="0">
                     {
                         reqList.map((request, index) => {
-                            
-
-                                        {/*
-                                            studList ? studList.filter((s) =>  s.id == request.student_id)
-                                            .map((s, studentIndex) => {
-                                                return (
-                                                    <div key={studentIndex}>
-                                                        <p><b>Student: </b> {s.name} {s.surname}</p> 
-                                                        <p><b>Student Mail: </b> {s.email}</p>
-                                                    </div> 
-                                                ) 
-                                            }) : ''
-
-                                        <p><b>Apply Date: </b> {dayjs(request.apply_date).format('YYYY-MM-DD')}</p>
-
-                                        <div className="accordion-row-buttons">
-                                            <Button variant="success" className="clerkBtn" onClick={() => handleClick(request.id, true)}>Accept</Button>
-                                            <Button variant="danger"  className="clerkBtn" onClick={() => handleClick(request.id, false)}>Reject</Button>
-                                        </div>
-                                        */}
-
                             return (
                                 <AccordionElement
                                     key={index}
@@ -133,6 +132,7 @@ const AccordionManagementRequestProfessor = (props) => {
                                         }) : ''
                                     }
                                     actions={{
+                                        update: () => handleClick(request.id, 2),
                                         accept: () => handleClick(request.id, 1),
                                         reject: () => handleClick(request.id, 3)
                                     }}

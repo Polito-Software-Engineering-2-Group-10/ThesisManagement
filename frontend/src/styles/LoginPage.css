@@ -9,12 +9,17 @@
     background-color:  var(--prussiaBlue);
     color: white !important;
     border-color: var(--prussiaBlue);
+    width: 25vh;
+    margin-right: 0.5em ;
 }
 
 .buttons2{
     background-color:  var(--samlButton);
     color: white !important;
     border-color: var(--samlButton);
+    width: 51vh;
+    
+    
 
 }
 
@@ -22,7 +27,29 @@
     background-color:  var(--cancelButton);
     color: white !important;
     border-color:  var(--cancelButton);
+    width: 25vh;
+    margin-left: 0.5em ;
 
+}
+
+
+#login-button-divider {
+    display: flex;
+    align-items: center;
+    
+}
+
+.login-separate
+{
+    background-color: #9da3a8;
+    height: 1px;
+    width: calc(50% - 39px);
+}
+
+.login-separate-text
+{
+    width: 78px;
+    text-align: center;
 }
 
 @media screen and (max-width: 768px)  {
@@ -30,4 +57,70 @@
         width: 100%;
     }
     
+    
+}
+
+@media screen and (max-width: 991px)  {
+    .buttons2{
+        width: 25vh;
+     
+    }
+}
+
+@media screen and (max-width: 1400px)  {
+   
+    .buttons{
+        width: 50vh;
+        margin-right: 0;
+     
+    }
+    .buttons2{
+        width:50vh;
+       
+     
+    }
+    .buttons3{
+        width: 50vh;
+        margin-left: 0;
+     
+    }
+}
+
+@media screen and (max-width: 1201px)  {
+   
+    .buttons{
+        width: 25vh;
+        margin-right: 0;
+     
+    }
+    .buttons2{
+        width:25vh;
+       
+     
+    }
+    .buttons3{
+        width: 25vh;
+        margin-left: 0;
+     
+    }
+}
+
+@media screen and (max-width: 1000px)  {
+   
+    .buttons{
+        width: 25vh;
+        margin-right: 0 ;
+     
+    }
+    .buttons2{
+        width:25vh;
+       
+     
+    }
+    .buttons3{
+        width: 25vh;
+        
+        margin-left: 0 ;
+     
+    }
 }

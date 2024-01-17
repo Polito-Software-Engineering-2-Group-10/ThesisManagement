@@ -139,12 +139,13 @@ class ThesisRequestTable {
         return ThesisRequest.fromRow(result);
     }
 
-    /*async updateRequestTeacherStatusById(id, status, comment) {
+    async updateRequestCommentById(id, status, comment) {
         const query = `UPDATE thesis_request SET status_teacher = $2, comment = $3 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);
         const result = await this.db.executeQueryExpectOne(query, aid, status, comment, `Request with id ${id} not found`);
         return ThesisRequest.fromRow(result);
-    }*/
+    }
+
     async updateRequestTeacherStatusById(id, status) {
         const query = `UPDATE thesis_request SET status_teacher = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);
@@ -152,12 +153,13 @@ class ThesisRequestTable {
         return ThesisRequest.fromRow(result);
     }
 
+/*
     async updateRequestCommentById(id, comment) {
         const query = `UPDATE thesis_request SET comment = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);
         const result = await this.db.executeQueryExpectOne(query, aid, comment, `Request with id ${id} not found`);
         return ThesisRequest.fromRow(result);
-    }
+    }*/
 
     async getAllRequestByStudent(student_id) {
         const query = `SELECT * FROM thesis_request WHERE student_id = $1`;

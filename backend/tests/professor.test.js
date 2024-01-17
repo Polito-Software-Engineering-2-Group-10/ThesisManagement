@@ -1340,7 +1340,7 @@ describe('PATCH /api/teacher/Requestlist/:requestid/comment', () => {
         });
         jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => thesisRequest);
         jest.spyOn(thesisRequestTable, 'updateRequestCommentById').mockImplementationOnce(() => true);
-        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment', status_teacher: 2});
         expect(response.status).toBe(200);
         expect(response.body).toEqual(true);
     });
@@ -1363,7 +1363,7 @@ describe('PATCH /api/teacher/Requestlist/:requestid/comment', () => {
             next();
         });
         jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {});
-        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});;
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment', status_teacher: 2});
         expect(response.status).toBe(400);
         expect(response.body).toEqual( {error: `The request does not exist!`} );
     });
@@ -1377,8 +1377,8 @@ describe('PATCH /api/teacher/Requestlist/:requestid/comment', () => {
         jest.spyOn(thesisRequestTable, 'getRequestDetailById').mockImplementationOnce(() => {
             throw new Error('Database error');
         })
-        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment'});;
+        const response = await request(app).patch('/api/teacher/Requestlist/1/comment').send({comment: 'comment', status_teacher: 2});
         expect(response.status).toBe(503);
-        expect(response.body).toEqual( {error: 'Database error while updating the request status: Error: Database error'} );
+        expect(response.body).toEqual( {error: 'Database error during retrieving requests list. Error: Database error'} );
     });
 });

@@ -11,7 +11,6 @@ function ConfirmModal(props){
 
     useEffect(() => {
         props.setComment(value);
-        console.log(value);
         
       }, [value]);
 
@@ -39,7 +38,6 @@ function ConfirmModal(props){
             variant="confirm"
             onClick={() => {
               setShow(false);
-              console.log("value vale => " + value);
               props.onConfirm();
             }}
           >

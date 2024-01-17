@@ -95,17 +95,21 @@ await psqlDriver.listen(
     'thesismanagement',
     'application_status',
     async (msg) => {
-        if (msg.channel === 'application_status') {
-            const canceled_app_ids = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
-            if (canceled_app_ids.length === 0) return;
-            const info = await applicationTable.getRejectedAppInfo(canceled_app_ids);
-            for (const s of info) {
-                await sendEmail({
-                    recipient_mail: s.email,
-                    subject: `Info about your application about ${s.title}`,
-                    message: `Hello dear student,\n Unfortunately your thesis application for the ${s.title} proposal, supervised by professor ${s.surname}, has been cancelled because the thesis proposal expired.\nBest Regards, Polito Staff.`
-                });
+        try {
+            if (msg.channel === 'application_status') {
+                const canceled_app_ids = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
+                if (canceled_app_ids.length === 0) return;
+                const info = await applicationTable.getRejectedAppInfo(canceled_app_ids);
+                for (const s of info) {
+                    await sendEmail({
+                        recipient_mail: s.email,
+                        subject: `Info about your application about ${s.title}`,
+                        message: `Hello dear student,\n Unfortunately your thesis application for the ${s.title} proposal, supervised by professor ${s.surname}, has been cancelled because the thesis proposal expired.\nBest Regards, Polito Staff.`
+                    });
+                }
             }
+        } catch (err) {
+            console.log(err);
         }
     }
 );
@@ -114,26 +118,29 @@ await psqlDriver.listen(
     'thesismanagement',
     'notify_professors',
     async (msg) => {
-        if (msg.channel === 'notify_professors') {
-            const thesisIds = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
-            if (thesisIds.length === 0) return;
-            const info = await thesisProposalTable.getThesisProposalByIds(thesisIds);
-            const result = Object.entries(Object.groupBy(info, ({ supervisor }) => supervisor)).map(([email, proposals]) => {
-                return {
-                    email,
-                    proposals: proposals.map(p => p.title)
-                }
-            });
-            for (const s of result) {
-                await sendEmail({
-                    recipient_mail: s.email,
-                    subject: `Notification about soon-to-expire proposals`,
-                    message: `Hello dear professor,\n There are some proposals that are going to expire soon (1 week from today). The titles are: ${s.proposals.join(', ')}.\nBest Regards, Polito Staff.`
+        try {
+            if (msg.channel === 'notify_professors') {
+                const thesisIds = msg.payload.split(',').slice(0, -1).map(v => parseInt(v));
+                if (thesisIds.length === 0) return;
+                const info = await thesisProposalTable.getThesisProposalByIds(thesisIds);
+                const result = Object.entries(Object.groupBy(info, ({ supervisor }) => supervisor)).map(([email, proposals]) => {
+                    return {
+                        email,
+                        proposals: proposals.map(p => p.title)
+                    }
                 });
+                for (const s of result) {
+                    await sendEmail({
+                        recipient_mail: s.email,
+                        subject: `Notification about soon-to-expire proposals`,
+                        message: `Hello dear professor,\n There are some proposals that are going to expire soon (1 week from today). The titles are: ${s.proposals.join(', ')}.\nBest Regards, Polito Staff.`
+                    });
+                }
             }
+        } catch (err) {
+            console.log(err);
         }
-    }
-)
+    })
 
 const upload = multer({ storage })
 
@@ -687,9 +694,9 @@ app.patch('/api/clerk/Requestlist/:requestid',
                             return;
                         }
                     }
-                    else{
+                    else {
                         res.status(500).json({ error: `Emails are not in the correct format` });
-                            return;
+                        return;
                     }
                 }
             }
@@ -768,18 +775,18 @@ app.patch('/api/teacher/Requestlist/:requestid',
 //PATCH /api/teacher/Requestlist/:requestid/comment
 
 app.patch('/api/teacher/Requestlist/:requestid/comment',
-      isLoggedInAsTeacher,
+    isLoggedInAsTeacher,
     [
         //check('comment').isString(),
         check('status_teacher').isInt()
     ],
     async (req, res) => {
-        
+
         try {
             console.log(req.body);
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array()});
+                return res.status(422).json({ errors: errors.array() });
             }
             const requestDetail = await thesisRequestTable.getRequestDetailById(req.params.requestid);
             if (!requestDetail) {
@@ -791,7 +798,7 @@ app.patch('/api/teacher/Requestlist/:requestid/comment',
             res.status(503).json({ error: `Database error during retrieving requests list. ${err}` });
         }
     }
-    );
+);
 /*
 app.patch('/api/teacher/Requestlist/:requestid/comment',
     isLoggedInAsTeacher,
@@ -1016,17 +1023,29 @@ app.post('/api/virtualclock', [
     };
     let now = dayjs();
     let new_date = dayjs(req.body.date);
-    await virtualClock.setOffset(new_date.unix() - now.unix());
-    res.json({ date: new_date });
+    try {
+        await virtualClock.setOffset(new_date.unix() - now.unix());
+        res.json({ date: new_date });
+    } catch (err) {
+        res.status(503).json({ error: `Database error during the update of the virtual clock: ${err}` });
+    }
 })
 
 app.delete('/api/virtualclock', async (req, res) => {
-    await virtualClock.resetOffset();
-    res.json({ ok: true });
+    try {
+        await virtualClock.resetOffset();
+        res.json({ ok: true });
+    } catch (err) {
+        res.status(503).json({ error: `Database error during the reset of the virtual clock: ${err}` });
+    }
 });
 app.get('/api/virtualclock', (req, res) => {
-    let date = virtualClock.getSqlDate();
-    res.json({ date: date });
+    try {
+        let date = virtualClock.getSqlDate();
+        res.json({ date: date });
+    } catch (err) {
+        res.status(503).json({ error: `Database error during the retrieval of the virtual clock: ${err}` });
+    }
 });
 
 app.put('/api/teacher/updateProposal/:thesisid',

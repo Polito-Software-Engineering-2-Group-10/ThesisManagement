@@ -1,11 +1,17 @@
 //const nodemailer = require('nodemailer');
 import nodemailer from 'nodemailer';
 
-const myemail = "politonotification@gmail.com";
-const mypassword = "vbql afhy mvyj afho";
+const myemail = "politothesisnotification@gmail.com";
+const mypassword = "xlsg erwk aalh bhiu";
 
 function sendEmail(parameters/*{recipient_email, subject,message }*/) {
   return new Promise((resolve, reject) => {
+
+    const [emailAddr] = parameters.recipient_mail.split("@").slice(-1)
+    if (emailAddr === "tmtest.polito.it") {
+        console.log(`Ignoro l'invio della mail per ${parameters.recipient_mail}`);
+        return resolve({ message: "Email sent successfully" });
+    }
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {

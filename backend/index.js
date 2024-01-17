@@ -13,10 +13,7 @@ import multer from 'multer';
 import {
     studentTable,
     teacherTable,
-    departmentTable,
     careerTable,
-    degreeTable,
-    groupTable,
     thesisProposalTable,
     applicationTable,
     thesisRequestTable,
@@ -50,8 +47,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session(
     {
-        resave: currentStrategy === 'local' ? false : true,
-        saveUninitialized: currentStrategy === 'local' ? false : true,
+        resave: currentStrategy !== 'local',
+        saveUninitialized: currentStrategy !== 'local',
         secret: 'TcEn#GiCD@Y$Etj7N933YHGK9h'
     }));
 app.use(passport.initialize());
@@ -103,7 +100,7 @@ await psqlDriver.listen(
             if (canceled_app_ids.length === 0) return;
             const info = await applicationTable.getRejectedAppInfo(canceled_app_ids);
             for (const s of info) {
-                const res = await sendEmail({
+                await sendEmail({
                     recipient_mail: s.email,
                     subject: `Info about your application about ${s.title}`,
                     message: `Hello dear student,\n Unfortunately your thesis application for the ${s.title} proposal, supervised by professor ${s.surname}, has been cancelled because the thesis proposal expired.\nBest Regards, Polito Staff.`
@@ -128,7 +125,7 @@ await psqlDriver.listen(
                 }
             });
             for (const s of result) {
-                const res = await sendEmail({
+                await sendEmail({
                     recipient_mail: s.email,
                     subject: `Notification about soon-to-expire proposals`,
                     message: `Hello dear professor,\n There are some proposals that are going to expire soon (1 week from today). The titles are: ${s.proposals.join(', ')}.\nBest Regards, Polito Staff.`
@@ -252,7 +249,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
                 if(validator.isEmail(csm))
                 {
                     try {
-                    const res = await sendEmail({
+                    await sendEmail({
                         recipient_mail: csm,
                         subject: `Application Status Updated - "${proposalDetail.title}"`,
                         message: `Dear Co-Supervisor,
@@ -267,7 +264,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
                 }
             }
             // when an application is accepted, the relative proposal has to be archived
-            if (newStatus == true) {
+            if (newStatus) {
                 await thesisProposalTable.archiveThesisProposal(applicationResult.proposal_id);
             }
             res.json(applicationResult);
@@ -344,33 +341,24 @@ app.get('/api/teacher/ProposalsList',
     }
 );
 
-/*Browse Cosupervised (Active) Proposals */
-
-//GET /api/cosup/ProposalsList
-// get the list of all cosupervised active proposals
-
+// GET /api/cosup/ProposalsList
+// Get the list of all co-supervised active proposals
 app.get('/api/cosup/ProposalsList',
     isLoggedInAsTeacher,
-    
     async (req, res) => {
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(422).json({ errors: errors.array() });
-            }
-            
             const proposalList = await thesisProposalTable.getByCosupervisor(req.user.email);
             res.json(proposalList);
         }
         catch (err) {
-            res.status(503).json({ error: `Database error during retrieving application List ${err}` });
+            res.status(503).json({ error: `Database error while retrieving co-supervised active proposals. ${err}` });
         }
     }
 );
 
-//Archive Proposal
-//PATCH /api/teacher/ProposalsList/<proposalid>
-//should be used when the teacher clicks on the Archive button
+// Archive Proposal
+// PATCH /api/teacher/ProposalsList/<proposalid>
+// Should be used when the teacher clicks on the Archive button
 app.patch('/api/teacher/ProposalsList/:proposalid',
     isLoggedInAsTeacher,
     async (req, res) => {
@@ -379,7 +367,6 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
             if (!proposalDetail) {
                 return res.status(400).json({ error: 'The proposal does not exist!' });
             }
-
             if (proposalDetail.archived === 0) {
                 const proposalResult = await thesisProposalTable.archiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
@@ -388,13 +375,10 @@ app.patch('/api/teacher/ProposalsList/:proposalid',
                 const proposalResult = await thesisProposalTable.unArchiveThesisProposal(req.params.proposalid);
                 res.json(proposalResult);
             }
-
         } catch (err) {
             res.status(503).json({ error: `Database error during archival of thesis proposal ${err}` });
         }
     }
-
-
 );
 /*End Archive Proposal*/
 
@@ -416,7 +400,6 @@ app.post('/api/teacher/insertProposal',
         check('programmes').isArray({ min: 1 })
     ],
     async (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
@@ -438,15 +421,14 @@ app.post('/api/teacher/insertProposal',
         }
         try {
             const proposalId = await thesisProposalTable.addThesisProposal(proposal)
-            //notification for co-supervisors
+            // notification for co-supervisors
             const cosupervisor_array = proposal.co_supervisor == '' ? [] : proposal.co_supervisor.map((k) => k.trim());
-
             let g = '';
             for (const c of cosupervisor_array) {
                 g = await teacherTable.getByEmail(c);
                 if(g.length!=0){
                     try{
-                        const res = await sendEmail({
+                        await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `New Thesis Proposal`,
                             message: `Dear Professor ${g[0].surname} ${g[0].name},\nYou've just been added to the thesis proposal named "${proposal.title}" as a co-supervisor.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`
@@ -458,12 +440,10 @@ app.post('/api/teacher/insertProposal',
                     }
                 }
             }
-
             res.json(proposalId); //choose the field of the new proposal to return to give a confirmation message
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of proposal: ${err}` });
         }
-
     }
 );
 
@@ -526,7 +506,6 @@ app.post('/api/student/applyProposal',
     isLoggedInAsStudent,
     upload.single('file'),
     async (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
@@ -549,7 +528,7 @@ app.post('/api/student/applyProposal',
             const proposalDetail = await thesisProposalTable.getProposalDetailById(Applyproposal.proposal_id);
             const teacherInfo = await thesisProposalTable.getTeacherInfoById(Applyproposal.proposal_id);
             try {
-                const res = await sendEmail({
+                await sendEmail({
                     recipient_mail: proposalDetail.supervisor,
                     subject: `New Application - "${proposalDetail.title}"`,
                     message: `Dear Professor ${teacherInfo.surname} ${teacherInfo.name},\nThere is a new application of your thesis topic "${proposalDetail.title}" to you.\nBest Regards,\nPolito Staff.`
@@ -563,14 +542,13 @@ app.post('/api/student/applyProposal',
         } catch (err) {
             res.status(503).json({ error: `Database error during the insert of the application: ${err}` });
         }
-
     }
 );
 
 /*Apply thesis request */
 
-//POST /api/student/applyRequest/:thesisid
-//apply thesis request
+// POST /api/student/applyRequest/:thesisid
+// Apply thesis request
 app.post('/api/student/applyRequest/:thesisid',
     isLoggedInAsStudent,
     [
@@ -597,7 +575,6 @@ app.post('/api/student/applyRequest/:thesisid',
             if (existingRequest.count > 0) {
                 return res.status(400).json({ error: `The student already request to this thesis before!` });
             }
-
             //Student can not request two different thesis at the same time
             const amountRequest = await thesisRequestTable.getCountByStudentID(req.user.id);
             const failedRequest = await thesisRequestTable.getCountFailedRequestByStudentID(req.user.id);
@@ -608,16 +585,13 @@ app.post('/api/student/applyRequest/:thesisid',
             {
                 return res.status(400).json({ error: `The student has a processing/approved request!` });
             }
-
-           // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
+            // const requestInfo = await thesisRequestTable.addThesisRequestNoDate(req.user.id, req.params.thesisid, request);
             const requestInfo = await thesisRequestTable.addThesisRequestWithDate(req.user.id, req.params.thesisid, request);
             res.json(requestInfo);
         }
         catch (err) {
             res.status(503).json({ error: `Database error during retrieving application List: ${err}` });
-
         }
-
     }
 );
 
@@ -733,7 +707,7 @@ app.patch('/api/clerk/Requestlist/:requestid',
                 if(validator.isEmail(csm))
                 {
                     try {
-                    const res = await sendEmail({
+                    await sendEmail({
                         recipient_mail: csm,
                         subject: `New Request Approved - "${requestResult.title}"`,
                         message: `Dear Co-Supervisor,\nThe thesis request "${requestResult.title}" related to you has been APPROVED by clerk.\nBest Regards,\nPolito Staff.`
@@ -1010,7 +984,7 @@ app.delete('/api/teacher/deleteProposal',
                     const proposalInfo = await thesisProposalTable.getById(app.proposal_id);
                     const teacherInfo = await teacherTable.getById(proposalInfo.teacher_id);
                     try {
-                        const res = await sendEmail({
+                        await sendEmail({
                             recipient_mail: s.email,
                             subject: `Info about on your application about ${proposalInfo.title}`,
                             message: `Hello dear student,\n Unfortunately your thesis application for the ${proposalInfo.title} proposal, supervised by professor ${teacherInfo.surname}, has been cancelled because the thesis proposal was deleted.\nBest Regards, Polito Staff.`
@@ -1103,7 +1077,7 @@ app.put('/api/teacher/updateProposal/:thesisid',
                 g = await teacherTable.getByEmail(c);
                 if(g.length!=0){
                     try{
-                        const res = await sendEmail({
+                        await sendEmail({
                             recipient_mail: g[0].email,
                             subject: `Thesis ${proposal.title} has been modified`,
                             message: `Dear Professor ${g[0].surname} ${g[0].name},\nThe thesis proposal named "${proposal.title}", in which you are co-supervisor, has been modified.\nTo see further details visit your page.\nBest Regards,\nPolito Staff.`

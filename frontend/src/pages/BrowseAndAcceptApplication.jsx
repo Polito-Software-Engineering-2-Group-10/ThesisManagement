@@ -3,7 +3,7 @@ import { Table, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { Navigation } from './Navigation.jsx';
 import dayjs from 'dayjs'
 import API from '../API';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import { ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 function BrowseAndAcceptApplication(props) {

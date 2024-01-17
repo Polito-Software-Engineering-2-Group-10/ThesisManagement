@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react';
 import '../styles/ClerkManagmentRequest.css';
 import API from '../API';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -33,6 +33,9 @@ function ProfessorManagementRequest(props){
     );
 }
 
+const STATUS_ACCEPTED = 1;
+const STATUS_ASK_FOR_CHANGES = 2;
+const STATUS_REJECTED = 3;
 
 const AccordionManagementRequestProfessor = (props) => {
     const [reqList, setReqList] = useState(props.reqList);
@@ -40,7 +43,7 @@ const AccordionManagementRequestProfessor = (props) => {
     const [showModal, setShowModal] = useState(false);
     const [showInputModal, setShowInputModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState(undefined);
-    const [status, setStatus] = useState(true);
+    const [status, setStatus] = useState(STATUS_ACCEPTED);
     const [comment, setComment] = useState("");
     const [dirty, setDirty] = useState(false);
 
@@ -65,7 +68,7 @@ const AccordionManagementRequestProfessor = (props) => {
         API.AcceptOrRejectThesisRequestProfessor(request_id, status)
         .then(() => {
             setDirty(true);
-            notify.success( status ? 'Thesis request accepted successfully!' : 'Thesis request rejected successfully!');
+            notify.success( status === STATUS_ACCEPTED ? 'Thesis request accepted successfully!' : 'Thesis request rejected successfully!');
         })
         .catch((err) => notify.error(err));
     }
@@ -94,8 +97,8 @@ const AccordionManagementRequestProfessor = (props) => {
       
             {/* This modal prevent the clerk to directly accept a proposal */}
             <ConfirmModal 
-                title = {status ? "Do you want to accept the request?" : "Do you want to reject the request?"}
-                text  = {status ? "The selected request will be visible for the professor." : "The selected request will be deleted."}
+                title = {status === STATUS_ACCEPTED ? "Do you want to accept the request?" : "Do you want to reject the request?"}
+                text  = {status === STATUS_ACCEPTED ? "This marks the official start of the thesis, proceed?" : "The selected request will be rejected."}
                 show  = {showModal} setShow={setShowModal} 
                 onConfirm={()=>handleSubmitRequest(selectedRequest, status)}
             />
@@ -132,9 +135,9 @@ const AccordionManagementRequestProfessor = (props) => {
                                         }) : ''
                                     }
                                     actions={{
-                                        update: () => handleClick(request.id, 2),
-                                        accept: () => handleClick(request.id, 1),
-                                        reject: () => handleClick(request.id, 3)
+                                        update: () => handleClick(request.id, STATUS_ASK_FOR_CHANGES),
+                                        accept: () => handleClick(request.id, STATUS_ACCEPTED),
+                                        reject: () => handleClick(request.id, STATUS_REJECTED)
                                     }}
                                 />
                             )

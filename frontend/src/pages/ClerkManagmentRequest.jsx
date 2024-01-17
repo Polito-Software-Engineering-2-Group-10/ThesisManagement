@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import '../styles/ClerkManagmentRequest.css';
 import API from '../API';
 import ConfirmModal from '../components/ConfirmModal';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AccessControlRedirect from '../components/AccessControlRedirect';

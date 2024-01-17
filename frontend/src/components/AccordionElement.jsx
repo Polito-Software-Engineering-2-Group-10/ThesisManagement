@@ -3,7 +3,7 @@ import {Link, useNavigate}   from 'react-router-dom';
 import dayjs                 from 'dayjs';
 
 export const AccordionElement = (props) => {
-    const {id, title, professor, expiration, application, level, type, status, actions, supervisor, coSupervisor, student} = props; 
+    const {id, title, professor, expiration, application, level, type, status, actions, supervisor, coSupervisor, student, description} = props; 
 
     return (
       <Accordion.Item eventKey={id} className='accordion-row'>
@@ -19,7 +19,7 @@ export const AccordionElement = (props) => {
             {status  && <p><b>Status:       </b>{status}</p>}
             {student && student[0] && <p><b>Student:      </b>{student[0]?.name} </p>}
             {student && student[0] && <p><b>Student Mail: </b>{student[0]?.email}</p>}
-
+            {description && <p><b>Description: </b>{description}</p>}
             {
                 actions && 
                 <div className="accordion-row-buttons">
@@ -59,7 +59,7 @@ export const AccordionElement = (props) => {
                         actions?.archive &&
                         <Button variant="primary" className='btn-archive' onClick={actions?.archive}>
                             <i className="bi bi-archive"></i>
-                            archive
+                            Archive
                         </Button>
                     }
                
@@ -67,7 +67,7 @@ export const AccordionElement = (props) => {
                         actions?.unarchive &&
                         <Button variant="primary" className='btn-archive' onClick={actions?.unarchive}>
                             <i className="bi bi-archive"></i>
-                            unarchive
+                            Unarchive
                         </Button>
                     }
                   

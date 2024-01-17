@@ -587,6 +587,14 @@ async function getStudentSubmittedCv(applicationId, studentId) {
     }
 }
 
+async function getAcceptedApplicationsPropList() {
+    const response = await fetch(`${URL}/student/AcceptedApplicationsPropList`, {
+        credentials: 'include'
+    });
+    const data = await response.json();
+    return data;
+}
+
 const API = {
     logInWithSaml,
     logOutWithSaml,
@@ -629,7 +637,8 @@ const API = {
     updateThesisRequest,
     getAllThesisRequestsProfessor,
     AcceptOrRejectThesisRequestProfessor,
-    AskForChangesThesisRequestProfessor
+    AskForChangesThesisRequestProfessor,
+    getAcceptedApplicationsPropList
 };
 
 export default API;

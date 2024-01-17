@@ -284,6 +284,17 @@ app.get('/api/student/ApplicationsList', isLoggedInAsStudent, async (req, res) =
     }
 })
 
+// GET /api/student/AcceptedApplicationsPropList
+app.get('/api/student/AcceptedApplicationsPropList', isLoggedInAsStudent, async (req, res) => {
+    try {
+        const propList = await thesisProposalTable.getAcceptedApplicationsPropList(req.user.id);
+        res.json(propList);
+    }
+    catch (err) {
+        res.status(503).json({ error: `Database error during retrieving proposals List` });
+    }
+});
+
 /*Browse Active Proposals */
 
 //GET /api/teacher/ProposalsList

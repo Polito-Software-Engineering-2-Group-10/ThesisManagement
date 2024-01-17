@@ -296,6 +296,10 @@ The backend exposes the following APIs:
     Following this request, the request will be updated with the given parameters, the status will be reset to 0 (pending) and the teacher's comment will be reset to null.
     It also returns the updated request in the same format as the one returned by `/api/student/RequestList`.
 
+- GET `/api/student/AcceptedApplicationsPropList`
+    - This API is used to get the list of proposals associated with accepted applications for the current student.
+    - It returns a list of proposals in the same format as the one returned by `/api/ProposalsList`.
+
 - GET `/api/clerk/Requestlist`
     - This API will return all the requests need to be evaluated by cletk in the database, it expects no parameters. It returns a list of thesis requests in the form:
     ```json

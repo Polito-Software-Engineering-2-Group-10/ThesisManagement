@@ -11,7 +11,7 @@ import ProposalForm from './pages/ProposalForm';
 import API from './API';
 import SearchForProposals from "./pages/SearchForProposals.jsx";
 import ThesisRequest from './pages/ThesisRequest.jsx';
-import useNotification from './hooks/useNotifcation.js';
+import useNotification from './hooks/useNotification.js';
 import AppContext from './AppContext.jsx';
 
 import BrowseProposal from './pages/BrowseProposal';

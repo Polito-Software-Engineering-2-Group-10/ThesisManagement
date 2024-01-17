@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Button, Container, Table,Accordion} from "react-bootstrap";
 import API from '../API';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import {Navigation} from "./Navigation.jsx";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

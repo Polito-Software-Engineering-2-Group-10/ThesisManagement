@@ -3,7 +3,7 @@ import {Form, Button, Row, Col} from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from "./Navigation";
 import API from '../API';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import { ToastContainer} from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import dayjs from 'dayjs';

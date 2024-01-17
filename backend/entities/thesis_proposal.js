@@ -396,6 +396,20 @@ WHERE NOT EXISTS (
         return result.map(ThesisProposal.fromRow);
     }
 
+    async getAcceptedApplicationsPropList(student_id) {
+        const query = `SELECT 
+        tp.*, t.name as teacher_name, t.surname as teacher_surname FROM 
+        thesis_proposal as tp, application as a, teacher as t
+        WHERE 
+            a.student_id = $1 AND 
+            a.proposal_id = tp.id AND 
+            tp.teacher_id = t.id AND
+            a.status = true
+`;
+        const result = await this.db.executeQueryExpectAny(query, getNum(student_id));
+        return result;
+    }
+
 }
 
 

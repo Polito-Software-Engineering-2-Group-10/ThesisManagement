@@ -253,6 +253,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     CALL public.archive_thesis_proposals();
+    UPDATE public.thesis_proposal SET professor_notified = false WHERE archived = 0;
     CALL public.notify_professors_about_expiring_thesis_proposals();
     RETURN NULL;
 END;

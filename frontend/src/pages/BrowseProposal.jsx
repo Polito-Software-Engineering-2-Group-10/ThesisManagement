@@ -5,7 +5,7 @@ import { useNavigate} from "react-router-dom";
 import dayjs from 'dayjs'
 import "../styles/BrowseProposal.css";
 import API from '../API';
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import "react-toastify/dist/ReactToastify.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBoxArchive} from "@fortawesome/free-solid-svg-icons";

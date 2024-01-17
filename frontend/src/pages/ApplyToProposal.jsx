@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { Button, Container, Row, Col, Alert, Modal, Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import useNotification from "../hooks/useNotifcation";
+import useNotification from "../hooks/useNotification.js";
 import { ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import "react-toastify/dist/ReactToastify.css";

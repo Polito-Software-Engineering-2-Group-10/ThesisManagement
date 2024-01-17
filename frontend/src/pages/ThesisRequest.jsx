@@ -11,7 +11,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import useNotification from '../hooks/useNotifcation';
+import useNotification from '../hooks/useNotification';
 import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ConfirmModal from '../components/ConfirmModal';
@@ -31,7 +31,7 @@ const ThesisRequestRow = ({
             <Accordion.Item eventKey={index}>
                 <Accordion.Header onClick={onClickCallback}>{realTitle}</Accordion.Header>
                 <Accordion.Body>
-                    <Form>
+                    <Form onSubmit={handleSendThesisRequestClick}>
                         <Form.Group className="mb-3">
                             <Form.Label>Title <span style={{ color: '#EF7B00' }}>*</span> </Form.Label>
                             {
@@ -69,10 +69,10 @@ const ThesisRequestRow = ({
                                 The request date will be set to today&apos;s date.
                             </Form.Text>
                         </Form.Group>
+
+                        <Button className="m-2" variant="success" type="submit">Send Request</Button>&nbsp;
+
                     </Form>
-
-                    <Button className="m-2" variant="success" type="submit" onClick={handleSendThesisRequestClick}>Send Request</Button>&nbsp;
-
                 </Accordion.Body>
             </Accordion.Item>
         </Col>
@@ -169,6 +169,7 @@ const ThesisRequest = (props) => {
 
     const [actualProp, setActualProp] = useState(undefined);
     const [propList, setPropList] = useState(undefined);
+    const [acceptedAppPropList, setAcceptedAppPropList] = useState(undefined);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [cosupervisors, setCosupervisors] = useState('');
@@ -195,7 +196,6 @@ const ThesisRequest = (props) => {
             API.getAllThesisRequestsForStudent()
                 .then((list) => {
                     setActiveRequests(list);
-                    console.log(list);
                 })
                 .catch((err) => console.log(err));
                 setDirtyReq(false);
@@ -214,6 +214,10 @@ const ThesisRequest = (props) => {
                     setActiveRequests(list);
                 })
                 .catch((err) => console.log(err));
+            API.getAcceptedApplicationsPropList()
+                .then((list) => {
+                    setAcceptedAppPropList(list);
+                }).catch((err) => console.log(err));
         }
     }, [props.studentDetail]);
 
@@ -254,9 +258,15 @@ const ThesisRequest = (props) => {
 
     const handleSendThesisRequestClick = (event) => {
         event.preventDefault();
-        if (title.trim() !== '' && description.trim() !== '') {
-            setShowModal(true);
-        } 
+        if (currentTab === 0) {
+            if (ACtitle.trim() !== '' && ACdescription.trim() !== '') {
+                setShowModal(true);
+            }
+        } else {
+            if (title.trim() !== '' && description.trim() !== '') {
+                setShowModal(true);
+            }
+        }
     }
 
     const handleUpdateThesisRequest = (event) => {
@@ -355,14 +365,14 @@ const ThesisRequest = (props) => {
                         <Accordion defaultActiveKey="0">
                             <Container style={{ width: '70%' }}>
                                 {
-                                    (props.appList && propList && activeRequests) ? props.appList.filter((a) => a.status == true)
+                                    (props.appList && acceptedAppPropList && activeRequests) ? props.appList.filter((a) => a.status == true)
                                     .filter((p)=>{
                                         const acceptedReqId = activeRequests.map((a) => a.proposal_id);
                                         return !acceptedReqId.includes(p.id);
                                     }).map((app, index) => {
                                         return <ThesisRequestRow
                                             onClickCallback={() => {
-                                                const prop = propList.filter((p) => p.id == app.proposal_id)[0];
+                                                const prop = acceptedAppPropList.filter((p) => p.id == app.proposal_id)[0];
                                                 setAcDescription(prop.description);
                                                 setAcTitle(prop.title);
                                                 setAcCosupervisors(prop.co_supervisor.join(', '));
@@ -423,7 +433,9 @@ const ThesisRequest = (props) => {
                             (activeRequests) ? activeRequests.map((req, index) => {
                                 return <ActiveThesisRequestRow
                                     onClickCallback={() => {
-                                        setActualProp(propList.filter((p) => p.id == req.proposal_id));
+                                        setActualProp(
+                                            [...propList.filter((p) => p.id == req.proposal_id),
+                                                ...acceptedAppPropList.filter((a) => a.id == req.proposal_id)]);
                                         setActualReq(req);
                                         setDirty(true);
                                     }}

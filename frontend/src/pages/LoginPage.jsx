@@ -7,8 +7,8 @@ import logoBlu from "../img/LogoBlu.svg";
 import { faDisplay } from "@fortawesome/free-solid-svg-icons";
 
 function LoginPage(props){
-    const [email, setEmail] = useState('ferrero.renato@tmtest.polito.it');
-    const [password, setPassword] = useState('2');
+    const [email, setEmail] = useState('thesis.management.test@gmail.com');
+    const [password, setPassword] = useState('552');
     const [errorMessage, setErrorMessage] = useState('') ;
     const navigate = useNavigate();
 

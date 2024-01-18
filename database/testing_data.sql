@@ -567,7 +567,8 @@ VALUES
 (549, 'PRIMATESTA', 'STEFANO', 'primatesta.stefano@tmtest.polito.it', 1, 6),
 (550, 'CARDONI', 'ALESSANDRO', 'cardoni.alessandro@tmtest.polito.it', 1, 9),
 (551, 'DALLA CHIARA', 'BRUNO', 'dallachiara.bruno@tmtest.polito.it', 2, 2),
-(552, 'TEST', 'PROFESSOR', 'thesis.management.test@gmail.com', 3, 2);
+(552, 'TEST', 'PROFESSOR', 'thesis.management.test@gmail.com', 3, 2),
+(553, 'SARACCO', 'GIULIA', 'giuliasaracco87@gmail.com', 3, 2);
 
 INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
 VALUES('Tesi senza titolo', 34, 'beltramo.silvia@tmtest.polito.it', ARRAY['cuneo.cristina@tmtest.polito.it']::text[], ARRAY['ANALISI FONTI DOCUMENTARIE','ANALISI FONTI ICONOGRAFICHE','STORIA DEL TERRITORIO','STORIA DELL''ARCHITETTURA','STORIA DELLE TECNICHE COSTRUTTIVE']::text[], 'Tesi di Laurea', ARRAY['L-36 group 1']::text[], 'Il percorso di ricerca si inserisce in un bando PNRR “Proposte di intervento per il restauro e la valorizzazione di parchi e giardini storici da finanziare nell’ambito del PNRR - INTERVENTO 2.3 – PARCHI E GIARDINI STORICI INTERVENTO DI RECUPERO”. La ricerca da svolgere si incentra su un edificio, una villa del tardo Quattrocento e del suo giardino, con una apertura all''indagine a scala territoriale, privilegiando l''impiego di fonti documentarie, scritte e iconografiche, e l''analisi dell''architettura. Nell''ambito della tesi saranno previste attività di catalogazione e gestione di data base.', ARRAY['Per una tesi di prevalente carattere storico, aver sostenuto gli esami di storia previsti dal piano di studio (votazione > 27). Possedere le relative competenze disciplinari nel campo della rappresentazione e del rilievo e della gestione di banche dati.']::text[], '', '2024-09-19', 1, ARRAY['L-36 - Political Sciences and International Relations']::text[]),
@@ -6005,6 +6006,8 @@ It is desired knowledge in evaluation and assessment. GIS, Stakeholder analysis,
 ('Sviluppo di tecniche numeriche per problemi di contatto su mesh arbitrarie', 326, 'berrone.stefano@tmtest.polito.it', ARRAY['pieraccini.sandra@tmtest.polito.it','scialo.stefano@tmtest.polito.it','vicini.fabio@tmtest.polito.it']::text[], ARRAY['PDE CONTRAINED OPTIMIZATION']::text[], 'Tesi di Laurea', ARRAY['Analisi Numerica E Calcolo Scientifico']::text[], 'La tesi di propone di analizare tecniche numeriche innovative per la discretizzazione di problemi di contatto su mesh non conformi alla geometria dei corpi a contatto.', ARRAY[]::text[], '', '2024-07-11', 1, ARRAY['L-38 - Zootechnical Sciences and Animal Production Technologies','L-17 - Architectural Sciences']::text[]),
 ('Strumenti e metodi per l''home working nella progettazione sostenibile', 514, 'osello.anna@tmtest.polito.it', ARRAY['mariaugliotti.francesca@tmtest.polito.it']::text[], ARRAY['PROGETTAZIONE SOSTENIBILE','REALTÀ VIRTUALE E AUMENTATA']::text[], 'SPERIMENTALE - PROGETTAZIONE', ARRAY['Drawingtothefuture E Vr@Polito']::text[], '-', ARRAY[]::text[], '', '2024-05-22', 1, ARRAY['L-23 - Construction Sciences and Techniques']::text[]);
 
+-- START DATA FOR DEMO 4
+
 INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
 VALUES (
     'Test title',
@@ -6022,49 +6025,101 @@ VALUES (
     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
 );
 
-COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
-2	1147	2023-11-30	\N
-2	710	2023-11-30	\N
-2	430	2023-11-30	\N
-2	1254	2023-11-30	\N
-\.
+INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
+VALUES (
+    'Test archived thesis 1 - Artificial Intelligence',
+    552,
+    'thesis.management.test@gmail.com',
+    ARRAY['squillero.giovanni@tmtest.polito.it']::text[],
+    ARRAY['TESTING ARCHIVED THESIS']::text[],
+    'SPERIMENTALE',
+    ARRAY['LM-32']::text[],
+    'Test description for archived thesis 1',
+    ARRAY['Coding']::text[],
+    'No notes',
+    '2023-05-22',
+    2,
+    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+),
+(
+    'Test archived thesis 1 - Software engineering',
+    552,
+    'thesis.management.test@gmail.com',
+    ARRAY['torchiano.marco@tmtest.polito.it']::text[],
+    ARRAY['TESTING ARCHIVED THESIS']::text[],
+    'SPERIMENTALE',
+    ARRAY['LM-32']::text[],
+    'Test description for archived thesis 2',
+    ARRAY['SW', 'IS']::text[],
+    'Test notes',
+    '2023-05-21',
+    2,
+    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+),
+(
+    'Test archived thesis 2 - Formal languages',
+    552,
+    'thesis.management.test@gmail.com',
+    ARRAY['sisto.riccardo@tmtest.polito.it']::text[],
+    ARRAY['TESTING ARCHIVED THESIS']::text[],
+    'IN AZIENDA',
+    ARRAY['LM-32']::text[],
+    'Test description for archived thesis 3',
+    ARRAY['COMPILERS', 'LANGUAGES']::text[],
+    'No notes',
+    '2023-04-22',
+    2,
+    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+),
+(
+    'Test archived thesis 3 - Build a database query language',
+    552,
+    'thesis.management.test@gmail.com',
+    ARRAY[]::text[],
+    ARRAY['TESTING ARCHIVED THESIS']::text[],
+    'SPERIMENTALE',
+    ARRAY['LM-32']::text[],
+    'Test description for archived thesis 4',
+    ARRAY['DB', 'DBMS', 'QUERY']::text[],
+    'No notes',
+    '2023-05-23',
+    2,
+    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+);
 
-COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
-6	710	2023-11-30	\N
-6	1254	2023-11-30	\N
-6	65	2023-11-30	\N
-6	871	2023-11-30	\N
-\.
+INSERT INTO public.application(student_id, proposal_id, apply_date, status)
+VALUES (
+    1,
+    1500, 
+    '2024-01-17',
+    null
+);
 
-COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
-1	871	2023-11-30	\N
-1	1147	2023-11-30	\N
-1	65	2023-11-30	\N
-1	1254	2023-11-30	\N
-\.
+-- END DATA FOR DEMO 4
+
+-- COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+-- 2	1147	2023-11-30	\N
+-- 2	710	2023-11-30	\N
+-- 2	430	2023-11-30	\N
+-- 2	1254	2023-11-30	\N
+-- \.
+
+-- COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+-- 6	710	2023-11-30	\N
+-- 6	1254	2023-11-30	\N
+-- 6	65	2023-11-30	\N
+-- 6	871	2023-11-30	\N
+-- \.
+
+-- COPY public.application (student_id, proposal_id, apply_date, status) FROM stdin;
+-- 1	871	2023-11-30	\N
+-- 1	1147	2023-11-30	\N
+-- 1	65	2023-11-30	\N
+-- 1	1254	2023-11-30	\N
+-- \.
 
 INSERT INTO public.thesis_request(student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date, status_clerk, status_teacher, comment, approval_date)
-VALUES(1,1147, 
- 'Effetti di degrado del calcestruzzo armato sulla sicurezza strutturale',
- 'Effetti di deterioramento del calcestruzzo in termini affidabilistici di strutture e ponti.', 
- 'castaldo.paolo@tmtest.polito.it', 
- ARRAY[]::text[],
- '2023-09-19', 
- null,
- null,
- null,
- null),
- (2,710, 
- 'Piano d’Azione per l’Energia Sostenibile e per lo Sviluppo del Turismo in Alta Quota',
- 'La Regione Val d’Aosta è conosciuta principalmente per il suo turismo invernale ed estivo grazie ad un vasto e vario comprensorio sciistico. Nella valle del Cervino si vuole avviare un percorso di sostenibilità energetica ed ambientale, coniugando la tutela del territorio al sostegno dell’economia locale', 
- 'mutani.guglielmina@tmtest.polito.it', 
- ARRAY[]::text[],
- '2023-11-22', 
- true,
- 2,
- 'The topic is not fine for me',
- null),
-(3,1500, 
+VALUES(3,1500, 
  'Test title',
  'Test description', 
  'thesis.management.test@gmail.com', 

@@ -396,6 +396,7 @@ The backend exposes the following APIs:
     Example request:
     ```json
     {
+        "status_teacher" : 3,
         "comment" : "Your description need to have more details."
     }
     ```

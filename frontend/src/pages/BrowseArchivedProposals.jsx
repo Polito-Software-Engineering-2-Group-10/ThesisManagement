@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Button, Container, Table,Accordion} from "react-bootstrap";
+import {Button, Container ,Accordion} from "react-bootstrap";
 import API from '../API';
 import useNotification from '../hooks/useNotification';
 import {Navigation} from "./Navigation.jsx";
@@ -67,14 +67,10 @@ function ProposalTable(props) {
                 return elem;
             } )
             setFilteredList(archivedProposals.filter((item) => {
-                return keys.some((key) => item[key].toLowerCase().includes(query));
+                return keys.some((key) => item[key].toLowerCase().includes(query.toLowerCase()));
             } ))
         }
     }, [query, archivedProposals]);
-
-    const handleProposalClick = (proposal) => {
-        setSelectedProposal(proposal);
-    };
 
     const handleUnarchiveClick = (proposal) => {
         API.archiveProposal(proposal.id).then(() => {
@@ -129,33 +125,6 @@ function ProposalTable(props) {
         navigate('/');
     };
 
-    const generateRow = (result) => {
-        return (
-            <tr key={result.id} style={{ textAlign: 'center' }} onClick={() => handleProposalClick(result)}
-                className={selectedProposal && selectedProposal.id === result.id ? 'table-primary' : ''}
-            >
-            <td>{result.title}</td>
-            <td>{result.expiration.substring(0, 10)}</td>
-            <td>{result.level === 1 ? "Bachelor" : "Master"}</td>
-            <td>{result.type}</td>
-            <td className="d-flex justify-content-center align-items-center">
-                <Button className="btn-edit" onClick={() => handleUpdateClick(result)} title="Update proposal">
-                    <i className="bi bi-pencil-square"></i>
-                </Button>
-                <Button className="btn-copy" onClick={() => handleCopyClick(result)} title="Create proposal starting from this one">
-                    <i className="bi bi-copy"></i>
-                </Button>
-                <Button className="btn-archive" onClick={() => handleUnarchiveClick(result)} title="Unarchive proposal">
-                    <i className="bi bi-archive"></i>
-                </Button>
-                <Button className="btn-delete" onClick={() => handleDeleteClick(result)} title="Delete proposal">
-                    <i className="bi bi-trash"></i>
-                </Button>
-            </td>
-            </tr>
-        );
-    }
-
     return (
         <Container className="proposal-table">
             <ConfirmModal 
@@ -194,7 +163,7 @@ function ProposalTable(props) {
                         <AccordionElement
                             title={result.title}
                             expiration={result.expiration}
-                            level={result.level}
+                            level={result.level === 1 ? "Bachelor" : "Master"}
                             type={result.type}
                             key={index}
                             id={result.id}
@@ -208,8 +177,7 @@ function ProposalTable(props) {
                 )}) : <p className="center-text">No archived proposals</p>
                 }
             </Accordion>
-        
-        
+
         </Container>
     );
 }

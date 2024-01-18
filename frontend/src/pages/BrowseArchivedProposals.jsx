@@ -9,6 +9,7 @@ import {faArrowRotateLeft} from '@fortawesome/free-solid-svg-icons';
 import {ToastContainer} from "react-toastify";
 import "../styles/BrowseArchivedProposal.css";
 import { AccordionElement } from '../components/AccordionElement.jsx';
+import dayjs from 'dayjs';
 
 import ConfirmModal from '../components/ConfirmModal';
 
@@ -67,7 +68,13 @@ function ProposalTable(props) {
                 return elem;
             } )
             setFilteredList(archivedProposals.filter((item) => {
-                return keys.some((key) => item[key].toLowerCase().includes(query.toLowerCase()));
+                return keys.some((key) => {
+                    if (key === 'expiration') {
+                        return dayjs(item[key]).format('DD/MM/YYYY').toString().toLowerCase().includes(query.toLowerCase())
+                    } else{
+                        return item[key].toLowerCase().includes(query.toLowerCase())
+                    }
+                });
             } ))
         }
     }, [query, archivedProposals]);

@@ -93,7 +93,7 @@ The stories we have done are:
 
 - What caused your errors in estimation (if any)? 
   - The main reasons that gave us problems in the estimation were related to the underestimation of the time required to improve the user interface and the time required to to integrate the features.
-  - The gap of information between memebers causes us wasting much time to do non-sense work especially on .ixing bugs and integration testing
+  - The gap of information between memebers causes us wasting much time to do non-sense work especially on fixing bugs and integration testing
  
 - What lessons did you learn (both positive and negative) in this sprint?
   - We learned that we have to update the information and guidelines in time when we take some unfamiliar technologies, for other group memeber to avoid end to end testing in a wrong way.

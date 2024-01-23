@@ -1,7 +1,7 @@
 INSERT INTO public.student (id, surname, name, gender, nationality, email, cod_degree, enrollment_year)
 VALUES
-(1, 'ROSIELLO', 'ALESSIO', 'M', 'Italian', 's317659@studenti.polito.it', 'LM-32', '2022-01-01'),
-(2, 'SALVATORE', 'CAVALLARO', 'M', 'Italian', 's317842@studenti.polito.it', 'LM-32', '2022-01-01'),
+(1, 'ELMO', 'MOSS', 'M', 'Italian', 's317659@studenti.polito.it', 'LM-32', '2022-01-01'),
+(2, 'BRYAN', 'WOODS', 'M', 'Italian', 's317842@studenti.polito.it', 'LM-32', '2022-01-01'),
 (3, 'COLAIACOMO', 'DAVIDE', 'M', 'Italian', 's313372@studenti.polito.it', 'LM-32', '2022-01-01'),
 (4, 'LAMPIS', 'MARCO', 'M', 'Italian', 's317978@studenti.polito.it', 'LM-32', '2022-01-01'),
 (5, 'MOBARGHA', 'YALDA SADAT', 'F', 'Iranian', 's314700@studenti.polito.it', 'LM-32', '2022-01-01'),
@@ -13,7 +13,9 @@ VALUES
 (2, 'GIUSEPPE', 'VERDI', 'giuseppe.verdi@tmtest.polito.it'),
 (3, 'ANNA', 'BIANCHI', 'anna.bianchi@tmtest.polito.it'),
 (4, 'MARIA', 'RUSSO', 'maria.russo@tmtest.polito.it'),
-(5, 'GIOVANNI', 'FERRARI', 'giovanni.ferrari@tmtest.polito.it');
+(5, 'GIOVANNI', 'FERRARI', 'giovanni.ferrari@tmtest.polito.it'),
+(6, 'PAM', 'BEESLY', 'thesis.management.test@gmail.com');
+
 INSERT INTO public.teacher (id, surname, name, email, cod_group, cod_department)
 VALUES
 (1, 'TEPPATI LOSE''', 'LORENZO', 'teppatilose.lorenzo@tmtest.polito.it', 2, 8),
@@ -567,8 +569,8 @@ VALUES
 (549, 'PRIMATESTA', 'STEFANO', 'primatesta.stefano@tmtest.polito.it', 1, 6),
 (550, 'CARDONI', 'ALESSANDRO', 'cardoni.alessandro@tmtest.polito.it', 1, 9),
 (551, 'DALLA CHIARA', 'BRUNO', 'dallachiara.bruno@tmtest.polito.it', 2, 2),
-(552, 'TEST', 'PROFESSOR', 'thesis.management.test@gmail.com', 3, 2),
-(553, 'SARACCO', 'GIULIA', 'giuliasaracco87@gmail.com', 3, 2);
+(553, 'SARACCO', 'GIULIA', 'giuliasaracco87@gmail.com', 11, 11), -- department of applied science and technology (SARACCO GIULIA)
+(554, 'JUAN STEFANO', 'PAULI', 'juanstefanopauli@gmail.com', 5, 3); -- department of electronics and telecommunication (JUAN STEFANO PAULI)
 
 INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
 VALUES('Tesi senza titolo', 34, 'beltramo.silvia@tmtest.polito.it', ARRAY['cuneo.cristina@tmtest.polito.it']::text[], ARRAY['ANALISI FONTI DOCUMENTARIE','ANALISI FONTI ICONOGRAFICHE','STORIA DEL TERRITORIO','STORIA DELL''ARCHITETTURA','STORIA DELLE TECNICHE COSTRUTTIVE']::text[], 'Tesi di Laurea', ARRAY['L-36 group 1']::text[], 'Il percorso di ricerca si inserisce in un bando PNRR “Proposte di intervento per il restauro e la valorizzazione di parchi e giardini storici da finanziare nell’ambito del PNRR - INTERVENTO 2.3 – PARCHI E GIARDINI STORICI INTERVENTO DI RECUPERO”. La ricerca da svolgere si incentra su un edificio, una villa del tardo Quattrocento e del suo giardino, con una apertura all''indagine a scala territoriale, privilegiando l''impiego di fonti documentarie, scritte e iconografiche, e l''analisi dell''architettura. Nell''ambito della tesi saranno previste attività di catalogazione e gestione di data base.', ARRAY['Per una tesi di prevalente carattere storico, aver sostenuto gli esami di storia previsti dal piano di studio (votazione > 27). Possedere le relative competenze disciplinari nel campo della rappresentazione e del rilievo e della gestione di banche dati.']::text[], '', '2024-09-19', 1, ARRAY['L-36 - Political Sciences and International Relations']::text[]),
@@ -6008,92 +6010,92 @@ It is desired knowledge in evaluation and assessment. GIS, Stakeholder analysis,
 
 -- START DATA FOR DEMO 4
 
-INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
-VALUES (
-    'Test title',
-    552,
-    'thesis.management.test@gmail.com',
-    ARRAY[]::text[],
-    ARRAY['TESTING']::text[],
-    'SPERIMENTALE',
-    ARRAY['LM-32']::text[],
-    'Test description',
-    ARRAY['Coding']::text[],
-    'No notes',
-    '2024-05-22',
-    2,
-    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
-);
+-- INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
+-- VALUES (
+--     'Test title',
+--     552,
+--     'thesis.management.test@gmail.com',
+--     ARRAY[]::text[],
+--     ARRAY['TESTING']::text[],
+--     'SPERIMENTALE',
+--     ARRAY['LM-32']::text[],
+--     'Test description',
+--     ARRAY['Coding']::text[],
+--     'No notes',
+--     '2024-05-22',
+--     2,
+--     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+-- );
 
-INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
-VALUES (
-    'Test archived thesis 1 - Artificial Intelligence',
-    552,
-    'thesis.management.test@gmail.com',
-    ARRAY['squillero.giovanni@tmtest.polito.it']::text[],
-    ARRAY['TESTING ARCHIVED THESIS']::text[],
-    'SPERIMENTALE',
-    ARRAY['LM-32']::text[],
-    'Test description for archived thesis 1',
-    ARRAY['Coding']::text[],
-    'No notes',
-    '2023-05-22',
-    2,
-    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
-),
-(
-    'Test archived thesis 1 - Software engineering',
-    552,
-    'thesis.management.test@gmail.com',
-    ARRAY['torchiano.marco@tmtest.polito.it']::text[],
-    ARRAY['TESTING ARCHIVED THESIS']::text[],
-    'SPERIMENTALE',
-    ARRAY['LM-32']::text[],
-    'Test description for archived thesis 2',
-    ARRAY['SW', 'IS']::text[],
-    'Test notes',
-    '2023-05-21',
-    2,
-    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
-),
-(
-    'Test archived thesis 2 - Formal languages',
-    552,
-    'thesis.management.test@gmail.com',
-    ARRAY['sisto.riccardo@tmtest.polito.it']::text[],
-    ARRAY['TESTING ARCHIVED THESIS']::text[],
-    'IN AZIENDA',
-    ARRAY['LM-32']::text[],
-    'Test description for archived thesis 3',
-    ARRAY['COMPILERS', 'LANGUAGES']::text[],
-    'No notes',
-    '2023-04-22',
-    2,
-    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
-),
-(
-    'Test archived thesis 3 - Build a database query language',
-    552,
-    'thesis.management.test@gmail.com',
-    ARRAY[]::text[],
-    ARRAY['TESTING ARCHIVED THESIS']::text[],
-    'SPERIMENTALE',
-    ARRAY['LM-32']::text[],
-    'Test description for archived thesis 4',
-    ARRAY['DB', 'DBMS', 'QUERY']::text[],
-    'No notes',
-    '2023-05-23',
-    2,
-    ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
-);
+-- INSERT INTO public.thesis_proposal (title, teacher_id, supervisor, co_supervisor, keywords, type, groups, description, required_knowledge, notes, expiration, level, programmes)
+-- VALUES (
+--     'Test archived thesis 1 - Artificial Intelligence',
+--     552,
+--     'thesis.management.test@gmail.com',
+--     ARRAY['squillero.giovanni@tmtest.polito.it']::text[],
+--     ARRAY['TESTING ARCHIVED THESIS']::text[],
+--     'SPERIMENTALE',
+--     ARRAY['LM-32']::text[],
+--     'Test description for archived thesis 1',
+--     ARRAY['Coding']::text[],
+--     'No notes',
+--     '2023-05-22',
+--     2,
+--     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+-- ),
+-- (
+--     'Test archived thesis 1 - Software engineering',
+--     552,
+--     'thesis.management.test@gmail.com',
+--     ARRAY['torchiano.marco@tmtest.polito.it']::text[],
+--     ARRAY['TESTING ARCHIVED THESIS']::text[],
+--     'SPERIMENTALE',
+--     ARRAY['LM-32']::text[],
+--     'Test description for archived thesis 2',
+--     ARRAY['SW', 'IS']::text[],
+--     'Test notes',
+--     '2023-05-21',
+--     2,
+--     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+-- ),
+-- (
+--     'Test archived thesis 2 - Formal languages',
+--     552,
+--     'thesis.management.test@gmail.com',
+--     ARRAY['sisto.riccardo@tmtest.polito.it']::text[],
+--     ARRAY['TESTING ARCHIVED THESIS']::text[],
+--     'IN AZIENDA',
+--     ARRAY['LM-32']::text[],
+--     'Test description for archived thesis 3',
+--     ARRAY['COMPILERS', 'LANGUAGES']::text[],
+--     'No notes',
+--     '2023-04-22',
+--     2,
+--     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+-- ),
+-- (
+--     'Test archived thesis 3 - Build a database query language',
+--     552,
+--     'thesis.management.test@gmail.com',
+--     ARRAY[]::text[],
+--     ARRAY['TESTING ARCHIVED THESIS']::text[],
+--     'SPERIMENTALE',
+--     ARRAY['LM-32']::text[],
+--     'Test description for archived thesis 4',
+--     ARRAY['DB', 'DBMS', 'QUERY']::text[],
+--     'No notes',
+--     '2023-05-23',
+--     2,
+--     ARRAY['LM-32 - Master Degree in Computer Engineering']::text[]
+-- );
 
-INSERT INTO public.application(student_id, proposal_id, apply_date, status)
-VALUES (
-    1,
-    1500, 
-    '2024-01-17',
-    null
-);
+-- INSERT INTO public.application(student_id, proposal_id, apply_date, status)
+-- VALUES (
+--     1,
+--     1500, 
+--     '2024-01-17',
+--     null
+-- );
 
 -- END DATA FOR DEMO 4
 
@@ -6119,26 +6121,27 @@ VALUES (
 -- \.
 
 INSERT INTO public.thesis_request(student_id, proposal_id, title, description, supervisor, co_supervisor, apply_date, status_clerk, status_teacher, comment, approval_date)
-VALUES(3,1500, 
- 'Test title',
- 'Test description', 
- 'thesis.management.test@gmail.com', 
- ARRAY[]::text[],
- '2023-07-19', 
- false,
- 3,
- 'You need to fix your format',
- null),
- (5,266, 
- 'Applicazioni possibili dell’ATO su linee ferroviarie regionali mediante impiego dell’ERTMS con impatti sulle curve frenatura e sull’architettura dell’impianto freno',
- 'Ipotesi, simulazioni e possibili applicazioni dell’ATO su linee ferroviarie regionali mediante integrazione con il sistema ATP  ERTMS,  impatti sulle curve frenatura, sull’architettura dell’impianto freno e sui dispositivi di rilevazione dell’ integrità treno (Train Integrity).', 
- 'dallachiara.bruno@tmtest.polito.it', 
- ARRAY[]::text[],
- '2023-12-1', 
- null,
- null,
- null,
- null),
+VALUES
+-- (3,1500, 
+--  'Test title',
+--  'Test description', 
+--  'thesis.management.test@gmail.com', 
+--  ARRAY[]::text[],
+--  '2023-07-19', 
+--  false,
+--  3,
+--  'You need to fix your format',
+--  null),
+--  (5,266, 
+--  'Applicazioni possibili dell’ATO su linee ferroviarie regionali mediante impiego dell’ERTMS con impatti sulle curve frenatura e sull’architettura dell’impianto freno',
+--  'Ipotesi, simulazioni e possibili applicazioni dell’ATO su linee ferroviarie regionali mediante integrazione con il sistema ATP  ERTMS,  impatti sulle curve frenatura, sull’architettura dell’impianto freno e sui dispositivi di rilevazione dell’ integrità treno (Train Integrity).', 
+--  'dallachiara.bruno@tmtest.polito.it', 
+--  ARRAY[]::text[],
+--  '2023-12-1', 
+--  null,
+--  null,
+--  null,
+--  null),
  (6,1043, 
  'Separatore inerziale per vapori condensati',
  'Il lavoro include una parte teorica e una parte sperimentale. Viene richiesto di studiare il fenomeno di condensazione di alcune sostanze in condizioni controllate e ripetibili all’interna di geometrie semplici. la concentrazione particellare, prima, durante e dopo il processo di condensazione dovrà essere valutata per via teorica. Per validare i risultati ottenuti, si progetterà un esperimento in cui si riescano a controllare alcune delle variabili che governano il fenomeno. I dati misurati saranno utili per estendere la previsione del funzionamento del separatore inerziale di vapori condensati ad altri casi di interesse industriale.', 

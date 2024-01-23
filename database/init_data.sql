@@ -105,7 +105,8 @@ VALUES
 (7, 4, 'Group 1 - DIATI'),
 (8, 4, 'Group 2 - DIATI'),
 (9, 5, 'Group 1 - DIMEAS'),
-(10, 5, 'Group 2 - DIMEAS');
+(10, 5, 'Group 2 - DIMEAS'),
+(11, 11, 'Group 1 - DISAT');
 
 -- degree-department bridge
 INSERT INTO public.degree_department_bridge (cod_degree, cod_department)
@@ -185,7 +186,7 @@ VALUES
 ('LM-29', 3),
 ('LM-30', 3),
 ('LM-31', 9),
-('LM-32', 2);
+('LM-32', 11);
 -- prcedure to notify professors about expiring thesis proposals
 CREATE PROCEDURE public.notify_professors_about_expiring_thesis_proposals()
 LANGUAGE plpgsql

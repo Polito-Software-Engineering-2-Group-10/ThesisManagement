@@ -99,6 +99,7 @@ function SearchForProposals(props) {
     const [sortColumn, setSortColumn] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
 
+    const [keywordFilter, setKeywordFilter] = useState('');
     
     const [sortedProposals, setsortedProposals] = useState([]);
 
@@ -258,6 +259,7 @@ function SearchForProposals(props) {
 
     const handleCancelFilter = () => {
         setActiveFilter(null);
+        setKeywordFilter('');
     };
 
     const handleRemoveFilter = (filter) => {
@@ -483,6 +485,8 @@ function SearchForProposals(props) {
                                                     <div>
                                                         <Form.Group controlId="keywordsFilter">
                                                             <Form.Label>Filter by keywords:</Form.Label>
+                                                            <Form.Control type="text" placeholder='Filter keyword list...' value={keywordFilter} onChange={(ev) => setKeywordFilter(ev.target.value)}></Form.Control>
+                                                            <hr />
                                                             <Form.Control
                                                                 as="select"
                                                                 name="keywords"
@@ -490,7 +494,7 @@ function SearchForProposals(props) {
                                                                 onChange={handleFilterChange}
                                                                 multiple={true}
                                                             >
-                                                                {keywords.map((keyword) => (
+                                                                {keywords.filter(x => x.toLowerCase().includes(keywordFilter.toLowerCase())).map((keyword) => (
                                                                     <option key={keyword} value={keyword}>
                                                                         {keyword}
                                                                     </option>

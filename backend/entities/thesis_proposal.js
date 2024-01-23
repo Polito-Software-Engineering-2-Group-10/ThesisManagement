@@ -316,7 +316,7 @@ class ThesisProposalTable {
         let params = [];
         let i = 1;
         if (filterObject.title !== null) {
-            query += ` AND title ILIKE $${i}`;
+            query += ` AND title ILIKE '%' || $${i} || '%'`;
             params.push(`%${filterObject.title}%`);
             i++;
         }
@@ -348,10 +348,18 @@ WHERE NOT EXISTS (
             i++;
         }
         if (filterObject.cod_degree !== null) {
-            query += ` AND EXISTS (
-                SELECT 1 FROM unnest(groups) AS code_degree
-                WHERE code_degree LIKE '%' || $${i} || '%'
-              )`;
+            query += ` AND
+            (
+            EXISTS (
+                    SELECT 1 FROM unnest(groups) AS code_degree
+                    WHERE code_degree LIKE '%' || $${i} || '%'
+                    )
+            OR
+            EXISTS (
+                        SELECT 1 FROM public.group as g, public.degree_department_bridge as ddb
+                        WHERE ddb.cod_department = g.cod_department AND g.name = ANY(thesis_proposal.groups) AND ddb.cod_degree = $${i}
+                    )
+            )`;
             params.push(filterObject.cod_degree);
             i++;
         }

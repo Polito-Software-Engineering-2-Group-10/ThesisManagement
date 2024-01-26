@@ -24,15 +24,15 @@ const ProposalForm = (props) => {
     const isEditing = !!(location.state?.action == "update");
 
     // Form fields
-    const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : '');
+    const [title, setTitle]                 = useState(location.state?.proposal ? location.state.proposal.title : 'Data Analysis of Rector Elections');
     const [supervisor, setSupervisor]       = useState(user !== null ? user.email : ''); // this should be taken from the logged in user
     const [co_supervisor, setCoSupervisor]  = useState(location.state?.proposal ? location.state.proposal.co_supervisor.join(",") : '');
-    const [type, setType]                   = useState(location.state?.proposal ? location.state.proposal.type : '');
-    const [expiration, setExpirationDate]   = useState(location.state?.proposal ? dayjs(location.state.proposal.expiration).format("YYYY-MM-DD") : '');
-    const [level, setLevel]                 = useState(location.state?.proposal ? location.state.proposal.level : 0);
+    const [type, setType]                   = useState(location.state?.proposal ? location.state.proposal.type : 'EXPERIMENTAL');
+    const [expiration, setExpirationDate]   = useState(location.state?.proposal ? dayjs(location.state.proposal.expiration).format("YYYY-MM-DD") : '2025-03-15');
+    const [level, setLevel]                 = useState(location.state?.proposal ? location.state.proposal.level : 2);
     const [groups, setGroups]               = useState(location.state?.proposal ? location.state.proposal.groups.join(",") : '');
-    const [keywords, setKeywords]           = useState(location.state?.proposal ? location.state.proposal.keywords.join(",") : "");
-    const [description, setDescription]     = useState(location.state?.proposal ? location.state.proposal.description : '');
+    const [keywords, setKeywords]           = useState(location.state?.proposal ? location.state.proposal.keywords.join(",") : "DATA ANALYSIS, ELECTIONS, RECTOR");
+    const [description, setDescription]     = useState(location.state?.proposal ? location.state.proposal.description : 'This is a proposal for a data analysis of the Rector Elections. The data will be provided by the Politechnic of Turin. The goal is to find out if there are any correlations between the votes and the students\' courses.');
     const [required_knowledge, setRequiredKnowledge] = useState(location.state?.proposal ? location.state.proposal.required_knowledge.join(",") : '');
     const [notes, setNotes]                          = useState(location.state?.proposal ? location.state.proposal.notes : '');
     const [programmes, setPrograms]                  = useState(location.state?.proposal ? location.state.proposal.programmes.join(",") : '');

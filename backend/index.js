@@ -238,7 +238,7 @@ app.patch('/api/teacher/applicationDetail/:applicationid',
             }
 
             const newStatus = Boolean(req.body.status);
-            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus);
+            const applicationResult = await applicationTable.updateApplicationStatusById(req.params.applicationid, newStatus, applicationDetail.title, req.user.surname);
             //send email to co-supervisor
             const proposalDetail = await thesisProposalTable.getProposalDetailById(applicationResult.proposal_id);
             const studentInfo = await studentTable.getById(applicationResult.student_id);

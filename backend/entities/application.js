@@ -1,6 +1,7 @@
 'use strict';
 import { psqlDriver } from '../dbdriver.js';
 import { getNum } from './utils.js';
+import sendEmail from '../emailSender.js';
 
 class Application {
     constructor(id, student_id, proposal_id, apply_date, status) {
@@ -113,16 +114,26 @@ class ApplicationTable {
         const result = await this.db.executeQueryExpectOne(query, sid, pid, `Application with student_id ${student_id} and proposal_id ${proposal_id} not found`);
         return result;
     }
-    async updateApplicationStatusById(id, status) {
+    async updateApplicationStatusById(id, status, thesis_title, teacher_surname) {
         const query = `UPDATE application SET status = $2 WHERE id = $1 RETURNING *`;
         const aid = getNum(id);
         const result = await this.db.executeQueryExpectOne(query, aid, status, `Application with id ${id} not found`);
-        let student_id = result.student_id;
-        let proposal_id = result.proposal_id;
+        const student_id = result.student_id;
+        const proposal_id = result.proposal_id;
         if (status === true) {
             // When professor accepts application, all other pending applications for that proposal (and of the student) are automatically rejected
-            const query2 = `UPDATE application SET status = false WHERE (proposal_id = $1 OR student_id = $2) AND id != $3`;
-            await this.db.executeQueryExpectAny(query2, proposal_id, student_id, aid);
+            const query2 = `UPDATE application SET status = false WHERE (proposal_id = $1 OR student_id = $2) AND id != $3 RETURNING *`;
+            const rejectedApplications = await this.db.executeQueryExpectAny(query2, proposal_id, student_id, aid);
+            const rejectedApplicationsStudentIds = rejectedApplications.map((app) => app.student_id).filter((id) => id !== student_id);
+            const getStudentsQuery = `SELECT email, name, surname FROM student WHERE id = ANY($1)`;
+            const rejectedApplicationsStudents = await this.db.executeQueryExpectAny(getStudentsQuery, rejectedApplicationsStudentIds);
+            for (const student of rejectedApplicationsStudents) {
+                await sendEmail({
+                    recipient_mail: student.email,
+                    subject: `Result on your application about ${thesis_title}`,
+                    message: `Hello ${student.name} ${student.surname},\nyour thesis application for the ${thesis_title} proposal, supervised by professor ${teacher_surname}, has been rejected.\nBest Regards, Polito Staff.`
+                })
+            }
             // Accepted proposals are automatically archived
             const query3 = `UPDATE thesis_proposal SET archived = 2 WHERE id = $1`;
             await this.db.executeQueryExpectAny(query3, proposal_id);

@@ -83,6 +83,7 @@ button{
 
 #card-proposal{
     width: 100%;
+    justify-content: space-between;
 }
 
 .container-filter-proposal{

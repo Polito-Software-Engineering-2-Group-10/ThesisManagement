@@ -1,7 +1,7 @@
 INSERT INTO public.student (id, surname, name, gender, nationality, email, cod_degree, enrollment_year)
 VALUES
 (1, 'ELMO', 'MOSS', 'M', 'Italian', 's317659@studenti.polito.it', 'LM-32', '2022-01-01'),
-(2, 'BRYAN', 'WOODS', 'M', 'Italian', 's317842@studenti.polito.it', 'LM-32', '2022-01-01'),
+(2, 'BRYAN', 'WOODS', 'M', 'Italian', 's317659@studenti.polito.it', 'LM-32', '2022-01-01'),
 (3, 'COLAIACOMO', 'DAVIDE', 'M', 'Italian', 's313372@studenti.polito.it', 'LM-32', '2022-01-01'),
 (4, 'LAMPIS', 'MARCO', 'M', 'Italian', 's317978@studenti.polito.it', 'LM-32', '2022-01-01'),
 (5, 'MOBARGHA', 'YALDA SADAT', 'F', 'Iranian', 's314700@studenti.polito.it', 'LM-32', '2022-01-01'),
